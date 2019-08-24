@@ -9,46 +9,67 @@ import json
 
 import requests
 
-class Resolve(object):
+class Resolver(object):
     def __init__(self):
         self.uri = 'http://ip-api.com/'
         self.ratelimit = (150/60)
         self.lang = "en"
-        self.fields = [
-            'status', 'message', 'continent', 'country',
-            'regionName', 'city', 'district', 'zip', 'lat', 'lon',
-            'timezone', 'isp', 'org', 'as', 'asname', 'reverse',
-            'mobile', 'proxy'
+        self.fields = [ # Ordered list of fields to gather
+            'query',
+            'as', 'org', 'isp'
+            'continent', 'country', 'regionName', 'city', 'district', 'zip',
+            'mobile', 'proxy', 'reverse',
+            'lat', 'lon', 'timezone'
+            'status', 'message'
         ]
 
         self.data = None
 
     def query(self, data):
         self.data = data
-        if isinstance(data, list):
-            yield self.batch()
+        if isinstance(data, (list, tuple, set)):
+            return self.batch()
         elif isinstance(data, str):
-            yield self.single()
+            return self.single()
         else:
             raise NotImplementedError()
 
     def batch(self):
         records = []
         for ip in self.data:
-            records.append({
-                'query': ip,
-                'fields': self.fields,
+            records.append({'query': ip})
+        rdata = requests.post(
+            self.uri+"batch",
+            json=records,
+            params={
+                'fields': ','.join(self.fields),
                 'lang': self.lang
             })
-        rdata = requests.get(self.uri+"batch", data=records)
-        import pdb; pdb.set_trace()
+        yield rdata.json()
 
     def single(self):
         rdata = requests.get(
-            self.uri+"json/"+self.data, 
+            self.uri+"json/"+self.data,
             params={
-                'fields': self.fields,
+                'fields': ','.join(self.fields),
                 'lang': self.lang
         })
-        import pdb; pdb.set_trace()
-        
+        yield rdata.json()
+
+if __name__ == "__main__":
+    import argparse
+    import pprint
+    parser = argparse.ArgumentParser()
+    parser.add_argument('ips', help='Comma separated list of IPs')
+    args = parser.parse_args()
+
+    resolver = Resolver()
+    if ',' in args.ips:
+        ip_data = args.ips.split(',')
+    else:
+        ip_data = args.ips
+
+    results = resolver.query(ip_data)
+
+    all_results = [x for x in results][0]
+    pprint.pprint(all_results)
