@@ -5,7 +5,9 @@ Plain text files include logs, csvs, json, and other formats where ascii strings
 contain IPv4 or IPv6 addresses.
 """
 
+import binascii
 import os
+from gzip import GzipFile
 import re
 
 # FROM https://gist.github.com/dfee/6ed3a4b05cfe7a6faf40a2102408d5d8
@@ -36,14 +38,28 @@ class PlainTextParser(object):
         self.file_entry = None
         self.ips = set()
 
+    @staticmethod
+    def is_gz_file(filepath):
+        with open(filepath, 'rb') as test_f:
+            return binascii.hexlify(test_f.read(2)) == b'1f8b'
+
     def parse_file(self, file_entry):
-        for raw_line in open(file_entry):
-            for ipv4 in IPv4.findall(raw_line):
+        if self.is_gz_file(file_entry):
+            file_data = GzipFile(file_entry)
+        else:
+            file_data = open(file_entry, 'rb')
+
+        for raw_line in file_data:
+            line = raw_line.decode()
+            for ipv4 in IPv4.findall(line):
                 self.ips.add(ipv4)
-            for ipv6 in IPv6.findall(raw_line):
+            for ipv6 in IPv6.findall(line):
                 if '%' in ipv6:
                     ip, net = ipv6.split('%')
+                else:
+                    ip = ipv6
                 self.ips.add(ip)
+
 
 if __name__ == "__main__":
     import argparse
