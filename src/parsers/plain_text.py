@@ -60,7 +60,6 @@ class PlainTextParser(object):
                     ip = ipv6
                 self.ips.add(ip)
 
-
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
