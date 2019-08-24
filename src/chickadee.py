@@ -24,6 +24,7 @@ class Resolver(object):
         ]
 
         self.data = None
+        self.last_request
 
     def query(self, data):
         self.data = data
