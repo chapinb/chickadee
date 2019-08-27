@@ -20,14 +20,14 @@ __date__ = 20190824
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
-FIELDS = [ # Ordered list of fields to gather
+FIELDS = ','.join([ # Ordered list of fields to gather
             'query',
             'as', 'org', 'isp'
             'continent', 'country', 'regionName', 'city', 'district', 'zip',
             'mobile', 'proxy', 'reverse',
             'lat', 'lon', 'timezone'
             'status', 'message'
-        ]
+        ])
 
 
 class Resolver(object):
@@ -129,11 +129,13 @@ def write_json(outfile, data, lines=False):
     else:
         open_file.write(json.dumps(data))
 
-def str_handler(input_data):
+def str_handler(input_data, fields=None):
     if isinstance(input_data, str) and ',' in input_data:
         input_data = input_data.split(',')
 
     resolver = Resolver()
+    if fields:
+        resolver.fields = fields
     if len(input_data) > resolver.bulk_limit * resolver.ratelimit:
         print("[!] Warning: due to rate limiting, this resolution will take "
               "at least {} minutes. Consider purchasing an API key for "
@@ -143,23 +145,23 @@ def str_handler(input_data):
     all_results = [x for x in results]
     return all_results
 
-def file_handler(input_data):
+def file_handler(input_data, fields):
     print("Extracting IPs from files")
     ptparser = PlainTextParser()
     ptparser.parse_file(input_data)
     print("{} IPs discovered, resolving...".format(len(ptparser.ips)))
-    return str_handler(list(ptparser.ips))
+    return str_handler(list(ptparser.ips), fields)
 
 
-def dir_handler(input_data):
+def dir_handler(input_data, fields):
     ptparser = PlainTextParser()
     for root, _, files in os.walk(input_data):
         for fentry in files:
             ptparser.parse_file(os.path.join(root, fentry))
-    return str_handler(list(ptparser.ips))
+    return str_handler(list(ptparser.ips), fields)
 
 
-def main(input_data, outformat='json', outfile=None):
+def main(input_data, outformat='json', outfile=None, fields=FIELDS):
     """Evaluate the input data format and properly parse to extract and resolve
     IP addresses.
 
@@ -169,11 +171,11 @@ def main(input_data, outformat='json', outfile=None):
     """
 
     if os.path.isdir(input_data):
-        results = dir_handler(input_data) # Directory handler
+        results = dir_handler(input_data, fields) # Directory handler
     elif os.path.isfile(input_data):
-        results = file_handler(input_data) # File handler
+        results = file_handler(input_data, fields) # File handler
     elif isinstance(input_data, str):
-        results = str_handler(input_data) # String handler
+        results = str_handler(input_data, fields) # String handler
 
     if outformat == 'csv':
         write_csv_dicts(oufile, results)
@@ -195,13 +197,15 @@ if __name__ == "__main__":
              "IP address values. Currently supported file types: "
              "plain text (ie logs, csv, json), gzipped plain text"
     )
-    parser.add_argument('-f', help='Fields to query',
+    parser.add_argument('-f', help='Comma separated fields to query',
         default=FIELDS)
     parser.add_argument('-t', help='Output format',
                         choices=['json', 'jsonl', 'csv'],
                         default='jsonl')
     parser.add_argument('-w', help='Path to file to write output',
-                        default=sys.stdout)
+                        default=sys.stdout, metavar='FILENAME.JSON')
     args = parser.parse_args()
 
-    main(args.data, outformat=args.t, outfile=args.w)
+    fields = args.f.split(',')
+
+    main(args.data, outformat=args.t, outfile=args.w, fields=fields)

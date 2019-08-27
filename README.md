@@ -15,6 +15,10 @@ Yet another GeoIP resolution tool.
           (_______)
 ```
 
+Supported GeoIP back-ends:
+* http://ip-api.com/ - Free to query up to 150 requests per minute. Unlimited
+  API keys available for purchase.
+
 ## Installation
 
 Currently you must use the source code (pip package coming soon).
@@ -115,6 +119,14 @@ $ python chickadee.py 8.8.8.8,1.1.1.1 | jq '.'
   "regionName": "New South Wales",
   "zip": "1001"
 }
+```
+
+Example of using the custom fields. Available field names can be found at: http://ip-api.com/docs/api:json
+
+```
+$ python chickadee.py 8.8.8.8,1.1.1.1 -t jsonl -f as,proxy
+{"as": "AS15169 Google LLC", "proxy": false}
+{"as": "AS13335 Cloudflare, Inc.", "proxy": false}
 ```
 
 ## Contributing
