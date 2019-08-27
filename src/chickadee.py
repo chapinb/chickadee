@@ -5,6 +5,7 @@ An application to provide context for an IP address
 """
 
 import argparse
+import csv
 import os
 import json
 import pprint
@@ -178,7 +179,7 @@ def main(input_data, outformat='json', outfile=None, fields=FIELDS):
         results = str_handler(input_data, fields) # String handler
 
     if outformat == 'csv':
-        write_csv_dicts(oufile, results)
+        write_csv_dicts(outfile, results)
     elif outformat == 'json':
         write_json(outfile, results)
     elif outformat == 'jsonl':
