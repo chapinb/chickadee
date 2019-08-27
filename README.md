@@ -59,7 +59,7 @@ the below formats:
 
 ```
 $ python chickadee.py --help
-usage: chickadee.py [-h] [-f F] [-t {json,jsonl,csv}] [-w W] data
+usage: chickadee.py [-h] [-f F] [-t {json,jsonl,csv}] [-w FILENAME.JSON] data
 
 Sample Argparse
 
@@ -72,16 +72,15 @@ positional arguments:
 
 optional arguments:
   -h, --help           show this help message and exit
-  -f F                 Fields to query (default: ['query', 'as', 'org',
-                       'ispcontinent', 'country', 'regionName', 'city',
-                       'district', 'zip', 'mobile', 'proxy', 'reverse', 'lat',
-                       'lon', 'timezonestatus', 'message'])
+  -f F                 Comma separated fields to query (default: query,as,org,
+                       ispcontinent,country,regionName,city,district,zip,mobil
+                       e,proxy,reverse,lat,lon,timezonestatus,message)
   -t {json,jsonl,csv}  Output format (default: jsonl)
-  -w W                 Path to file to write output (default:
+  -w FILENAME.JSON     Path to file to write output (default:
                        <_io.TextIOWrapper name='<stdout>' mode='w'
                        encoding='UTF-8'>)
 
-Built by Chapin Bryce, v.20190824
+Built by Chapin Bryce, v.20190827
 ```
 
 ## Example
