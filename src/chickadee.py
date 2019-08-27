@@ -9,6 +9,7 @@ import os
 import json
 import pprint
 import time
+import sys
 
 import requests
 
@@ -18,6 +19,15 @@ __author__ = 'Chapin Bryce'
 __date__ = 20190824
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
+
+FIELDS = [ # Ordered list of fields to gather
+            'query',
+            'as', 'org', 'isp'
+            'continent', 'country', 'regionName', 'city', 'district', 'zip',
+            'mobile', 'proxy', 'reverse',
+            'lat', 'lon', 'timezone'
+            'status', 'message'
+        ]
 
 
 class Resolver(object):
@@ -95,13 +105,29 @@ def write_csv_dicts(outfile, data, headers=None):
         # Use the first line of data
         headers = [str(x) for x in data[0].keys()]
 
-    with open(outfile, 'w', newline="") as open_file:
-        # Write only provided headers, ignore others
-        csvfile = csv.DictWriter(open_file, headers,
-                                 extrasaction='ignore')
-        csvfile.writeheader()
-        csvfile.writerows(data)
+    if isinstance(outfile, str):
+        open_file = open(outfile, 'w', newline="")
+    else:
+        open_file = outfile
 
+    # Write only provided headers, ignore others
+    csvfile = csv.DictWriter(open_file, headers,
+                                extrasaction='ignore')
+    csvfile.writeheader()
+    csvfile.writerows(data)
+
+
+def write_json(outfile, data, lines=False):
+    if isinstance(outfile, str):
+        open_file = open(outfile, 'w', newline="")
+    else:
+        open_file = outfile
+
+    if lines:
+        for entry in data:
+            open_file.write(json.dumps(entry)+"\n")
+    else:
+        open_file.write(json.dumps(data))
 
 def str_handler(input_data):
     if isinstance(input_data, str) and ',' in input_data:
@@ -151,7 +177,10 @@ def main(input_data, outformat='json', outfile=None):
 
     if outformat == 'csv':
         write_csv_dicts(oufile, results)
-
+    elif outformat == 'json':
+        write_json(outfile, results)
+    elif outformat == 'jsonl':
+        write_json(outfile, results, lines=True)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -167,10 +196,12 @@ if __name__ == "__main__":
              "plain text (ie logs, csv, json), gzipped plain text"
     )
     parser.add_argument('-f', help='Fields to query',
-        default=)
+        default=FIELDS)
     parser.add_argument('-t', help='Output format',
-                        choices=['json', 'jsonl', 'csv'])
-    parser.add_argument('-w', help='Path to file to write output')
+                        choices=['json', 'jsonl', 'csv'],
+                        default='jsonl')
+    parser.add_argument('-w', help='Path to file to write output',
+                        default=sys.stdout)
     args = parser.parse_args()
 
     main(args.data, outformat=args.t, outfile=args.w)
