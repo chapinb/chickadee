@@ -23,10 +23,10 @@ __desc__ = '''Yet another GeoIP resolution tool.'''
 
 FIELDS = ','.join([ # Ordered list of fields to gather
             'query',
-            'as', 'org', 'isp'
+            'as', 'org', 'isp',
             'continent', 'country', 'regionName', 'city', 'district', 'zip',
             'mobile', 'proxy', 'reverse',
-            'lat', 'lon', 'timezone'
+            'lat', 'lon', 'timezone',
             'status', 'message'
         ])
 
