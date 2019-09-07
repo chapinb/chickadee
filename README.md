@@ -21,29 +21,35 @@ Supported GeoIP back-ends:
 
 ## Installation
 
-Currently you must use the source code (pip package coming soon).
+You may install Chickadee on your platform using `pip install chickadee` (you 
+may need to use `pip3` depending on your system configuration).
+**Please ensure you are using Python 3**
+
+You may also install via the source code as detailed below.
 
 ### macOS and Linux
 
 Requirements:
-* Python 3.6+, installed on your path
+
+* Python 3+, installed on your path
 * Virtualenv (`pip3 install virtualenv`)
 
 1. Clone the git repo: `git clone https://github.com/chapinb/chickadee.git`
 2. Create your virtual environment `virtualenv -p python3 venv3` and activate it (`source venv3/bin/activate`)
-3. Install dependencies: `pip install -r requirements.txt`
-4. `cd` into the `src` directory and run `python chickadee.py --help` to get started.
+3. Install dependencies: `pip install .`
+4. Run `chickadee --help` to get started.
 
 ### Windows
 
 Requirements:
-* Python 3.6+, installed on your path
+
+* Python 3+, installed on your path
 * Virtualenv (`pip.exe install virtualenv`)
 
 1. Clone the git repo: `git clone https://github.com/chapinb/chickadee.git`
-2. Create your virtual environment `virtualenv -p python3 venv3` and activate it (`source venv3/bin/activate`)
-3. Install dependencies: `pip install -r requirements.txt`
-4. `cd` into the `src` directory and run `python chickadee.py --help` to get started.
+2. Create your virtual environment `virtualenv -p python3 venv3` and activate it (`source venv3/Scripts/activate.bat`)
+3. Install dependencies: `pip install .`
+4. Run `chickadee --help` to get started.
 
 ## Usage
 
@@ -58,8 +64,8 @@ the below formats:
 * A path to a folder containing plaintext or gzip'd plaintext data
 
 ```
-$ python chickadee.py --help
-usage: chickadee.py [-h] [-f F] [-t {json,jsonl,csv}] [-w FILENAME.JSON] data
+$ chickadee --help
+usage: chickadee [-h] [-f F] [-t {json,jsonl,csv}] [-w FILENAME.JSON] data
 
 Sample Argparse
 
@@ -80,7 +86,7 @@ optional arguments:
                        <_io.TextIOWrapper name='<stdout>' mode='w'
                        encoding='UTF-8'>)
 
-Built by Chapin Bryce, v.20190827
+Built by Chapin Bryce, v.20190907
 ```
 
 ## Example
@@ -89,7 +95,7 @@ To resolve `8.8.8.8` and `1.1.1.1`. *The `jq` tool isn't a requirement, but is
 a great utility for formatting and querying any JSON data.*
 
 ```
-$ python chickadee.py 8.8.8.8,1.1.1.1 | jq '.'
+$ chickadee 8.8.8.8,1.1.1.1 | jq '.'
 {
   "as": "AS15169 Google LLC",
   "city": "Ashburn",
@@ -123,7 +129,7 @@ $ python chickadee.py 8.8.8.8,1.1.1.1 | jq '.'
 Example of using the custom fields. Available field names can be found at: http://ip-api.com/docs/api:json
 
 ```
-$ python chickadee.py 8.8.8.8,1.1.1.1 -t jsonl -f as,proxy
+$ chickadee 8.8.8.8,1.1.1.1 -t jsonl -f as,proxy
 {"as": "AS15169 Google LLC", "proxy": false}
 {"as": "AS13335 Cloudflare, Inc.", "proxy": false}
 ```

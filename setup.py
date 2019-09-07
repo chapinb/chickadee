@@ -10,7 +10,6 @@ setuptools.setup(
     author='Chapin Bryce',
     author_email='python@chapinb.com',
     url='https://github.com/chapinb/chickadee',
-    license='GPLv3',
     long_description=long_description,
     long_description_content_type='text/markdown',
     packages=setuptools.find_packages(),
@@ -24,7 +23,7 @@ setuptools.setup(
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
     ]
 
