@@ -77,7 +77,7 @@ def main(input_data, outformat='json', outfile=None, fields=FIELDS):
         results = str_handler(input_data, fields) # String handler
 
     if outformat == 'csv':
-        Resolver.write_csv(outfile, results, FIELDS)
+        Resolver.write_csv(outfile, results, fields)
     elif outformat == 'json':
         Resolver.write_json(outfile, results)
     elif outformat == 'jsonl':
@@ -87,7 +87,7 @@ def arg_handling():
     parser = argparse.ArgumentParser(
         description='Sample Argparse',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-        epilog=f"Built by {__author__}, v.{__date__}"
+        epilog="Built by {}, v.{}".format(__author__, __date__)
     )
     parser.add_argument(
         'data',

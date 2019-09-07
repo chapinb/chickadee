@@ -1,6 +1,6 @@
 import json
 import time
-from unicodecsv import csv
+import csv
 
 __author__ = 'Chapin Bryce'
 __date__ = 20190907

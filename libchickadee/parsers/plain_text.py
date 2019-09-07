@@ -60,7 +60,7 @@ class PlainTextParser(object):
                 self.ips.add(ipv4)
             for ipv6 in IPv6.findall(line):
                 if '%' in ipv6:
-                    ip, net = ipv6.split('%')
+                    ip, _ = ipv6.split('%')
                 else:
                     ip = ipv6
                 self.ips.add(ip)

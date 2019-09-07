@@ -14,7 +14,7 @@ __desc__ = '''Yet another GeoIP resolution tool.'''
 
 class Resolver(ResolverBase):
     def __init__(self):
-        super()
+        ResolverBase.__init__(self)
         self.uri = 'http://ip-api.com/'
         self.lang = "en"
         self.ratelimit = 150  # Requests per minute

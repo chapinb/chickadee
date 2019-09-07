@@ -20,8 +20,7 @@ setuptools.setup(
         ]
     },
     install_requires=[
-        "requests >= 2.22.0",
-        "unicodecsv >= 0.14.1"
+        "requests >= 2.22.0"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
