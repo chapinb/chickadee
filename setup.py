@@ -5,7 +5,7 @@ with open('README.md') as fh:
 
 setuptools.setup(
     name='chickadee',
-    version=20190907,
+    version=20190907.3,
     description='Yet another GeoIP resolution tool.',
     author='Chapin Bryce',
     author_email='python@chapinb.com',
@@ -15,7 +15,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     entry_points={
         'console_scripts': [
-            'chickadee = libchickadee.chickadee:__entry__'
+            'chickadee = libchickadee.chickadee:entry'
         ]
     },
     install_requires=[

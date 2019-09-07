@@ -106,7 +106,7 @@ def arg_handling():
     args = parser.parse_args()
     return args
 
-def __entry__(args=None):
+def entry(args=None):
     """Entrypoint for package script"""
     args = arg_handling()
     fields = args.f.split(',')
@@ -114,4 +114,4 @@ def __entry__(args=None):
 
 
 if __name__ == "__main__":
-    __entry__()
+    entry()
