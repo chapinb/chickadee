@@ -19,7 +19,6 @@ Supported GeoIP back-ends:
 * http://ip-api.com/ - Free to query up to 150 requests per minute. Unlimited
   API keys available for purchase.
 
-[![asciicast](https://asciinema.org/a/266509.png)](https://asciinema.org/a/266509)
 
 ## Installation
 
@@ -90,6 +89,8 @@ optional arguments:
 
 Built by Chapin Bryce, v.20190907
 ```
+
+[![asciicast](https://asciinema.org/a/266509.png)](https://asciinema.org/a/266509)
 
 ## Example
 
