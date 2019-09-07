@@ -10,6 +10,11 @@ import os
 from gzip import GzipFile
 import re
 
+__author__ = 'Chapin Bryce'
+__date__ = 20190907
+__license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
+__desc__ = '''Yet another GeoIP resolution tool.'''
+
 # FROM https://gist.github.com/dfee/6ed3a4b05cfe7a6faf40a2102408d5d8
 IPV4SEG  = r'(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])'
 IPV4ADDR = r'(?:(?:' + IPV4SEG + r'\.){3,3}' + IPV4SEG + r')'

@@ -5,19 +5,17 @@ An application to provide context for an IP address
 """
 
 import argparse
-import csv
 import os
 import json
 import pprint
 import time
 import sys
 
-import requests
-
-from parsers.plain_text import PlainTextParser
+from libchickadee.backends.ipapi import Resolver
+from libchickadee.parsers.plain_text import PlainTextParser
 
 __author__ = 'Chapin Bryce'
-__date__ = 20190827
+__date__ = 20190907
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
@@ -29,106 +27,6 @@ FIELDS = ','.join([ # Ordered list of fields to gather
             'lat', 'lon', 'timezone',
             'status', 'message'
         ])
-
-
-class Resolver(object):
-    def __init__(self):
-        self.uri = 'http://ip-api.com/'
-        self.lang = "en"
-        self.ratelimit = 150  # Requests per minute
-        self.bulk_limit = 100  # Entries per request
-        self.min_timeout = 60/self.ratelimit  # Minimum timeout period
-        self.fields = [ # Ordered list of fields to gather
-            'query',
-            'as', 'org', 'isp'
-            'continent', 'country', 'regionName', 'city', 'district', 'zip',
-            'mobile', 'proxy', 'reverse',
-            'lat', 'lon', 'timezone'
-            'status', 'message'
-        ]
-
-        self.data = None
-        self.last_req = time.time()
-
-    def query(self, data):
-        self.data = data
-        if isinstance(data, (list, tuple, set)):
-            return self.batch()
-        elif isinstance(data, str):
-            return self.single()
-        else:
-            raise NotImplementedError()
-
-    def batch(self):
-        records = []
-        for ip in self.data:
-            records.append({'query': ip})
-
-        for x in range(0, len(records), 100):
-            elapsed = time.time() - self.last_req
-            if elapsed <= self.min_timeout and elapsed != 0:
-                time.sleep(self.min_timeout - elapsed)
-            rdata = requests.post(
-                self.uri+"batch",
-                json=records[x:x+100],
-                params={
-                    'fields': ','.join(self.fields),
-                    'lang': self.lang
-                })
-            self.last_req = time.time()
-            for result in rdata.json():
-                yield result
-
-    def single(self):
-        elapsed = time.time() - self.last_req
-        if elapsed <= self.min_timeout and elapsed != 0:
-            time.sleep(self.min_timeout - elapsed)
-        rdata = requests.get(
-            self.uri+"json/"+self.data,
-            params={
-                'fields': ','.join(self.fields),
-                'lang': self.lang
-        })
-        self.last_req = time.time()
-        yield rdata.json()
-
-def write_csv_dicts(outfile, data, headers=None):
-    """Writes a list of dictionaries to a CSV file.
-
-    Arguments:
-        outfile (str): Path to output file
-        data (list): List of dictionaries to write to file
-        headers (list): Header row to use. If empty, will use the
-            first dictionary in the `data` list.
-    """
-
-    if not headers:
-        # Use the first line of data
-        headers = [str(x) for x in data[0].keys()]
-
-    if isinstance(outfile, str):
-        open_file = open(outfile, 'w', newline="")
-    else:
-        open_file = outfile
-
-    # Write only provided headers, ignore others
-    csvfile = csv.DictWriter(open_file, headers,
-                                extrasaction='ignore')
-    csvfile.writeheader()
-    csvfile.writerows(data)
-
-
-def write_json(outfile, data, lines=False):
-    if isinstance(outfile, str):
-        open_file = open(outfile, 'w', newline="")
-    else:
-        open_file = outfile
-
-    if lines:
-        for entry in data:
-            open_file.write(json.dumps(entry)+"\n")
-    else:
-        open_file.write(json.dumps(data))
 
 def str_handler(input_data, fields=None):
     if isinstance(input_data, str) and ',' in input_data:
@@ -179,13 +77,13 @@ def main(input_data, outformat='json', outfile=None, fields=FIELDS):
         results = str_handler(input_data, fields) # String handler
 
     if outformat == 'csv':
-        write_csv_dicts(outfile, results)
+        Resolver.write_csv(outfile, results, FIELDS)
     elif outformat == 'json':
-        write_json(outfile, results)
+        Resolver.write_json(outfile, results)
     elif outformat == 'jsonl':
-        write_json(outfile, results, lines=True)
+        Resolver.write_json(outfile, results, lines=True)
 
-if __name__ == "__main__":
+def arg_handling():
     parser = argparse.ArgumentParser(
         description='Sample Argparse',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -206,7 +104,14 @@ if __name__ == "__main__":
     parser.add_argument('-w', help='Path to file to write output',
                         default=sys.stdout, metavar='FILENAME.JSON')
     args = parser.parse_args()
+    return args
 
+def __entry__(args=None):
+    """Entrypoint for package script"""
+    args = arg_handling()
     fields = args.f.split(',')
-
     main(args.data, outformat=args.t, outfile=args.w, fields=fields)
+
+
+if __name__ == "__main__":
+    __entry__()
