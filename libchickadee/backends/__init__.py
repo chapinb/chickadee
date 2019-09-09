@@ -1,3 +1,4 @@
+"""Base class for all backends."""
 import json
 import time
 import csv
@@ -8,6 +9,7 @@ __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
 class ResolverBase(object):
+    """Generic base class for use by other backends."""
     def __init__(self):
         self.uri = None
         self.lang = "en"
@@ -20,17 +22,18 @@ class ResolverBase(object):
         self.last_req = time.time()
 
     def sleeper(self):
+        """Method to sleep operations for rate limiting."""
         elapsed = time.time() - self.last_req
         if elapsed <= self.min_timeout and elapsed != 0:
             time.sleep(self.min_timeout - elapsed)
 
     def single(self):
         """Base method to handle single queries"""
-        pass
+        raise NotImplementedError()
 
     def batch(self):
         """Base method to handle batch queries"""
-        pass
+        raise NotImplementedError()
 
     def query(self, data):
         """Generic query handler to decide to use single or batch
@@ -38,10 +41,10 @@ class ResolverBase(object):
         self.data = data
         if isinstance(data, (list, tuple, set)):
             return self.batch()
-        elif isinstance(data, str):
+        if isinstance(data, str):
             return self.single()
-        else:
-            raise NotImplementedError()
+
+        raise NotImplementedError()
 
     @staticmethod
     def write_csv(outfile, data, headers=None):
@@ -65,12 +68,20 @@ class ResolverBase(object):
 
         # Write only provided headers, ignore others
         csvfile = csv.DictWriter(open_file, headers,
-                                    extrasaction='ignore')
+                                 extrasaction='ignore')
         csvfile.writeheader()
         csvfile.writerows(data)
 
     @staticmethod
     def write_json(outfile, data, lines=False):
+        """Writes output in JSON format
+
+        Args:
+            outfile (str or fileobj): Path to or already open file
+            data (list): List of dictionaries containing resolved data
+            lines (bool): Whether to export 1 dictionary object per line or
+                a whole json object.
+        """
         if isinstance(outfile, str):
             open_file = open(outfile, 'w', newline="")
         else:

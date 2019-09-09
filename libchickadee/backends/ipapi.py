@@ -1,4 +1,4 @@
-import json
+"""Backend leveraging the ip-api.com JSON API."""
 import time
 
 import requests
@@ -13,6 +13,7 @@ __desc__ = '''Yet another GeoIP resolution tool.'''
 
 
 class Resolver(ResolverBase):
+    """Class to handle ip-api.com API queries for IP addresses."""
     def __init__(self):
         ResolverBase.__init__(self)
         self.uri = 'http://ip-api.com/'
@@ -30,10 +31,8 @@ class Resolver(ResolverBase):
             'status', 'message'
         ]
 
-        self.data = None
-        self.last_req = time.time()
-
     def batch(self):
+        """Handle batch query operations."""
         records = []
         for ip in self.data:
             records.append({'query': ip})
@@ -50,15 +49,16 @@ class Resolver(ResolverBase):
             self.last_req = time.time()
             for result in rdata.json():
                 yield result
-            
 
     def single(self):
+        """Handle single item query operations."""
         self.sleeper()
         rdata = requests.get(
             self.uri+"json/"+self.data,
             params={
                 'fields': ','.join(self.fields),
                 'lang': self.lang
-        })
+            }
+        )
         self.last_req = time.time()
         yield rdata.json()

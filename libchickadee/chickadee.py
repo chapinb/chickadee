@@ -6,9 +6,6 @@ An application to provide context for an IP address
 
 import argparse
 import os
-import json
-import pprint
-import time
 import sys
 
 from libchickadee.backends.ipapi import Resolver
@@ -20,15 +17,24 @@ __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
 FIELDS = ','.join([ # Ordered list of fields to gather
-            'query',
-            'as', 'org', 'isp',
-            'continent', 'country', 'regionName', 'city', 'district', 'zip',
-            'mobile', 'proxy', 'reverse',
-            'lat', 'lon', 'timezone',
-            'status', 'message'
-        ])
+    'query',
+    'as', 'org', 'isp',
+    'continent', 'country', 'regionName', 'city', 'district', 'zip',
+    'mobile', 'proxy', 'reverse',
+    'lat', 'lon', 'timezone',
+    'status', 'message'
+])
 
 def str_handler(input_data, fields=None):
+    """Handle string input of one or more IP addresses and executes the query
+
+    Args:
+        input_data (str): raw input data from use
+        fields (list): List of fields to query for
+
+    Return:
+        all_results (list): list of distinct IP addresses to resolve.
+    """
     if isinstance(input_data, str) and ',' in input_data:
         input_data = input_data.split(',')
 
@@ -45,6 +51,15 @@ def str_handler(input_data, fields=None):
     return all_results
 
 def file_handler(input_data, fields):
+    """Handle parsing IP addresses from a file
+
+    Args:
+        input_data (str): raw input data from use
+        fields (list): List of fields to query for
+
+    Return:
+        (list): all query results from extracted IPs
+    """
     print("Extracting IPs from files")
     ptparser = PlainTextParser()
     ptparser.parse_file(input_data)
@@ -53,6 +68,15 @@ def file_handler(input_data, fields):
 
 
 def dir_handler(input_data, fields):
+    """Handle parsing IP addresses from files recursively
+
+    Args:
+        input_data (str): raw input data from use
+        fields (list): List of fields to query for
+
+    Return:
+        (list): all query results from extracted IPs
+    """
     ptparser = PlainTextParser()
     for root, _, files in os.walk(input_data):
         for fentry in files:
@@ -61,14 +85,14 @@ def dir_handler(input_data, fields):
 
 
 def main(input_data, outformat='json', outfile=None, fields=FIELDS):
-    """Evaluate the input data format and properly parse to extract and resolve
-    IP addresses.
+    """Evaluate the input data format to extract and resolve IP addresses.
 
     Args:
         input_data (str or file_obj): User provided data containing IPs to
             resolve
     """
 
+    # Extract and resolve IP addresses
     if os.path.isdir(input_data):
         results = dir_handler(input_data, fields) # Directory handler
     elif os.path.isfile(input_data):
@@ -76,6 +100,7 @@ def main(input_data, outformat='json', outfile=None, fields=FIELDS):
     elif isinstance(input_data, str):
         results = str_handler(input_data, fields) # String handler
 
+    # Write results to output format and/or files
     if outformat == 'csv':
         Resolver.write_csv(outfile, results, fields)
     elif outformat == 'json':
@@ -84,6 +109,7 @@ def main(input_data, outformat='json', outfile=None, fields=FIELDS):
         Resolver.write_json(outfile, results, lines=True)
 
 def arg_handling():
+    """Argument handling."""
     parser = argparse.ArgumentParser(
         description='Sample Argparse',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -97,7 +123,7 @@ def arg_handling():
              "plain text (ie logs, csv, json), gzipped plain text"
     )
     parser.add_argument('-f', help='Comma separated fields to query',
-        default=FIELDS)
+                        default=FIELDS)
     parser.add_argument('-t', help='Output format',
                         choices=['json', 'jsonl', 'csv'],
                         default='jsonl')
