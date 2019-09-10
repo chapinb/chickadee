@@ -42,9 +42,10 @@ def str_handler(input_data, fields=None):
     if fields:
         resolver.fields = fields
     if len(input_data) > resolver.bulk_limit * resolver.ratelimit:
-        print("[!] Warning: due to rate limiting, this resolution will take "
+        sys.stderr.write(
+              "[!] Warning: due to rate limiting, this resolution will take "
               "at least {} minutes. Consider purchasing an API key for "
-              "increased query performance".format(
+              "increased query performance\n".format(
                   len(input_data)/resolver.bulk_limit/resolver.ratelimit))
     results = resolver.query(input_data)
     all_results = [x for x in results]
@@ -60,10 +61,11 @@ def file_handler(input_data, fields):
     Return:
         (list): all query results from extracted IPs
     """
-    print("Extracting IPs from files")
+    sys.stderr.write("Extracting IPs from files\n")
     ptparser = PlainTextParser()
     ptparser.parse_file(input_data)
-    print("{} IPs discovered, resolving...".format(len(ptparser.ips)))
+    sys.stderr.write(
+        "{} IPs discovered, resolving...\n".format(len(ptparser.ips)))
     return str_handler(list(ptparser.ips), fields)
 
 
