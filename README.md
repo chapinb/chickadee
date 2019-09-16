@@ -16,9 +16,9 @@ Yet another GeoIP resolution tool.
 ```
 
 Supported GeoIP back-ends:
+
 * http://ip-api.com/ - Free to query up to 150 requests per minute. Unlimited
   API keys available for purchase.
-
 
 ## Installation
 
@@ -64,7 +64,7 @@ the below formats:
 * A path to a gzip'd plaintext file (not an archive of multiple plaintext files)
 * A path to a folder containing plaintext or gzip'd plaintext data
 
-```
+```text
 $ chickadee --help
 usage: chickadee [-h] [-f F] [-t {json,jsonl,csv}] [-w FILENAME.JSON] data
 
@@ -97,7 +97,7 @@ Built by Chapin Bryce, v.20190907
 To resolve `8.8.8.8` and `1.1.1.1`. *The `jq` tool isn't a requirement, but is
 a great utility for formatting and querying any JSON data.*
 
-```
+```text
 $ chickadee 8.8.8.8,1.1.1.1 | jq '.'
 {
   "as": "AS15169 Google LLC",
@@ -129,13 +129,23 @@ $ chickadee 8.8.8.8,1.1.1.1 | jq '.'
 }
 ```
 
-Example of using the custom fields. Available field names can be found at: http://ip-api.com/docs/api:json
+Example of using the custom fields. Available field names are at: http://ip-api.com/docs/api:json
 
-```
+```text
 $ chickadee 8.8.8.8,1.1.1.1 -t jsonl -f as,proxy
 {"as": "AS15169 Google LLC", "proxy": false}
 {"as": "AS13335 Cloudflare, Inc.", "proxy": false}
 ```
+
+## Known bugs
+
+Below are a list of known bugs. Please report any new bugs identified or 
+submit a PR to patch any of the below or ones you found on your own. No one 
+is perfect :)
+
+* IPv6 addresses expressed in expanded form in the source document
+  are not properly deduplicated against discovered IPv6 addresses in compressed 
+  form.
 
 ## Contributing
 

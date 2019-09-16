@@ -34,7 +34,7 @@ IPV6GROUPS = (
     # fe80::7:8%eth0 | fe80::7:8%1
     # (link-local IPv6 addresses with zone index)
     r'fe80:(?::' + IPV6SEG + r'){0,4}%[0-9a-zA-Z]{1,}',
-    # ::255.255.255.255 | ::ffff:255.255.255.255 | ::ffff:0:255.255.255.255 
+    # ::255.255.255.255 | ::ffff:255.255.255.255 | ::ffff:0:255.255.255.255
     # (IPv4-mapped IPv6 addresses and IPv4-translated addresses)
     r'::(?:ffff(?::0{1,4}){0,1}:){0,1}[^\s:]' + IPV4ADDR,
     # 2001:db8:3:4::192.0.2.33  64:ff9b::192.0.2.33
@@ -47,3 +47,11 @@ IPV6ADDR = '|'.join(['(?:{})'.format(g) for g in IPV6GROUPS[::-1]])
 
 IPv4Pattern = re.compile(IPV4ADDR)
 IPv6Pattern = re.compile(IPV6ADDR)
+
+def strip_ipv6(ipv6_addr):
+    """Isolate IPv6 Value"""
+    if '%' in ipv6_addr:
+        ip, _ = ipv6_addr.split('%')
+    else:
+        ip = ipv6_addr
+    return ip

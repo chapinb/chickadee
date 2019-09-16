@@ -5,7 +5,7 @@ with open('README.md') as fh:
 
 setuptools.setup(
     name='chickadee',
-    version=20190910,
+    version=20190915,
     description='Yet another GeoIP resolution tool.',
     author='Chapin Bryce',
     author_email='python@chapinb.com',
@@ -19,7 +19,8 @@ setuptools.setup(
         ]
     },
     install_requires=[
-        "requests >= 2.22.0"
+        "requests >= 2.22.0",
+        "openpyxl >= 2.6.3"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

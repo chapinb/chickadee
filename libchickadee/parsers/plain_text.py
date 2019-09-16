@@ -9,7 +9,7 @@ import binascii
 import os
 from gzip import GzipFile
 
-from libchickadee.parsers import IPv4Pattern, IPv6Pattern
+from libchickadee.parsers import IPv4Pattern, IPv6Pattern, strip_ipv6
 
 __author__ = 'Chapin Bryce'
 __date__ = 20190907
@@ -20,7 +20,6 @@ class PlainTextParser(object):
     """Class to extract IP addresses from plain text
         and gzipped plain text files."""
     def __init__(self):
-        self.file_entry = None
         self.ips = set()
 
     @staticmethod
@@ -41,13 +40,12 @@ class PlainTextParser(object):
             for ipv4 in IPv4Pattern.findall(line):
                 self.ips.add(ipv4)
             for ipv6 in IPv6Pattern.findall(line):
-                if '%' in ipv6:
-                    ip, _ = ipv6.split('%')
-                else:
-                    ip = ipv6
-                self.ips.add(ip)
+                self.ips.add(strip_ipv6(ipv6))
 
-if __name__ == "__main__":
+        if 'closed' in dir(file_data) and not file_data.closed:
+            file_data.close()
+
+if __name__ == "__main__":  # pragma: no cover
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('path', help="File or folder to parse")
