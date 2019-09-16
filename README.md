@@ -2,6 +2,8 @@
 
 Yet another GeoIP resolution tool.
 
+![build status](https://travis-ci.org/chapinb/chickadee.svg?branch=master)
+
 ```
          _          _
         ('<        >')
