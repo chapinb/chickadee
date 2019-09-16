@@ -1,7 +1,6 @@
 """XLSX parsing tests."""
 import unittest
 import os
-from pathlib import PurePath
 
 from libchickadee.parsers.xlsx import XLSXParser
 
@@ -20,7 +19,7 @@ class XLSXParserTestCase(unittest.TestCase):
         }
         self.parser = XLSXParser()
         self.test_data_dir = os.path.join(
-            PurePath(__file__).parent, 'test_data')
+            os.path.dirname(__file__), 'test_data')
 
     def test_ip_extraction_xlsx(self):
         """Extraction test."""

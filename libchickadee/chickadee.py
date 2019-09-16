@@ -204,6 +204,7 @@ def arg_handling():
         default=os.path.abspath(os.path.join(
             os.getcwd(), PurePath(__file__).name.rsplit('.', 1)[0] + '.log'))
     )
+    import pdb; pdb.set_trace()
     args = parser.parse_args()
     return args
 
