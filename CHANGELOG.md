@@ -1,5 +1,11 @@
 # Changelog
 
+## 20190917
+
+This release includes:
+
+* Removed left over debugging statement
+
 ## 20190915
 
 This release includes:
@@ -7,7 +13,7 @@ This release includes:
 * Added XLSX support (by extension only)
 * Error handling to continue when unsupported document is scanned, or encoding 
   error is encountered
-* Added a CHAGELOG (*so meta*)
+* Added a CHANGELOG (*so meta*)
 * Added logging
 * Added unittesting
 

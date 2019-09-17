@@ -19,7 +19,7 @@ from libchickadee.parsers.xlsx import XLSXParser
 
 
 __author__ = 'Chapin Bryce'
-__date__ = 20190915
+__date__ = 20190917
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
@@ -197,6 +197,9 @@ def arg_handling():
                         default=sys.stdout, metavar='FILENAME.JSON')
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='Include debug log messages')
+    parser.add_argument('--version', action='version',
+                        help='Displays version',
+                        version=str(__date__))
     parser.add_argument(
         '-l',
         '--log',
@@ -204,7 +207,6 @@ def arg_handling():
         default=os.path.abspath(os.path.join(
             os.getcwd(), PurePath(__file__).name.rsplit('.', 1)[0] + '.log'))
     )
-    import pdb; pdb.set_trace()
     args = parser.parse_args()
     return args
 
