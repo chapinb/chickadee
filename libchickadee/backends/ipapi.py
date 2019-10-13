@@ -1,10 +1,12 @@
 """Backend leveraging the ip-api.com JSON API."""
+import logging
 import time
 
 import requests
 
 from . import ResolverBase
 
+logger = logging.getLogger('libchickadee.chickadee')
 
 __author__ = 'Chapin Bryce'
 __date__ = 20190927
@@ -31,12 +33,16 @@ class Resolver(ResolverBase):
             lang = 'en'
         ResolverBase.__init__(self, fields=FIELDS, lang='en')
 
-        self.ratelimit = 150  # Requests per minute
-        self.bulk_limit = 100  # Entries per request
-        self.min_timeout = 60/self.ratelimit  # Minimum timeout period
         self.uri = 'http://ip-api.com/'
         self.api_key = None
         self.enable_sleep = True
+
+    @staticmethod
+    def sleeper(headers):
+        """Method to sleep operations for rate limiting."""
+        if int(headers['X-Rl']) < 1:
+            logger.info('Sleeping due to rate limiting.')
+            time.sleep(int(headers['X-Ttl'])+1)
 
     def batch(self):
         """Handle batch query operations."""
@@ -45,42 +51,56 @@ class Resolver(ResolverBase):
             records.append({'query': ip})
 
         for x in range(0, len(records), 100):
-            if self.enable_sleep:
-                self.sleeper()
             params = {
                 'fields': ','.join(self.fields),
                 'lang': self.lang,
             }
             if self.api_key:
                 params['key'] = self.api_key
+
             rdata = requests.post(
                 self.uri+"batch",
                 json=records[x:x+100],
                 params=params
             )
-            if self.enable_sleep:
-                self.last_req = time.time()
-            for result in rdata.json():
-                yield result
+
+            if rdata.status_code == 200:
+                result_list = []
+                for result in rdata.json():
+                    result_list.append(result)
+                return result_list
+
+            else:
+                msg = "Unknown error encountered: {}".format(rdata.status_code())
+                logger.error(msg)
+                result_list = []
+                for result in records[x:x+100]:
+                    result_list.append({'query': result,
+                                        'status': 'failed',
+                                        'message': msg})
+                return result_list
 
     def single(self):
         """Handle single item query operations."""
-        if self.enable_sleep:
-            self.sleeper()
         params = {
             'fields': ','.join(self.fields),
             'lang': self.lang,
         }
         if self.api_key:
             params['key'] = self.api_key
+
         rdata = requests.get(
             self.uri+"json/"+self.data,
             params=params
         )
-        if self.enable_sleep:
-            self.last_req = time.time()
-        yield rdata.json()
+        if rdata.status_code == 200:
+            self.sleeper(rdata.headers)
+            return [rdata.json()]
 
+        else:
+            msg = "Unknown error encountered: {}".format(rdata.status_code())
+            logger.error(msg)
+            return [{'query': self.data, 'status': 'failed', 'message': msg}]
 
 class ProResolver(Resolver):
     """GeoIP resolver using the ip-api.com paid subscription."""

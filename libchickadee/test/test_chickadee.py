@@ -21,7 +21,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
 
             {'as': 'AS15169 Google LLC', 'city': 'Ashburn',
              'country': 'United States', 'district': '', 'lat': 39.0438,
-             'lon': -77.4874, 'mobile': False, 'org': 'Google Inc.',
+             'lon': -77.4874, 'mobile': False, 'org': 'Google LLC',
              'proxy': False, 'query': '8.8.8.8', 'reverse': 'dns.google',
              'regionName': 'Virginia', 'zip': '20149'},
 
@@ -31,17 +31,17 @@ class ChickadeeStringTestCase(unittest.TestCase):
              'query': '1.1.1.1', 'regionName': 'New South Wales',
              'zip': '1001', 'reverse': 'one.one.one.one'},
 
-            {'as': 'AS3215 Orange S.A.', 'city': 'Aubervilliers',
-             'country': 'France', 'district': '', 'lat': 48.9123,
-             'lon': 2.38405, 'mobile': False, 'org': '', 'proxy': True,
+            {'as': 'AS3215 Orange S.A.', 'city': 'Paris',
+             'country': 'France', 'district': '', 'lat': 48.8566,
+             'lon': 2.35222, 'mobile': False, 'org': '', 'proxy': True,
              'query': '2.2.2.2', 'regionName': 'Île-de-France',
-             'zip': '93300', 'reverse': ''},
+             'zip': '75000', 'reverse': ''},
 
-            {'as': 'AS15169 Google LLC', 'city': 'Newark',
-             'country': 'United States', 'district': '', 'lat': 40.7357,
-             'lon': -74.1724, 'mobile': False, 'org': 'Google LLC',
+            {'as': 'AS15169 Google LLC', 'city': 'Ashburn',
+             'country': 'United States', 'district': '', 'lat': 39.0438,
+             'lon': -77.4874, 'mobile': False, 'org': 'Google LLC',
              'proxy': False, 'query': '2001:4860:4860::8888',
-             'regionName': 'New Jersey', 'zip': '07175',
+             'regionName': 'Virginia', 'zip': '20149',
              'reverse': 'dns.google',}
         ]
 
@@ -73,43 +73,43 @@ class ChickadeeFileTestCase(unittest.TestCase):
         self.test_data_dir = os.path.join(
             os.path.dirname(__file__), 'test_data')
         self.txt_data_results = [
-            {"as": "AS15169 Google LLC", "city": "Newark",
-             "country": "United States", "district": "", "lat": 40.7357,
-             "lon": -74.1724, "mobile": False, "org": "Google LLC",
+            {"as": "AS15169 Google LLC", "city": "Ashburn",
+             "country": "United States", "district": "", "lat": 39.0438,
+             "lon": -77.4874, "mobile": False, "org": "Google LLC",
              "proxy": False, "query": "2001:4860:4860::8844",
-             "regionName": "New Jersey", "zip": "07175"},
+             "regionName": "Virginia", "zip": "20149"},
 
-            {"as": "AS15169 Google LLC", "city": "Newark",
-             "country": "United States", "district": "", "lat": 40.7357,
-             "lon": -74.1724, "mobile": False, "org": "Google LLC",
+            {"as": "AS15169 Google LLC", "city": "Ashburn",
+             "country": "United States", "district": "", "lat": 39.0438,
+             "lon": -77.4874, "mobile": False, "org": "Google LLC",
              "proxy": False, "query": "2001:4860:4860::8844",
-             "regionName": "New Jersey", "zip": "07175"},
+             "regionName": "Virginia", "zip": "20149"},
 
             {"message": "private range", "query": "10.0.1.2"},
 
             {"as": "AS15169 Google LLC", "city": "Ashburn",
              "country": "United States", "district": "", "lat": 39.0438,
-             "lon": -77.4874, "mobile": False, "org": "Google Inc.",
+             "lon": -77.4874, "mobile": False, "org": "Google LLC",
              "proxy": False, "query": "8.8.8.8", "regionName": "Virginia",
              "zip": "20149"},
 
-            {"as": "AS15169 Google LLC", "city": "Newark",
-             "country": "United States", "district": "", "lat": 40.7357,
-             "lon": -74.1724, "mobile": False, "org": "Google LLC",
+            {"as": "AS15169 Google LLC", "city": "Ashburn",
+             "country": "United States", "district": "", "lat": 39.0438,
+             "lon": -77.4874, "mobile": False, "org": "Google LLC",
              "proxy": False, "query": "2001:4860:4860::8888",
-             "regionName": "New Jersey", "zip": "07175"},
+             "regionName": "Virginia", "zip": "20149"},
 
-            {"as": "AS3215 Orange S.A.", "city": "Aubervilliers",
-             "country": "France", "district": "", "lat": 48.9123,
-             "lon": 2.38405, "mobile": False, "org": "", "proxy": True,
+            {"as": "AS3215 Orange S.A.", "city": "Paris",
+             "country": "France", "district": "", "lat": 48.8566,
+             "lon": 2.35222, "mobile": False, "org": "", "proxy": True,
              "query": "2.2.2.2", "regionName": "\u00cele-de-France",
-             "zip": "93300"},
+             "zip": "75000"},
 
-            {"as": "AS15169 Google LLC", "city": "Newark",
-             "country": "United States", "district": "", "lat": 40.7357,
-             "lon": -74.1724, "mobile": False, "org": "Google LLC",
+            {"as": "AS15169 Google LLC", "city": "Ashburn",
+             "country": "United States", "district": "", "lat": 39.0438,
+             "lon": -77.4874, "mobile": False, "org": "Google LLC",
              "proxy": False, "query": "2001:4860:4860::8888", "regionName":
-             "New Jersey", "zip": "07175"},
+             "Virginia", "zip": "20149"},
 
             {"as": "AS3356 Level 3 Communications, Inc.",
              "city": "Minneapolis", "country": "United States",
@@ -124,31 +124,31 @@ class ChickadeeFileTestCase(unittest.TestCase):
         ]
 
         self.xlsx_data_results = [
-            {"as": "AS15169 Google LLC", "city": "Newark",
-             "country": "United States", "district": "", "lat": 40.7357,
-             "lon": -74.1724, "mobile": False, "org": "Google LLC",
+            {"as": "AS15169 Google LLC", "city": "Ashburn",
+             "country": "United States", "district": "", "lat": 39.0438,
+             "lon": -77.4874, "mobile": False, "org": "Google LLC",
              "proxy": False, "query": "2001:4860:4860::8844",
-             "regionName": "New Jersey", "zip": "07175"},
+             "regionName": "Virginia", "zip": "20149"},
 
             {"message": "private range", "query": "10.0.1.2"},
 
             {"as": "AS15169 Google LLC", "city": "Ashburn",
              "country": "United States", "district": "", "lat": 39.0438,
-             "lon": -77.4874, "mobile": False, "org": "Google Inc.",
+             "lon": -77.4874, "mobile": False, "org": "Google LLC",
              "proxy": False, "query": "8.8.8.8", "regionName": "Virginia",
              "zip": "20149"},
 
-            {"as": "AS15169 Google LLC", "city": "Newark",
-             "country": "United States", "district": "", "lat": 40.7357,
-             "lon": -74.1724, "mobile": False, "org": "Google LLC",
+            {"as": "AS15169 Google LLC", "city": "Ashburn",
+             "country": "United States", "district": "", "lat": 39.0438,
+             "lon": -77.4874, "mobile": False, "org": "Google LLC",
              "proxy": False, "query": "2001:4860:4860::8888",
-             "regionName": "New Jersey", "zip": "07175"},
+             "regionName": "Virginia", "zip": "20149"},
 
-            {"as": "AS3215 Orange S.A.", "city": "Aubervilliers",
-             "country": "France", "district": "", "lat": 48.9123,
-             "lon": 2.38405, "mobile": False, "org": "", "proxy": True,
+            {"as": "AS3215 Orange S.A.", "city": "Paris",
+             "country": "France", "district": "", "lat": 48.8566,
+             "lon": 2.35222, "mobile": False, "org": "", "proxy": True,
              "query": "2.2.2.2", "regionName": "\u00cele-de-France",
-             "zip": "93300"},
+             "zip": "75000"},
 
             {"as": "AS3356 Level 3 Communications, Inc.",
              "city": "Minneapolis", "country": "United States",
@@ -197,7 +197,6 @@ class ChickadeeFileTestCase(unittest.TestCase):
                 item.pop('reverse')
             batch_result.append(item)
         self.assertCountEqual(res, batch_result)
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -14,19 +14,9 @@ class ResolverBase(object):
         self.uri = None
         self.lang = lang
         self.supported_langs = []
-        self.ratelimit = 100  # Requests per minute
-        self.bulk_limit = 100  # Entries per request
-        self.min_timeout = 60/self.ratelimit  # Minimum timeout
         self.fields = fields # Ordered list of fields to gather
 
         self.data = None
-        self.last_req = time.time()
-
-    def sleeper(self):
-        """Method to sleep operations for rate limiting."""
-        elapsed = time.time() - self.last_req
-        if elapsed <= self.min_timeout and elapsed != 0:
-            time.sleep(self.min_timeout - elapsed)
 
     def single(self):
         """Base method to handle single queries"""

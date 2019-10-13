@@ -19,7 +19,7 @@ from libchickadee.parsers.xlsx import XLSXParser
 
 
 __author__ = 'Chapin Bryce'
-__date__ = 20190927
+__date__ = 20191013
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.
 
@@ -109,6 +109,8 @@ class Chickadee(object):
         if isinstance(data, str) and ',' in data:
             data = data.split(',')
 
+        logger.info("Identified {} distinct IPs for resolution".format(len(data)))
+
         api_key = self.get_api_key()
 
         if api_key:
@@ -116,20 +118,15 @@ class Chickadee(object):
         else:
             resolver = Resolver(fields=self.fields, lang=self.lang)
 
-            if len(data) > resolver.bulk_limit * resolver.ratelimit:
-                logger.warning(
-                    "[!] Warning: due to rate limiting, this resolution will "
-                    "take at least {} minutes. Consider purchasing an API key "
-                    "for increased query performance".format(
-                        len(data)/resolver.bulk_limit/resolver.ratelimit))
-
+        logger.info("Resolving IPs")
         if self.force_single:
             results = []
             for element in data:
                 resolver.data = element
-                results.append(next(resolver.single()))
+                results.append(resolver.single())
         else:
             results = resolver.query(data)
+        logger.info("Resolved IPs")
         return results
 
     def file_handler(self, file_path):
@@ -168,7 +165,11 @@ class Chickadee(object):
         result_set = set()
         for root, _, files in os.walk(file_path):
             for fentry in files:
-                file_results = self.file_handler(os.path.join(root, fentry))
+                file_entry = os.path.join(root, fentry)
+                logger.debug("Parsing file {}".format(file_entry))
+                file_results = self.file_handler(file_entry)
+                logger.debug("Parsed file {}, {} results".format(
+                    file_entry, len(file_results)))
                 result_set = result_set | file_results
         logger.debug("{} total distinct IPs discovered".format(len(result_set)))
         return result_set
@@ -187,7 +188,7 @@ def setup_logging(path, verbose=False):
     # Logging formatter. Best to keep consistent for most usecases
     log_format = logging.Formatter(
         '%(asctime)s %(filename)s %(levelname)s %(module)s '
-        '%(funcName)s %(lineno)d %(message)s')
+        '%(funcName)s:%(lineno)d - %(message)s')
 
     # Setup STDERR logging, allowing you uninterrupted
     # STDOUT redirection
