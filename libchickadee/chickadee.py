@@ -10,6 +10,9 @@ import sys
 import logging
 from pathlib import PurePath
 
+# Third Party Libs
+from tqdm import tqdm
+
 # Import Backends
 from libchickadee.backends.ipapi import Resolver, ProResolver
 
@@ -19,7 +22,7 @@ from libchickadee.parsers.xlsx import XLSXParser
 
 
 __author__ = 'Chapin Bryce'
-__date__ = 20191013
+__date__ = 20191020
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.
 
@@ -48,6 +51,7 @@ class Chickadee(object):
         self.fields = fields
         self.force_single = False
         self.lang = 'en'
+        self.pbar = False
 
     def run(self, input_data):
         """Evaluate the input data format to extract and resolve IP addresses.
@@ -118,9 +122,15 @@ class Chickadee(object):
         else:
             resolver = Resolver(fields=self.fields, lang=self.lang)
 
+        if self.pbar:
+            resolver.pbar = self.pbar
+
         logger.info("Resolving IPs")
         if self.force_single:
             results = []
+            if self.pbar:
+                data = tqdm(data, desc="Resolving IPs", unit_scale=True)
+
             for element in data:
                 resolver.data = element
                 results.append(resolver.single())
@@ -244,6 +254,8 @@ def arg_handling():
     parser.add_argument('--lang', help="Language", default='en',
                         choices=['en', 'de', 'es', 'pt-BR', 'fr', 'ja',
                                  'zh-CN', 'ru'])
+    parser.add_argument('-p', '--progress', help="Enable progress bar",
+                        action="store_true")
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='Include debug log messages')
     parser.add_argument('-V', '--version', action='version',
@@ -274,6 +286,7 @@ def entry(args=None):
     chickadee = Chickadee(fields=fields)
     chickadee.force_single = args.single
     chickadee.lang = args.lang
+    chickadee.pbar = args.progress
 
     logger.info("Parsing input")
     data = chickadee.run(args.data)

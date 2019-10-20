@@ -4,7 +4,7 @@ import time
 import csv
 
 __author__ = 'Chapin Bryce'
-__date__ = 20190927
+__date__ = 20191020
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
@@ -15,7 +15,7 @@ class ResolverBase(object):
         self.lang = lang
         self.supported_langs = []
         self.fields = fields # Ordered list of fields to gather
-
+        self.pbar = False  # Enable progress bars
         self.data = None
 
     def single(self):
