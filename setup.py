@@ -1,3 +1,4 @@
+"""Installer for chickadee"""
 import setuptools
 
 with open('README.md') as fh:
@@ -5,7 +6,7 @@ with open('README.md') as fh:
 
 setuptools.setup(
     name='chickadee',
-    version=20190917,
+    version=20191020,
     description='Yet another GeoIP resolution tool.',
     author='Chapin Bryce',
     author_email='python@chapinb.com',
@@ -20,12 +21,12 @@ setuptools.setup(
     },
     install_requires=[
         "requests >= 2.22.0",
-        "openpyxl >= 2.6.3"
+        "openpyxl >= 2.6.3",
+        "tqdm >= 4.36.1"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
     ]
-
 )

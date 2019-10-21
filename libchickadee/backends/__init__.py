@@ -4,28 +4,19 @@ import time
 import csv
 
 __author__ = 'Chapin Bryce'
-__date__ = 20190907
+__date__ = 20191020
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
 class ResolverBase(object):
     """Generic base class for use by other backends."""
-    def __init__(self):
+    def __init__(self, fields=list(), lang='en'):
         self.uri = None
-        self.lang = "en"
-        self.ratelimit = 100  # Requests per minute
-        self.bulk_limit = 100  # Entries per request
-        self.min_timeout = 60/self.ratelimit  # Minimum timeout
-        self.fields = list() # Ordered list of fields to gather
-
+        self.lang = lang
+        self.supported_langs = []
+        self.fields = fields # Ordered list of fields to gather
+        self.pbar = False  # Enable progress bars
         self.data = None
-        self.last_req = time.time()
-
-    def sleeper(self):
-        """Method to sleep operations for rate limiting."""
-        elapsed = time.time() - self.last_req
-        if elapsed <= self.min_timeout and elapsed != 0:
-            time.sleep(self.min_timeout - elapsed)
 
     def single(self):
         """Base method to handle single queries"""
@@ -37,7 +28,14 @@ class ResolverBase(object):
 
     def query(self, data):
         """Generic query handler to decide to use single or batch
-            method for querying."""
+            method for querying.
+
+        Args:
+            data (list, tuple,set or str): One or more IPs to resolve
+
+        Return:
+            (yield) request data iterator
+        """
         self.data = data
         if isinstance(data, (list, tuple, set)):
             return self.batch()

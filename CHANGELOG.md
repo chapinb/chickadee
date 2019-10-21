@@ -1,5 +1,14 @@
 # Changelog
 
+## 20191014
+
+This release includes:
+
+* Improved API request limit handling
+* Support for Pro API keys for ip-api.com
+* Improved logging
+* Tests for chickadee script
+
 ## 20190917
 
 This release includes:
@@ -11,7 +20,7 @@ This release includes:
 This release includes:
 
 * Added XLSX support (by extension only)
-* Error handling to continue when unsupported document is scanned, or encoding 
+* Error handling to continue when unsupported document is scanned, or encoding
   error is encountered
 * Added a CHANGELOG (*so meta*)
 * Added logging

@@ -10,8 +10,11 @@ import sys
 import logging
 from pathlib import PurePath
 
+# Third Party Libs
+from tqdm import tqdm
+
 # Import Backends
-from libchickadee.backends.ipapi import Resolver
+from libchickadee.backends.ipapi import Resolver, ProResolver
 
 # Import Parsers
 from libchickadee.parsers.plain_text import PlainTextParser
@@ -19,12 +22,18 @@ from libchickadee.parsers.xlsx import XLSXParser
 
 
 __author__ = 'Chapin Bryce'
-__date__ = 20190917
+__date__ = 20191020
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
-__desc__ = '''Yet another GeoIP resolution tool.'''
+__desc__ = '''Yet another GeoIP resolution tool.
+
+Will use the free rate limited ip-api.com service for resolution.
+Please set an environment variable named CHICKADEE_API_KEY with the
+value of your API key to enabled unlimited requests with the
+commercial API
+'''
 
 logger = logging.getLogger(__name__)
-FIELDS = ','.join([ # Ordered list of fields to gather
+_FIELDS = ','.join([ # Ordered list of fields to gather
     'query',
     'as', 'org', 'isp',
     'continent', 'country', 'regionName', 'city', 'district', 'zip',
@@ -33,107 +42,147 @@ FIELDS = ','.join([ # Ordered list of fields to gather
     'status', 'message'
 ])
 
-def str_handler(input_data, fields=None):
-    """Handle string input of one or more IP addresses and executes the query
+class Chickadee(object):
+    """Class to handle chickadee script operations."""
+    def __init__(self, outformat='json', outfile=sys.stdout, fields=_FIELDS):
+        self.input_data = None
+        self.outformat = outformat
+        self.outfile = outfile
+        self.fields = fields
+        self.force_single = False
+        self.lang = 'en'
+        self.pbar = False
 
-    Args:
-        input_data (str): raw input data from use
-        fields (list): List of fields to query for
+    def run(self, input_data):
+        """Evaluate the input data format to extract and resolve IP addresses.
 
-    Return:
-        all_results (list): list of distinct IP addresses to resolve.
-    """
-    if isinstance(input_data, str) and ',' in input_data:
-        input_data = input_data.split(',')
+        Args:
+            input_data (str or file_obj): User provided data containing IPs to
+                resolve
 
-    resolver = Resolver()
-    if fields:
-        resolver.fields = fields
-    if len(input_data) > resolver.bulk_limit * resolver.ratelimit:
-        logger.warning(
-            "[!] Warning: due to rate limiting, this resolution will take "
-            "at least {} minutes. Consider purchasing an API key for "
-            "increased query performance".format(
-                len(input_data)/resolver.bulk_limit/resolver.ratelimit))
-    results = resolver.query(input_data)
-    all_results = [x for x in results]
-    return all_results
+        Returns:
+            (list): List of dictionaries containing resolved hits
+        """
+        self.input_data = input_data
+        # Extract and resolve IP addresses
+        if os.path.isdir(self.input_data):
+            logger.debug("Detected the data source as a directory")
+            result_set = self.dir_handler(self.input_data) # Directory handler
+            results = self.str_handler(list(result_set))
+        elif os.path.isfile(self.input_data):
+            logger.debug("Detected the data source as a file")
+            result_set = self.file_handler(self.input_data) # File handler
+            results = self.str_handler(list(result_set))
+        elif isinstance(self.input_data, str):
+            logger.debug("Detected the data source as raw value(s)")
+            results = self.str_handler(input_data) # String handler
+        return results
 
-def file_handler(input_data, fields):
-    """Handle parsing IP addresses from a file
+    def write_output(self, results):
+        # Write results to output format and/or files
+        if self.outformat == 'csv':
+            logger.debug("Writing CSV report")
+            Resolver.write_csv(self.outfile, results, self.fields)
+        elif self.outformat == 'json':
+            logger.debug("Writing json report")
+            Resolver.write_json(self.outfile, results)
+        elif self.outformat == 'jsonl':
+            logger.debug("Writing json lines report")
+            Resolver.write_json(self.outfile, results, lines=True)
 
-    Args:
-        input_data (str): raw input data from use
-        fields (list): List of fields to query for
-
-    Return:
-        (list): all query results from extracted IPs
-    """
-    # Extract IPs with proper handler
-    logger.debug("Extracting IPs from {}".format(input_data))
-    if input_data.endswith('xlsx'):
-        file_parser = XLSXParser()
-    else:
-        file_parser = PlainTextParser()
-    try:
-        file_parser.parse_file(input_data)
-    except Exception:
-        logger.warn("Failed to parse {}".format(input_data))
-    return file_parser.ips
-
-
-def dir_handler(input_data, fields):
-    """Handle parsing IP addresses from files recursively
-
-    Args:
-        input_data (str): raw input data from use
-        fields (list): List of fields to query for
-
-    Return:
-        (list): all query results from extracted IPs
-    """
-    result_set = set()
-    for root, _, files in os.walk(input_data):
-        for fentry in files:
-            file_results = file_handler(os.path.join(root, fentry),
-                                        fields)
-            result_set = result_set | file_results
-            logger.debug("{} total distinct IPs discovered".format(
-                len(result_set)))
-    return str_handler(list(result_set), fields)
+    @staticmethod
+    def get_api_key():
+        """Retrieve an API key set as an envar."""
+        api_key = os.environ.get('CHICKADEE_API_KEY', None)
+        if api_key is not None and len(api_key):
+            return api_key
+        else:
+            return None
 
 
-def main(input_data, outformat='json', outfile=None, fields=FIELDS):
-    """Evaluate the input data format to extract and resolve IP addresses.
+    def str_handler(self, data):
+        """Handle string input of one or more IP addresses and executes the query
 
-    Args:
-        input_data (str or file_obj): User provided data containing IPs to
-            resolve
-    """
+        Args:
+            input_data (str): raw input data from use
+            fields (list): List of fields to query for
 
-    # Extract and resolve IP addresses
-    if os.path.isdir(input_data):
-        logger.debug("Detected the data source as a directory")
-        results = dir_handler(input_data, fields) # Directory handler
-    elif os.path.isfile(input_data):
-        logger.debug("Detected the data source as a file")
-        result_set = file_handler(input_data, fields) # File handler
-        results = str_handler(list(result_set), fields)
-    elif isinstance(input_data, str):
-        logger.debug("Detected the data source as raw value(s)")
-        results = str_handler(input_data, fields) # String handler
+        Return:
+            all_results (list): list of distinct IP addresses to resolve.
+        """
+        if isinstance(data, str) and ',' in data:
+            data = data.split(',')
 
-    # Write results to output format and/or files
-    if outformat == 'csv':
-        logger.debug("Writing CSV report")
-        Resolver.write_csv(outfile, results, fields)
-    elif outformat == 'json':
-        logger.debug("Writing json report")
-        Resolver.write_json(outfile, results)
-    elif outformat == 'jsonl':
-        logger.debug("Writing json lines report")
-        Resolver.write_json(outfile, results, lines=True)
+        logger.info("Identified {} distinct IPs for resolution".format(len(data)))
 
+        api_key = self.get_api_key()
+
+        if api_key:
+            resolver = ProResolver(api_key, fields=self.fields, lang=self.lang)
+        else:
+            resolver = Resolver(fields=self.fields, lang=self.lang)
+
+        if self.pbar:
+            resolver.pbar = self.pbar
+
+        logger.info("Resolving IPs")
+        if self.force_single:
+            results = []
+            if self.pbar:
+                data = tqdm(data, desc="Resolving IPs", unit_scale=True)
+
+            for element in data:
+                resolver.data = element
+                results.append(resolver.single())
+        else:
+            results = resolver.query(data)
+        logger.info("Resolved IPs")
+        return results
+
+    def file_handler(self, file_path):
+        """Handle parsing IP addresses from a file
+
+        Args:
+            input_data (str): raw input data from use
+            fields (list): List of fields to query for
+
+        Return:
+            (list): all query results from extracted IPs
+        """
+        # Extract IPs with proper handler
+        logger.debug("Extracting IPs from {}".format(file_path))
+        if file_path.endswith('xlsx'):
+            file_parser = XLSXParser()
+        else:
+            file_parser = PlainTextParser()
+        try:
+            file_parser.parse_file(file_path)
+        except Exception:
+            logger.warning("Failed to parse {}".format(file_path))
+        return file_parser.ips
+
+
+    def dir_handler(self, file_path):
+        """Handle parsing IP addresses from files recursively
+
+        Args:
+            input_data (str): raw input data from use
+            fields (list): List of fields to query for
+
+        Return:
+            (list): all query results from extracted IPs
+        """
+        result_set = set()
+        for root, _, files in os.walk(file_path):
+            for fentry in files:
+                file_entry = os.path.join(root, fentry)
+                logger.debug("Parsing file {}".format(file_entry))
+                file_results = self.file_handler(file_entry)
+                logger.debug("Parsed file {}, {} results".format(
+                    file_entry, len(file_results)))
+                result_set = result_set | file_results
+        logger.debug("{} total distinct IPs discovered".format(len(result_set)))
+        return result_set
 
 def setup_logging(path, verbose=False):
     """Function to setup logging configuration and test it."""
@@ -149,7 +198,7 @@ def setup_logging(path, verbose=False):
     # Logging formatter. Best to keep consistent for most usecases
     log_format = logging.Formatter(
         '%(asctime)s %(filename)s %(levelname)s %(module)s '
-        '%(funcName)s %(lineno)d %(message)s')
+        '%(funcName)s:%(lineno)d - %(message)s')
 
     # Setup STDERR logging, allowing you uninterrupted
     # STDOUT redirection
@@ -170,11 +219,14 @@ def setup_logging(path, verbose=False):
     logger.addHandler(file_handle)
 
 
+class CustomArgFormatter(argparse.RawTextHelpFormatter, argparse.ArgumentDefaultsHelpFormatter):
+    """Custom argparse formatter class"""
+
 def arg_handling():
     """Argument handling."""
     parser = argparse.ArgumentParser(
         description=__desc__,
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        formatter_class=CustomArgFormatter,
         epilog="Built by {}, v.{}".format(__author__, __date__)
     )
     parser.add_argument(
@@ -187,7 +239,7 @@ def arg_handling():
     )
     parser.add_argument('-f', '--fields',
                         help='Comma separated fields to query',
-                        default=FIELDS)
+                        default=_FIELDS)
     parser.add_argument('-t', '--output-format',
                         help='Output format',
                         choices=['json', 'jsonl', 'csv'],
@@ -195,9 +247,18 @@ def arg_handling():
     parser.add_argument('-w', '--output-file',
                         help='Path to file to write output',
                         default=sys.stdout, metavar='FILENAME.JSON')
+    parser.add_argument('-s', '--single',
+                        help="Use the significantly slower single item API. "
+                             "Adds reverse DNS.",
+                        action='store_true')
+    parser.add_argument('--lang', help="Language", default='en',
+                        choices=['en', 'de', 'es', 'pt-BR', 'fr', 'ja',
+                                 'zh-CN', 'ru'])
+    parser.add_argument('-p', '--progress', help="Enable progress bar",
+                        action="store_true")
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='Include debug log messages')
-    parser.add_argument('--version', action='version',
+    parser.add_argument('-V', '--version', action='version',
                         help='Displays version',
                         version=str(__date__))
     parser.add_argument(
@@ -221,8 +282,20 @@ def entry(args=None):
         logger.debug("Argument {} is set to {}".format(
             arg, getattr(args, arg)
         ))
-    main(args.data, outformat=args.output_format,
-         outfile=args.output_file, fields=fields)
+    logger.info("Configuring Chickadee")
+    chickadee = Chickadee(fields=fields)
+    chickadee.force_single = args.single
+    chickadee.lang = args.lang
+    chickadee.pbar = args.progress
+
+    logger.info("Parsing input")
+    data = chickadee.run(args.data)
+
+    logger.info("Writing output")
+    chickadee.outfile = args.output_file
+    chickadee.outformat = args.output_format
+    chickadee.write_output(data)
+
     logger.info("Chickadee complete")
 
 if __name__ == "__main__":
