@@ -9,6 +9,7 @@ import os
 import sys
 import logging
 from pathlib import PurePath
+from collections import Counter
 
 # Third Party Libs
 from tqdm import tqdm
@@ -22,7 +23,7 @@ from libchickadee.parsers.xlsx import XLSXParser
 
 
 __author__ = 'Chapin Bryce'
-__date__ = 20191020
+__date__ = 20191220
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.
 
@@ -67,19 +68,25 @@ class Chickadee(object):
         # Extract and resolve IP addresses
         if os.path.isdir(self.input_data):
             logger.debug("Detected the data source as a directory")
-            result_set = self.dir_handler(self.input_data) # Directory handler
-            results = self.str_handler(list(result_set))
+            result_dict = self.dir_handler(self.input_data) # Directory handler
+            results = self.resolve(result_dict)
         elif os.path.isfile(self.input_data):
             logger.debug("Detected the data source as a file")
-            result_set = self.file_handler(self.input_data) # File handler
-            results = self.str_handler(list(result_set))
+            result_dict = self.file_handler(self.input_data) # File handler
+            results = self.resolve(result_dict)
         elif isinstance(self.input_data, str):
             logger.debug("Detected the data source as raw value(s)")
-            results = self.str_handler(input_data) # String handler
+            result_dict = self.str_handler(self.input_data) # String handler
+            results = self.resolve(result_dict)
         return results
 
     def write_output(self, results):
-        # Write results to output format and/or files
+        """Write results to output format and/or files
+
+        Args:
+            results (list): List of GeoIP results
+        """
+
         if self.outformat == 'csv':
             logger.debug("Writing CSV report")
             Resolver.write_csv(self.outfile, results, self.fields)
@@ -99,21 +106,48 @@ class Chickadee(object):
         else:
             return None
 
-
-    def str_handler(self, data):
+    @staticmethod
+    def str_handler(data):
         """Handle string input of one or more IP addresses and executes the query
 
         Args:
-            input_data (str): raw input data from use
+            input_data (str): raw input data from user
             fields (list): List of fields to query for
 
         Return:
-            all_results (list): list of distinct IP addresses to resolve.
+            data_dict (dict): dictionary of distinct IP addresses to resolve.
         """
         if isinstance(data, str) and ',' in data:
-            data = data.split(',')
+            # List of IPs
+            raw_data = data.strip().split(',')
+        elif isinstance(data, str):
+            # Single IP
+            raw_data = [data.strip()]
+        else:
+            raise TypeError('Unsupported input provided.')
 
-        logger.info("Identified {} distinct IPs for resolution".format(len(data)))
+        # Generate a distinct list with count
+        data_dict = {}
+        for x in raw_data:
+            if not x in data_dict:
+                data_dict[x] = 0
+            data_dict[x] += 1
+        return data_dict
+
+    def resolve(self, data_dict):
+        """Resolve IP addresses stored as keys within `data_dict`. The values
+        for each key should represent the number of occurances of an IP within
+        a data set.
+
+        Args:
+            data_dict (dict): Structured as {'IP': COUNT}
+
+        Returns:
+            all_results (list): resolved GeoIP data
+        """
+        distinct_ips = list(data_dict.keys())
+
+        logger.info("Identified {} distinct IPs for resolution".format(len(distinct_ips)))
 
         api_key = self.get_api_key()
 
@@ -129,17 +163,26 @@ class Chickadee(object):
         if self.force_single:
             results = []
             if self.pbar:
-                data = tqdm(data, desc="Resolving IPs", unit_scale=True)
+                data = tqdm(distinct_ips, desc="Resolving IPs", unit_scale=True)
 
             for element in data:
                 resolver.data = element
                 results.append(resolver.single())
         else:
-            results = resolver.query(data)
-        logger.info("Resolved IPs")
-        return results
+            results = resolver.query(distinct_ips)
 
-    def file_handler(self, file_path):
+        # Add frequency information to results
+        updated_results = []
+        for result in results:
+            query = str(result.get('query', ''))
+            result['count'] = int(data_dict.get(query, 0))
+            updated_results.append(result)
+
+        logger.info("Resolved IPs")
+        return updated_results
+
+    @staticmethod
+    def file_handler(file_path):
         """Handle parsing IP addresses from a file
 
         Args:
@@ -172,7 +215,7 @@ class Chickadee(object):
         Return:
             (list): all query results from extracted IPs
         """
-        result_set = set()
+        result_dict = {}
         for root, _, files in os.walk(file_path):
             for fentry in files:
                 file_entry = os.path.join(root, fentry)
@@ -180,9 +223,9 @@ class Chickadee(object):
                 file_results = self.file_handler(file_entry)
                 logger.debug("Parsed file {}, {} results".format(
                     file_entry, len(file_results)))
-                result_set = result_set | file_results
-        logger.debug("{} total distinct IPs discovered".format(len(result_set)))
-        return result_set
+                result_dict = dict(Counter(result_dict)+Counter(file_results))
+        logger.debug("{} total distinct IPs discovered".format(len(result_dict)))
+        return result_dict
 
 def setup_logging(path, verbose=False):
     """Function to setup logging configuration and test it."""

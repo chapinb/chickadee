@@ -4,7 +4,7 @@ import time
 from datetime import datetime, timedelta
 
 import requests
-from tqdm import tqdm, trange
+from tqdm import trange
 
 from . import ResolverBase
 

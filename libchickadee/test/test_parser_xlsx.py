@@ -14,8 +14,13 @@ class XLSXParserTestCase(unittest.TestCase):
     def setUp(self):
         """Test Config."""
         self.test_data_ips = {
-            '10.0.1.2', '8.8.8.8', '1.1.1.1', '2.2.2.2', '4.4.4.4',
-            '2001:4860:4860::8844', '2001:4860:4860::8888'
+            '10.0.1.2': 1,
+            '8.8.8.8': 1,
+            '1.1.1.1': 2,
+            '2.2.2.2': 1,
+            '4.4.4.4': 1,
+            '2001:4860:4860::8844': 2,
+            '2001:4860:4860::8888': 1
         }
         self.parser = XLSXParser()
         self.test_data_dir = os.path.join(
