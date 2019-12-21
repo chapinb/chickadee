@@ -36,7 +36,7 @@ commercial API
 logger = logging.getLogger(__name__)
 _FIELDS = ','.join([ # Ordered list of fields to gather
     'query',
-    'as', 'org', 'isp',
+    'count', 'as', 'org', 'isp',
     'continent', 'country', 'regionName', 'city', 'district', 'zip',
     'mobile', 'proxy', 'reverse',
     'lat', 'lon', 'timezone',
@@ -171,15 +171,18 @@ class Chickadee(object):
         else:
             results = resolver.query(distinct_ips)
 
-        # Add frequency information to results
-        updated_results = []
-        for result in results:
-            query = str(result.get('query', ''))
-            result['count'] = int(data_dict.get(query, 0))
-            updated_results.append(result)
-
         logger.info("Resolved IPs")
-        return updated_results
+
+        # Add frequency information to results
+        if 'count' in self.fields:
+            updated_results = []
+            for result in results:
+                query = str(result.get('query', ''))
+                result['count'] = int(data_dict.get(query, 0))
+                updated_results.append(result)
+
+            return updated_results
+        return results
 
     @staticmethod
     def file_handler(file_path):
