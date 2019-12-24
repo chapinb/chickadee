@@ -54,6 +54,7 @@ class Chickadee(object):
         self.force_single = False
         self.lang = 'en'
         self.pbar = False
+        self.resolve_ips=True
 
     def run(self, input_data):
         """Evaluate the input data format to extract and resolve IP addresses.
@@ -66,20 +67,25 @@ class Chickadee(object):
             (list): List of dictionaries containing resolved hits
         """
         self.input_data = input_data
+        results = []
+        result_dict = {}
         # Extract and resolve IP addresses
         if not isinstance(self.input_data, _io.TextIOWrapper) and os.path.isdir(self.input_data):
             logger.debug("Detected the data source as a directory")
             result_dict = self.dir_handler(self.input_data) # Directory handler
-            results = self.resolve(result_dict)
         elif isinstance(self.input_data, _io.TextIOWrapper) or os.path.isfile(self.input_data):
             logger.debug("Detected the data source as a file")
             result_dict = self.file_handler(self.input_data) # File handler
-            results = self.resolve(result_dict)
         elif isinstance(self.input_data, str):
             logger.debug("Detected the data source as raw value(s)")
             result_dict = self.str_handler(self.input_data) # String handler
+
+        # Resolve if requested
+        if self.resolve_ips:
             results = self.resolve(result_dict)
-        return results
+            return results
+
+        return [{'query': k, 'count': v, 'message': 'No resolve'} for k, v in result_dict.items()]
 
     def write_output(self, results):
         """Write results to output format and/or files
@@ -303,6 +309,8 @@ def arg_handling():
     parser.add_argument('-w', '--output-file',
                         help='Path to file to write output',
                         default=sys.stdout, metavar='FILENAME.JSON')
+    parser.add_argument('-n', '--no-resolve', action='store_false',
+                        help="Only extract IP addresses, don't resolve.")
     parser.add_argument('-s', '--single',
                         help="Use the significantly slower single item API. "
                              "Adds reverse DNS.",
@@ -340,6 +348,7 @@ def entry(args=None):
         ))
     logger.info("Configuring Chickadee")
     chickadee = Chickadee(fields=fields)
+    chickadee.resolve_ips = args.no_resolve
     chickadee.force_single = args.single
     chickadee.lang = args.lang
     chickadee.pbar = args.progress
