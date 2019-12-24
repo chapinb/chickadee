@@ -28,12 +28,18 @@ class PlainTextParser(object):
         with open(filepath, 'rb') as test_f:
             return binascii.hexlify(test_f.read(2)) == b'1f8b'
 
-    def parse_file(self, file_entry):
+    def parse_file(self, file_entry, is_stream=False):
         """Parse contents of the file."""
-        if self.is_gz_file(file_entry):
-            file_data = GzipFile(file_entry)
+        if not is_stream:
+            if self.is_gz_file(file_entry):
+                file_data = GzipFile(filename=file_entry)
+            else:
+                file_data = open(file_entry, 'rb')
         else:
-            file_data = open(file_entry, 'rb')
+            if binascii.hexlify(file_entry.buffer.read(2)) ==  b'1f8b':
+                file_data = GzipFile(fileobj=file_entry)
+            else:
+                file_data = file_entry.buffer
 
         for raw_line in file_data:
             line = raw_line.decode()

@@ -19,12 +19,12 @@ Yet another GeoIP resolution tool.
 
 Supported GeoIP back-ends:
 
-* http://ip-api.com/ - Free to query up to 150 requests per minute. Unlimited
+* http://ip-api.com/ - Free to query up to 45 requests per minute. Unlimited
   API keys available for purchase.
 
 ## Installation
 
-You may install Chickadee on your platform using `pip install chickadee` (you 
+You may install Chickadee on your platform using `pip install chickadee` (you
 may need to use `pip3` depending on your system configuration).
 **Please ensure you are using Python 3**
 
@@ -38,7 +38,8 @@ Requirements:
 * Virtualenv (`pip3 install virtualenv`)
 
 1. Clone the git repo: `git clone https://github.com/chapinb/chickadee.git`
-2. Create your virtual environment `virtualenv -p python3 venv3` and activate it (`source venv3/bin/activate`)
+2. Create your virtual environment `virtualenv -p python3 venv3` and
+   activate it (`source venv3/bin/activate`)
 3. Install dependencies: `pip install .`
 4. Run `chickadee --help` to get started.
 
@@ -50,7 +51,8 @@ Requirements:
 * Virtualenv (`pip.exe install virtualenv`)
 
 1. Clone the git repo: `git clone https://github.com/chapinb/chickadee.git`
-2. Create your virtual environment `virtualenv -p python3 venv3` and activate it (`source venv3/Scripts/activate.bat`)
+2. Create your virtual environment `virtualenv -p python3 venv3` and activate
+   it (`source venv3/Scripts/activate.bat`)
 3. Install dependencies: `pip install .`
 4. Run `chickadee --help` to get started.
 
@@ -68,28 +70,50 @@ the below formats:
 
 ```text
 $ chickadee --help
-usage: chickadee [-h] [-f F] [-t {json,jsonl,csv}] [-w FILENAME.JSON] data
+usage: chickadee [-h] [-f FIELDS] [-t {json,jsonl,csv}] [-w FILENAME.JSON]
+                 [-s] [--lang {en,de,es,pt-BR,fr,ja,zh-CN,ru}] [-p] [-v] [-V]
+                 [-l LOG]
+                 [data [data ...]]
 
-Sample Argparse
+Yet another GeoIP resolution tool.
+
+Will use the free rate limited ip-api.com service for resolution.
+Please set an environment variable named CHICKADEE_API_KEY with the
+value of your API key to enabled unlimited requests with the
+commercial API
 
 positional arguments:
-  data                 Either an IP address, comma delimited list of IP
-                       addresses, or path to a file or folder containing files
-                       to check for IP address values. Currently supported
-                       file types: plain text (ie logs, csv, json), gzipped
-                       plain text
+  data                  Either an IP address, comma delimited list of IP
+                        addresses, or path to a file or folder containing files
+                        to check for IP address values. Currently supported file
+                        types: plain text (ie logs, csv, json), gzipped plain
+                        text, xlsx (must be xlsx extension). Can accept plain
+                        text data as stdin. (default: <_io.TextIOWrapper
+                        name='<stdin>' mode='r' encoding='UTF-8'>)
 
 optional arguments:
-  -h, --help           show this help message and exit
-  -f F                 Comma separated fields to query (default: query,as,org,
-                       ispcontinent,country,regionName,city,district,zip,mobil
-                       e,proxy,reverse,lat,lon,timezonestatus,message)
-  -t {json,jsonl,csv}  Output format (default: jsonl)
-  -w FILENAME.JSON     Path to file to write output (default:
-                       <_io.TextIOWrapper name='<stdout>' mode='w'
-                       encoding='UTF-8'>)
+  -h, --help            show this help message and exit
+  -f FIELDS, --fields FIELDS
+                        Comma separated fields to query (default:
+                        query,count,as,org,isp,continent,country,regionName,
+                        city,district,zip,mobile,proxy,reverse,lat,lon,
+                        timezone,status,message)
+  -t {json,jsonl,csv}, --output-format {json,jsonl,csv}
+                        Output format (default: jsonl)
+  -w FILENAME.JSON, --output-file FILENAME.JSON
+                        Path to file to write output (default:
+                        <_io.TextIOWrapper name='<stdout>' mode='w'
+                        encoding='UTF-8'>)
+  -s, --single          Use the significantly slower single item API. Adds
+                        reverse DNS. (default: False)
+  --lang {en,de,es,pt-BR,fr,ja,zh-CN,ru}
+                        Language (default: en)
+  -p, --progress        Enable progress bar (default: False)
+  -v, --verbose         Include debug log messages (default: False)
+  -V, --version         Displays version
+  -l LOG, --log LOG     Path to log file (default: ./chickadee.log)
 
-Built by Chapin Bryce, v.20190907
+Built by Chapin Bryce, v.20191220
 ```
 
 [![asciicast](https://asciinema.org/a/266509.png)](https://asciinema.org/a/266509)
@@ -102,32 +126,46 @@ a great utility for formatting and querying any JSON data.*
 ```text
 $ chickadee 8.8.8.8,1.1.1.1 | jq '.'
 {
-  "as": "AS15169 Google LLC",
-  "city": "Ashburn",
   "country": "United States",
+  "regionName": "Virginia",
+  "city": "Ashburn",
   "district": "",
+  "zip": "20149",
   "lat": 39.0438,
   "lon": -77.4874,
+  "org": "Google LLC",
+  "as": "AS15169 Google LLC",
   "mobile": false,
-  "org": "Google Inc.",
   "proxy": false,
   "query": "8.8.8.8",
-  "regionName": "Virginia",
-  "zip": "20149"
+  "count": 1,
+  "isp": null,
+  "continent": null,
+  "reverse": null,
+  "timezone": null,
+  "status": null,
+  "message": null
 }
 {
-  "as": "AS13335 Cloudflare, Inc.",
-  "city": "Sydney",
   "country": "Australia",
+  "regionName": "New South Wales",
+  "city": "Sydney",
   "district": "",
+  "zip": "1001",
   "lat": -33.8688,
   "lon": 151.209,
-  "mobile": false,
   "org": "",
+  "as": "AS13335 Cloudflare, Inc.",
+  "mobile": false,
   "proxy": false,
   "query": "1.1.1.1",
-  "regionName": "New South Wales",
-  "zip": "1001"
+  "count": 1,
+  "isp": null,
+  "continent": null,
+  "reverse": null,
+  "timezone": null,
+  "status": null,
+  "message": null
 }
 ```
 
@@ -141,13 +179,21 @@ $ chickadee 8.8.8.8,1.1.1.1 -t jsonl -f as,proxy
 
 ## Known bugs
 
-Below are a list of known bugs. Please report any new bugs identified or 
-submit a PR to patch any of the below or ones you found on your own. No one 
+Below are a list of known bugs. Please report any new bugs identified or
+submit a PR to patch any of the below or ones you found on your own. No one
 is perfect :)
 
 * IPv6 addresses expressed in expanded form in the source document
-  are not properly deduplicated against discovered IPv6 addresses in compressed 
+  are not properly deduplicated against discovered IPv6 addresses in compressed
   form.
+* While you can provide multiple input files in the same instance, the IPs will
+  only be distinct to a single input item. For example, if you provide a file
+  and folder as two inputs to the same invocation all IPs within a single
+  file will be deduped, then separately all IPs within the files in the
+  directory will be deduped. This means you may have duplicate resolutions in
+  the same output in this case.
+* JSON and CSV output will show column/field names even if a value is not
+  present. Please enter an issue if this does not support your usecase.
 
 ## Contributing
 

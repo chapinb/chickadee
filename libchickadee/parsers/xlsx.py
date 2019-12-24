@@ -19,7 +19,7 @@ class XLSXParser(object):
     def __init__(self):
         self.ips = dict()
 
-    def parse_file(self, file_entry):
+    def parse_file(self, file_entry, is_stream=False):
         """Parse xlsx contents"""
         wb = load_workbook(file_entry)
 
