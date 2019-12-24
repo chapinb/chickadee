@@ -96,7 +96,10 @@ class Resolver(ResolverBase):
                 for result in rdata.json():
                     result_list.append(result)
                 resolved_recs += result_list
-
+            elif rdata.status_code == 429:
+                self.rate_limit(rdata.headers)
+                self.sleeper()
+                return self.batch()
             else:
                 msg = "Unknown error encountered: {}".format(rdata.status_code)
                 logger.error(msg)
@@ -127,9 +130,12 @@ class Resolver(ResolverBase):
         if rdata.status_code == 200:
             self.rate_limit(rdata.headers)
             return [rdata.json()]
-
+        elif rdata.status_code == 429:
+            self.rate_limit(rdata.headers)
+            self.sleeper()
+            return self.single()
         else:
-            msg = "Unknown error encountered: {}".format(rdata.status_code())
+            msg = "Unknown error encountered: {}".format(rdata.status_code)
             logger.error(msg)
             return [{'query': self.data, 'status': 'failed', 'message': msg}]
 
