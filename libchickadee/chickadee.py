@@ -92,10 +92,10 @@ class Chickadee(object):
             Resolver.write_csv(self.outfile, results, self.fields)
         elif self.outformat == 'json':
             logger.debug("Writing json report")
-            Resolver.write_json(self.outfile, results)
+            Resolver.write_json(self.outfile, results, self.fields)
         elif self.outformat == 'jsonl':
             logger.debug("Writing json lines report")
-            Resolver.write_json(self.outfile, results, lines=True)
+            Resolver.write_json(self.outfile, results, self.fields, lines=True)
 
     @staticmethod
     def get_api_key():

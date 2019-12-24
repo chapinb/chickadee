@@ -71,7 +71,7 @@ class ResolverBase(object):
         csvfile.writerows(data)
 
     @staticmethod
-    def write_json(outfile, data, lines=False):
+    def write_json(outfile, data, headers=None, lines=False):
         """Writes output in JSON format
 
         Args:
@@ -84,6 +84,22 @@ class ResolverBase(object):
             open_file = open(outfile, 'w', newline="")
         else:
             open_file = outfile
+
+        if headers:
+            # Only include fields in headers
+            # Include headers with no value if not present in original
+            selected_data = []
+            for x in data:
+                d = {}
+                for k, v in x.items():
+                    if k in headers:
+                        d[k] = v
+                for h in headers:
+                    if h not in d:
+                        d[h] = None
+                selected_data.append(d)
+            data = selected_data
+
 
         if lines:
             for entry in data:
