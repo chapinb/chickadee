@@ -10,6 +10,7 @@ import sys
 import logging
 from pathlib import PurePath
 from collections import Counter
+import _io
 
 # Third Party Libs
 from tqdm import tqdm
@@ -66,11 +67,11 @@ class Chickadee(object):
         """
         self.input_data = input_data
         # Extract and resolve IP addresses
-        if os.path.isdir(self.input_data):
+        if not isinstance(self.input_data, _io.TextIOWrapper) and os.path.isdir(self.input_data):
             logger.debug("Detected the data source as a directory")
             result_dict = self.dir_handler(self.input_data) # Directory handler
             results = self.resolve(result_dict)
-        elif os.path.isfile(self.input_data):
+        elif isinstance(self.input_data, _io.TextIOWrapper) or os.path.isfile(self.input_data):
             logger.debug("Detected the data source as a file")
             result_dict = self.file_handler(self.input_data) # File handler
             results = self.resolve(result_dict)
@@ -195,14 +196,21 @@ class Chickadee(object):
         Return:
             (list): all query results from extracted IPs
         """
-        # Extract IPs with proper handler
-        logger.debug("Extracting IPs from {}".format(file_path))
-        if file_path.endswith('xlsx'):
+        if isinstance(file_path, _io.TextIOWrapper):
+            is_stream = True
+            # Extract IPs with proper handler
+            logger.debug("Extracting IPs from STDIN")
+        else:
+            is_stream = False
+            # Extract IPs with proper handler
+            logger.debug("Extracting IPs from {}".format(file_path))
+
+        if not is_stream and file_path.endswith('xlsx'):
             file_parser = XLSXParser()
         else:
             file_parser = PlainTextParser()
         try:
-            file_parser.parse_file(file_path)
+            file_parser.parse_file(file_path, is_stream)
         except Exception:
             logger.warning("Failed to parse {}".format(file_path))
         return file_parser.ips
@@ -281,7 +289,9 @@ def arg_handling():
              "or path to a file or folder containing files to check for "
              "IP address values. Currently supported file types: "
              "plain text (ie logs, csv, json), gzipped plain text, xlsx "
-             "(must be xlsx extension)."
+             "(must be xlsx extension). Can accept plain text data as stdin.",
+        nargs='*',
+        default=sys.stdin
     )
     parser.add_argument('-f', '--fields',
                         help='Comma separated fields to query',
@@ -335,7 +345,14 @@ def entry(args=None):
     chickadee.pbar = args.progress
 
     logger.info("Parsing input")
-    data = chickadee.run(args.data)
+    if isinstance(args.data, list):
+        data = []
+        for x in args.data:
+            res = chickadee.run(x)
+            data += res
+    else:
+        data = chickadee.run(args.data)
+
 
     logger.info("Writing output")
     chickadee.outfile = args.output_file
