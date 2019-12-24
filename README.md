@@ -104,6 +104,7 @@ optional arguments:
                         Path to file to write output (default:
                         <_io.TextIOWrapper name='<stdout>' mode='w'
                         encoding='UTF-8'>)
+  -n, --no-resolve      Only extract IP addresses, don't resolve. (default: True)
   -s, --single          Use the significantly slower single item API. Adds
                         reverse DNS. (default: False)
   --lang {en,de,es,pt-BR,fr,ja,zh-CN,ru}
