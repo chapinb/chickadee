@@ -17,7 +17,7 @@ __desc__ = '''Yet another GeoIP resolution tool.'''
 class XLSXParser(object):
     """Class to extract IP addresses from xlsx workbooks."""
     def __init__(self):
-        self.ips = set()
+        self.ips = dict()
 
     def parse_file(self, file_entry):
         """Parse xlsx contents"""
@@ -33,9 +33,13 @@ class XLSXParser(object):
     def check_ips(self, data):
         """Check data for IP addresses."""
         for ipv4 in IPv4Pattern.findall(data):
-            self.ips.add(ipv4)
+            if ipv4 not in self.ips:
+                self.ips[ipv4] = 0
+            self.ips[ipv4] += 1
         for ipv6 in IPv6Pattern.findall(data):
-            self.ips.add(strip_ipv6(ipv6))
+            if strip_ipv6(ipv6) not in self.ips:
+                self.ips[strip_ipv6(ipv6)] = 0
+            self.ips[strip_ipv6(ipv6)] += 1
 
 if __name__ == '__main__':  # pragma: no cover
     import argparse

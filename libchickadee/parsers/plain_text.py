@@ -20,7 +20,7 @@ class PlainTextParser(object):
     """Class to extract IP addresses from plain text
         and gzipped plain text files."""
     def __init__(self):
-        self.ips = set()
+        self.ips = dict()
 
     @staticmethod
     def is_gz_file(filepath):
@@ -38,9 +38,13 @@ class PlainTextParser(object):
         for raw_line in file_data:
             line = raw_line.decode()
             for ipv4 in IPv4Pattern.findall(line):
-                self.ips.add(ipv4)
+                if ipv4 not in self.ips:
+                    self.ips[ipv4] = 0
+                self.ips[ipv4] += 1
             for ipv6 in IPv6Pattern.findall(line):
-                self.ips.add(strip_ipv6(ipv6))
+                if strip_ipv6(ipv6) not in self.ips:
+                    self.ips[strip_ipv6(ipv6)] = 0
+                self.ips[strip_ipv6(ipv6)] += 1
 
         if 'closed' in dir(file_data) and not file_data.closed:
             file_data.close()
