@@ -39,7 +39,7 @@ _FIELDS = ','.join([ # Ordered list of fields to gather
     'query',
     'count', 'as', 'org', 'isp',
     'continent', 'country', 'regionName', 'city', 'district', 'zip',
-    'mobile', 'proxy', 'reverse',
+    'mobile', 'proxy', 'hosting', 'reverse',
     'lat', 'lon', 'timezone',
     'status', 'message'
 ])
