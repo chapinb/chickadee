@@ -33,7 +33,7 @@ class Resolver(ResolverBase):
         ]
         if lang not in self.supported_langs:
             lang = 'en'
-        ResolverBase.__init__(self, fields=FIELDS, lang='en')
+        ResolverBase.__init__(self, fields=fields, lang='en')
 
         self.uri = 'http://ip-api.com/'
         self.api_key = None
@@ -142,7 +142,7 @@ class Resolver(ResolverBase):
 class ProResolver(Resolver):
     """GeoIP resolver using the ip-api.com paid subscription."""
     def __init__(self, api_key, fields=FIELDS, lang='en'):
-        Resolver.__init__(self, fields=None, lang='en')
+        Resolver.__init__(self, fields=fields, lang='en')
         self.uri = 'https://pro.ip-api.com/'
         self.api_key = api_key
         self.enable_sleep = False
