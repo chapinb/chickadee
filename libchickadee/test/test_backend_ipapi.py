@@ -32,7 +32,6 @@ class IPAPITestCase(unittest.TestCase):
         for count, ip in enumerate(self.test_data_ips):
             data = self.resolver.query(ip)
             res = [x for x in data]
-            # import pdb; pdb.set_trace()
             self.assertEqual(res, [self.expected_result[count]])
 
     def test_ipapi_resolve_query_batch(self):
