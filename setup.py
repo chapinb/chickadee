@@ -6,7 +6,7 @@ with open('README.md') as fh:
 
 setuptools.setup(
     name='chickadee',
-    version=20200107,
+    version=20200114,
     description='Yet another GeoIP resolution tool.',
     author='Chapin Bryce',
     author_email='python@chapinb.com',

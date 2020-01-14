@@ -4,7 +4,7 @@ import unittest
 from libchickadee.backends.ipapi import Resolver
 
 __author__ = 'Chapin Bryce'
-__date__ = 20200107
+__date__ = 20200114
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
@@ -31,8 +31,7 @@ class IPAPITestCase(unittest.TestCase):
         """Query Method Test"""
         for count, ip in enumerate(self.test_data_ips):
             data = self.resolver.query(ip)
-            res = [x for x in data]
-            self.assertEqual(res, [self.expected_result[count]])
+            self.assertEqual(data, self.expected_result[count])
 
     def test_ipapi_resolve_query_batch(self):
         """Batch Query Method Test"""
@@ -50,8 +49,7 @@ class IPAPITestCase(unittest.TestCase):
         for count, ip in enumerate(self.test_data_ips):
             self.resolver.data = ip
             data = self.resolver.single()
-            res = [x for x in data]
-            self.assertEqual(res, [self.expected_result[count]])
+            self.assertEqual(data, self.expected_result[count])
 
     def test_ipapi_resolve_batch(self):
         """Batch Query Method Test"""
@@ -60,22 +58,19 @@ class IPAPITestCase(unittest.TestCase):
         res = [x for x in data]
         self.assertCountEqual(res, self.expected_result)
 
-
     def test_ipapi_resolve_single_field(self):
         """Single Query Method Test"""
         for count, ip in enumerate(self.test_data_ips):
             self.resolver.data = ip
             self.resolver.fields = ['query', 'country', 'as']
             data = self.resolver.single()
-            res = [x for x in data]
 
             expected = {}
             for field in ['query', 'country', 'as']:
-                if field not in res[0]:
+                if field not in data:
                     continue
                 expected[field] = self.expected_result[count].get(field, None)
-            self.assertEqual(res, [expected])
-
+            self.assertEqual(data, expected)
 
 '''
 import os
