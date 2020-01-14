@@ -11,7 +11,7 @@ from . import ResolverBase
 logger = logging.getLogger('libchickadee.chickadee')
 
 __author__ = 'Chapin Bryce'
-__date__ = 20200107
+__date__ = 20200114
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
@@ -92,9 +92,7 @@ class Resolver(ResolverBase):
 
             if rdata.status_code == 200:
                 self.rate_limit(rdata.headers)
-                result_list = []
-                for result in rdata.json():
-                    result_list.append(result)
+                result_list = [x for x in rdata.json()]
                 resolved_recs += result_list
             elif rdata.status_code == 429:
                 self.rate_limit(rdata.headers)
@@ -129,7 +127,7 @@ class Resolver(ResolverBase):
         )
         if rdata.status_code == 200:
             self.rate_limit(rdata.headers)
-            return [rdata.json()]
+            return rdata.json()
         elif rdata.status_code == 429:
             self.rate_limit(rdata.headers)
             self.sleeper()

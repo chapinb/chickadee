@@ -24,7 +24,7 @@ from libchickadee.parsers.xlsx import XLSXParser
 
 
 __author__ = 'Chapin Bryce'
-__date__ = 20200107
+__date__ = 20200114
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.
 
@@ -54,7 +54,7 @@ class Chickadee(object):
         self.force_single = False
         self.lang = 'en'
         self.pbar = False
-        self.resolve_ips=True
+        self.resolve_ips = True
 
     def run(self, input_data):
         """Evaluate the input data format to extract and resolve IP addresses.
@@ -110,8 +110,7 @@ class Chickadee(object):
         api_key = os.environ.get('CHICKADEE_API_KEY', None)
         if api_key is not None and len(api_key):
             return api_key
-        else:
-            return None
+        return None
 
     @staticmethod
     def str_handler(data):
@@ -169,6 +168,7 @@ class Chickadee(object):
         logger.info("Resolving IPs")
         if self.force_single:
             results = []
+            data = distinct_ips
             if self.pbar:
                 data = tqdm(distinct_ips, desc="Resolving IPs", unit_scale=True)
 
@@ -184,8 +184,11 @@ class Chickadee(object):
         if 'count' in self.fields:
             updated_results = []
             for result in results:
-                query = str(result.get('query', ''))
-                result['count'] = int(data_dict.get(query, 0))
+                try:
+                    query = str(result.get('query', ''))
+                except AttributeError:
+                    import pdb; pdb.set_trace()
+                result['count'] = int(data_dict.get(query, '0'))
                 updated_results.append(result)
 
             return updated_results

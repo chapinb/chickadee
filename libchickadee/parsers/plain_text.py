@@ -12,7 +12,7 @@ from gzip import GzipFile
 from libchickadee.parsers import IPv4Pattern, IPv6Pattern, strip_ipv6
 
 __author__ = 'Chapin Bryce'
-__date__ = 20200107
+__date__ = 20200114
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
@@ -36,7 +36,7 @@ class PlainTextParser(object):
             else:
                 file_data = open(file_entry, 'rb')
         else:
-            if binascii.hexlify(file_entry.buffer.read(2)) ==  b'1f8b':
+            if binascii.hexlify(file_entry.buffer.read(2)) == b'1f8b':
                 file_data = GzipFile(fileobj=file_entry)
             else:
                 file_data = file_entry.buffer
