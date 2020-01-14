@@ -9,6 +9,7 @@ __date__ = 20200107
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
+
 class XLSXParserTestCase(unittest.TestCase):
     """XLSX parsing tests."""
     def setUp(self):
@@ -30,6 +31,7 @@ class XLSXParserTestCase(unittest.TestCase):
         """Extraction test."""
         self.parser.parse_file(self.test_data_dir+'/test_ips.xlsx')
         self.assertEqual(self.test_data_ips, self.parser.ips)
+
 
 if __name__ == '__main__':
     unittest.main()

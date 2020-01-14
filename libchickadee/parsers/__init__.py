@@ -48,6 +48,7 @@ IPV6ADDR = '|'.join(['(?:{})'.format(g) for g in IPV6GROUPS[::-1]])
 IPv4Pattern = re.compile(IPV4ADDR)
 IPv6Pattern = re.compile(IPV6ADDR)
 
+
 def strip_ipv6(ipv6_addr):
     """Isolate IPv6 Value"""
     if '%' in ipv6_addr:

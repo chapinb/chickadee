@@ -1,8 +1,8 @@
 """Parse IP addresses from plain text files
 and feed to the Chickadee GeoIP API
 
-Plain text files include logs, csvs, json, and other formats where ascii strings
-contain IPv4 or IPv6 addresses.
+Plain text files include logs, csvs, json, and other formats where ascii
+strings contain IPv4 or IPv6 addresses.
 """
 
 import binascii
@@ -15,6 +15,7 @@ __author__ = 'Chapin Bryce'
 __date__ = 20200114
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
+
 
 class PlainTextParser(object):
     """Class to extract IP addresses from plain text
@@ -54,6 +55,7 @@ class PlainTextParser(object):
 
         if 'closed' in dir(file_data) and not file_data.closed:
             file_data.close()
+
 
 if __name__ == "__main__":  # pragma: no cover
     import argparse

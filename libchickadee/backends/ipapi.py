@@ -15,7 +15,7 @@ __date__ = 20200114
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
-FIELDS = [ # Ordered list of fields to gather
+FIELDS = [  # Ordered list of fields to gather
     'query',
     'as', 'org', 'isp'
     'continent', 'country', 'regionName', 'city',
@@ -24,6 +24,7 @@ FIELDS = [ # Ordered list of fields to gather
     'lat', 'lon', 'timezone'
     'status', 'message'
 ]
+
 
 class Resolver(ResolverBase):
     """Class to handle ip-api.com API queries for IP addresses."""
@@ -54,7 +55,7 @@ class Resolver(ResolverBase):
             if wait_time.total_seconds() < 0:
                 self.wait_time = datetime.now()
                 return
-            wt_sec = wait_time.total_seconds()+1 # add a buffer
+            wt_sec = wait_time.total_seconds()+1  # add a buffer
             logger.info(
                 'Sleeping for {} seconds due to rate limiting.'.format(wt_sec))
             time.sleep(wt_sec)
@@ -71,7 +72,6 @@ class Resolver(ResolverBase):
                                desc="Resolving IPs", unit_scale=True)
         else:
             orig_recs = range(0, len(records), 100)
-
 
         for x in orig_recs:
             params = {
@@ -136,6 +136,7 @@ class Resolver(ResolverBase):
             msg = "Unknown error encountered: {}".format(rdata.status_code)
             logger.error(msg)
             return [{'query': self.data, 'status': 'failed', 'message': msg}]
+
 
 class ProResolver(Resolver):
     """GeoIP resolver using the ip-api.com paid subscription."""

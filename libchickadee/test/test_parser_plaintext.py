@@ -9,6 +9,7 @@ __date__ = 20200107
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
+
 class PlainTextParserTestCase(unittest.TestCase):
     """Plain-text parsing tests"""
     def setUp(self):
@@ -49,6 +50,7 @@ class PlainTextParserTestCase(unittest.TestCase):
         self.assertFalse(
             self.parser.is_gz_file(self.test_data_dir+'/txt_ips.txt')
         )
+
 
 if __name__ == '__main__':
     unittest.main()

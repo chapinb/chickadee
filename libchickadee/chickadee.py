@@ -35,7 +35,7 @@ commercial API
 '''
 
 logger = logging.getLogger(__name__)
-_FIELDS = ','.join([ # Ordered list of fields to gather
+_FIELDS = ','.join([  # Ordered list of fields to gather
     'query',
     'count', 'as', 'org', 'isp',
     'continent', 'country', 'regionName', 'city', 'district', 'zip',
@@ -43,6 +43,7 @@ _FIELDS = ','.join([ # Ordered list of fields to gather
     'lat', 'lon', 'timezone',
     'status', 'message'
 ])
+
 
 class Chickadee(object):
     """Class to handle chickadee script operations."""
@@ -70,22 +71,25 @@ class Chickadee(object):
         results = []
         result_dict = {}
         # Extract and resolve IP addresses
-        if not isinstance(self.input_data, _io.TextIOWrapper) and os.path.isdir(self.input_data):
+        if not isinstance(self.input_data, _io.TextIOWrapper) and \
+                os.path.isdir(self.input_data):
             logger.debug("Detected the data source as a directory")
-            result_dict = self.dir_handler(self.input_data) # Directory handler
-        elif isinstance(self.input_data, _io.TextIOWrapper) or os.path.isfile(self.input_data):
+            result_dict = self.dir_handler(self.input_data)  # Dir handler
+        elif isinstance(self.input_data, _io.TextIOWrapper) or \
+                os.path.isfile(self.input_data):
             logger.debug("Detected the data source as a file")
-            result_dict = self.file_handler(self.input_data) # File handler
+            result_dict = self.file_handler(self.input_data)  # File handler
         elif isinstance(self.input_data, str):
             logger.debug("Detected the data source as raw value(s)")
-            result_dict = self.str_handler(self.input_data) # String handler
+            result_dict = self.str_handler(self.input_data)  # String handler
 
         # Resolve if requested
         if self.resolve_ips:
             results = self.resolve(result_dict)
             return results
 
-        return [{'query': k, 'count': v, 'message': 'No resolve'} for k, v in result_dict.items()]
+        return [{'query': k, 'count': v, 'message': 'No resolve'}
+                for k, v in result_dict.items()]
 
     def write_output(self, results):
         """Write results to output format and/or files
@@ -135,7 +139,7 @@ class Chickadee(object):
         # Generate a distinct list with count
         data_dict = {}
         for x in raw_data:
-            if not x in data_dict:
+            if x not in data_dict:
                 data_dict[x] = 0
             data_dict[x] += 1
         return data_dict
@@ -153,7 +157,8 @@ class Chickadee(object):
         """
         distinct_ips = list(data_dict.keys())
 
-        logger.info("Identified {} distinct IPs for resolution".format(len(distinct_ips)))
+        logger.info("Identified {} distinct IPs for resolution".format(
+            len(distinct_ips)))
 
         api_key = self.get_api_key()
 
@@ -170,7 +175,8 @@ class Chickadee(object):
             results = []
             data = distinct_ips
             if self.pbar:
-                data = tqdm(distinct_ips, desc="Resolving IPs", unit_scale=True)
+                data = tqdm(distinct_ips, desc="Resolving IPs",
+                            unit_scale=True)
 
             for element in data:
                 resolver.data = element
@@ -184,10 +190,7 @@ class Chickadee(object):
         if 'count' in self.fields:
             updated_results = []
             for result in results:
-                try:
-                    query = str(result.get('query', ''))
-                except AttributeError:
-                    import pdb; pdb.set_trace()
+                query = str(result.get('query', ''))
                 result['count'] = int(data_dict.get(query, '0'))
                 updated_results.append(result)
 
@@ -224,7 +227,6 @@ class Chickadee(object):
             logger.warning("Failed to parse {}".format(file_path))
         return file_parser.ips
 
-
     def dir_handler(self, file_path):
         """Handle parsing IP addresses from files recursively
 
@@ -244,8 +246,10 @@ class Chickadee(object):
                 logger.debug("Parsed file {}, {} results".format(
                     file_entry, len(file_results)))
                 result_dict = dict(Counter(result_dict)+Counter(file_results))
-        logger.debug("{} total distinct IPs discovered".format(len(result_dict)))
+        logger.debug("{} total distinct IPs discovered".format(
+            len(result_dict)))
         return result_dict
+
 
 def setup_logging(path, verbose=False):
     """Function to setup logging configuration and test it."""
@@ -282,8 +286,10 @@ def setup_logging(path, verbose=False):
     logger.addHandler(file_handle)
 
 
-class CustomArgFormatter(argparse.RawTextHelpFormatter, argparse.ArgumentDefaultsHelpFormatter):
+class CustomArgFormatter(argparse.RawTextHelpFormatter,
+                         argparse.ArgumentDefaultsHelpFormatter):
     """Custom argparse formatter class"""
+
 
 def arg_handling():
     """Argument handling."""
@@ -365,13 +371,13 @@ def entry(args=None):
     else:
         data = chickadee.run(args.data)
 
-
     logger.info("Writing output")
     chickadee.outfile = args.output_file
     chickadee.outformat = args.output_format
     chickadee.write_output(data)
 
     logger.info("Chickadee complete")
+
 
 if __name__ == "__main__":
     entry()

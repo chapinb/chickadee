@@ -8,6 +8,7 @@ __date__ = 20200114
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
+
 class IPAPITestCase(unittest.TestCase):
     """IP-API Backend Tests."""
     def setUp(self):
@@ -25,7 +26,8 @@ class IPAPITestCase(unittest.TestCase):
              'org': 'Google LLC', 'proxy': False,
              'query': '2001:4860:4860::8888'}
         ]
-        self.resolver = Resolver(fields=['query', 'count', 'as', 'country', 'org', 'proxy'])
+        self.resolver = Resolver(fields=['query', 'count', 'as',
+                                         'country', 'org', 'proxy'])
 
     def test_ipapi_resolve_query_single(self):
         """Query Method Test"""
@@ -37,7 +39,7 @@ class IPAPITestCase(unittest.TestCase):
         """Batch Query Method Test"""
         data = self.resolver.query(self.test_data_ips)
         res = [x for x in data]
-        batch_result = [] # No reverse field
+        batch_result = []  # No reverse field
         for item in self.expected_result:
             if 'reverse' in item:
                 item.pop('reverse')
@@ -71,6 +73,7 @@ class IPAPITestCase(unittest.TestCase):
                     continue
                 expected[field] = self.expected_result[count].get(field, None)
             self.assertEqual(data, expected)
+
 
 '''
 import os
@@ -151,6 +154,7 @@ class IPAPIProTestCase(unittest.TestCase):
             batch_result.append(item)
         self.assertCountEqual(res, batch_result)
 # '''
+
 
 if __name__ == '__main__':
     unittest.main()

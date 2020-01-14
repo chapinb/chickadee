@@ -14,6 +14,7 @@ __date__ = 20200107
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
+
 class XLSXParser(object):
     """Class to extract IP addresses from xlsx workbooks."""
     def __init__(self):
@@ -40,6 +41,7 @@ class XLSXParser(object):
             if strip_ipv6(ipv6) not in self.ips:
                 self.ips[strip_ipv6(ipv6)] = 0
             self.ips[strip_ipv6(ipv6)] += 1
+
 
 if __name__ == '__main__':  # pragma: no cover
     import argparse

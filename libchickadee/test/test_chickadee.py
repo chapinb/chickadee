@@ -9,6 +9,7 @@ __date__ = 20200114
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
+
 class ChickadeeStringTestCase(unittest.TestCase):
     """Chickadee script tests."""
     def setUp(self):
@@ -33,7 +34,8 @@ class ChickadeeStringTestCase(unittest.TestCase):
         results = [
             {'query': '10.0.1.2', 'count': 1, 'message': 'No resolve'},
             {'query': '8.8.8.8', 'count': 1, 'message': 'No resolve'},
-            {'query': '2001:4860:4860::8888', 'count': 1, 'message': 'No resolve'}
+            {'query': '2001:4860:4860::8888', 'count': 1,
+             'message': 'No resolve'}
         ]
         for count, ip in enumerate(self.test_data_ips):
             chickadee = Chickadee()
@@ -144,7 +146,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
         chickadee.fields = self.fields
         data = chickadee.run(os.path.join(self.test_data_dir, 'txt_ips.txt'))
         res = [x for x in data]
-        batch_result = [] # No reverse field
+        batch_result = []  # No reverse field
         for item in self.txt_data_results:
             if 'reverse' in item:
                 item.pop('reverse')
@@ -155,9 +157,10 @@ class ChickadeeFileTestCase(unittest.TestCase):
         """Batch Query Method Test"""
         chickadee = Chickadee()
         chickadee.fields = self.fields
-        data = chickadee.run(os.path.join(self.test_data_dir, 'txt_ips.txt.gz'))
+        data = chickadee.run(os.path.join(self.test_data_dir,
+                                          'txt_ips.txt.gz'))
         res = [x for x in data]
-        batch_result = [] # No reverse field
+        batch_result = []  # No reverse field
         for item in self.txt_data_results:
             if 'reverse' in item:
                 item.pop('reverse')
@@ -170,7 +173,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
         chickadee.fields = self.fields
         data = chickadee.run(os.path.join(self.test_data_dir, 'test_ips.xlsx'))
         res = [x for x in data]
-        batch_result = [] # No reverse field
+        batch_result = []  # No reverse field
         for item in self.xlsx_data_results:
             if 'reverse' in item:
                 item.pop('reverse')
@@ -180,31 +183,38 @@ class ChickadeeFileTestCase(unittest.TestCase):
     def test_ipapi_resolve_query_folder(self):
         """Batch Query Method Test"""
         expected = [
-            {"country": "Australia", "org": "", "as": "AS13335 Cloudflare, Inc.",
+            {"country": "Australia", "org": "",
+             "as": "AS13335 Cloudflare, Inc.",
              "proxy": False, "query": "1.1.1.1", "count": 6},
 
             {"query": "10.0.1.2", "count": 3},
 
-            {"country": "United States", "org": "Level 3", "as": "AS15169 Google LLC",
+            {"country": "United States", "org": "Level 3",
+             "as": "AS15169 Google LLC",
              "proxy": False, "query": "8.8.8.8", "count": 3},
 
-            {"country": "United States", "org": "Google LLC", "as": "AS15169 Google LLC",
+            {"country": "United States", "org": "Google LLC",
+             "as": "AS15169 Google LLC",
              "proxy": False, "query": "2001:4860:4860::8888", "count": 3},
 
             {"country": "United States", "org": "Informs",
-             "as": "AS3356 Level 3 Communications, Inc.", "proxy": True, "query": "4.4.4.4",
+             "as": "AS3356 Level 3 Communications, Inc.", "proxy": True,
+             "query": "4.4.4.4",
              "count": 3},
 
-            {"country": "United States", "org": "Google LLC", "as": "AS15169 Google LLC",
+            {"country": "United States", "org": "Google LLC",
+             "as": "AS15169 Google LLC",
              "proxy": False, "query": "2001:4860:4860::8844", "count": 4},
 
-            {"country": "United States", "org": "Google LLC", "as": "AS15169 Google LLC",
+            {"country": "United States", "org": "Google LLC",
+             "as": "AS15169 Google LLC",
              "proxy": False, "query": "2001:4860:4860::8888", "count": 3},
 
             {"country": "France", "org": "", "as": "AS3215 Orange S.A.",
              "proxy": True, "query": "2.2.2.2", "count": 3},
 
-            {"country": "United States", "org": "Google LLC", "as": "AS15169 Google LLC",
+            {"country": "United States", "org": "Google LLC",
+             "as": "AS15169 Google LLC",
              "proxy": False, "query": "2001:4860:4860::8844", "count": 4}
         ]
 
@@ -213,6 +223,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
         data = chickadee.run(self.test_data_dir)
         res = [x for x in data]
         self.assertCountEqual(res, expected)
+
 
 if __name__ == '__main__':
     unittest.main()

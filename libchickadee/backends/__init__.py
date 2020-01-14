@@ -1,6 +1,5 @@
 """Base class for all backends."""
 import json
-import time
 import csv
 
 __author__ = 'Chapin Bryce'
@@ -8,13 +7,14 @@ __date__ = 20200107
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
+
 class ResolverBase(object):
     """Generic base class for use by other backends."""
     def __init__(self, fields=list(), lang='en'):
         self.uri = None
         self.lang = lang
         self.supported_langs = []
-        self.fields = fields # Ordered list of fields to gather
+        self.fields = fields  # Ordered list of fields to gather
         self.pbar = False  # Enable progress bars
         self.data = None
 
@@ -99,7 +99,6 @@ class ResolverBase(object):
                         d[h] = None
                 selected_data.append(d)
             data = selected_data
-
 
         if lines:
             for entry in data:
