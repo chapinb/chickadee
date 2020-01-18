@@ -83,6 +83,9 @@ class Chickadee(object):
             logger.debug("Detected the data source as raw value(s)")
             result_dict = self.str_handler(self.input_data)  # String handler
 
+        logger.info("Extracted {} distinct IPs".format(
+            len(list(result_dict.keys()))))
+
         # Resolve if requested
         if self.resolve_ips:
             results = self.resolve(result_dict)
@@ -157,9 +160,6 @@ class Chickadee(object):
         """
         distinct_ips = list(data_dict.keys())
 
-        logger.info("Identified {} distinct IPs for resolution".format(
-            len(distinct_ips)))
-
         api_key = self.get_api_key()
 
         if api_key:
@@ -170,7 +170,7 @@ class Chickadee(object):
         if self.pbar:
             resolver.pbar = self.pbar
 
-        logger.info("Resolving IPs")
+        logger.debug("Resolving IPs")
         if self.force_single:
             results = []
             data = distinct_ips
@@ -184,7 +184,7 @@ class Chickadee(object):
         else:
             results = resolver.query(distinct_ips)
 
-        logger.info("Resolved IPs")
+        logger.debug("Resolved IPs")
 
         # Add frequency information to results
         if 'count' in self.fields:
@@ -350,19 +350,19 @@ def entry(args=None):
     args = arg_handling()
     fields = args.fields.split(',')
     setup_logging(args.log, args.verbose)
-    logger.info("Starting Chickadee")
+    logger.debug("Starting Chickadee")
     for arg in vars(args):
         logger.debug("Argument {} is set to {}".format(
             arg, getattr(args, arg)
         ))
-    logger.info("Configuring Chickadee")
+    logger.debug("Configuring Chickadee")
     chickadee = Chickadee(fields=fields)
     chickadee.resolve_ips = args.no_resolve
     chickadee.force_single = args.single
     chickadee.lang = args.lang
     chickadee.pbar = args.progress
 
-    logger.info("Parsing input")
+    logger.debug("Parsing input")
     if isinstance(args.data, list):
         data = []
         for x in args.data:
@@ -371,12 +371,12 @@ def entry(args=None):
     else:
         data = chickadee.run(args.data)
 
-    logger.info("Writing output")
+    logger.debug("Writing output")
     chickadee.outfile = args.output_file
     chickadee.outformat = args.output_format
     chickadee.write_output(data)
 
-    logger.info("Chickadee complete")
+    logger.debug("Chickadee complete")
 
 
 if __name__ == "__main__":
