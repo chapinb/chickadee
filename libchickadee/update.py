@@ -2,6 +2,10 @@
 
 import requests
 
+__author__ = 'Chapin Bryce'
+__date__ = 20200202
+__license__ = 'MIT Copyright 2020 Chapin Bryce'
+
 
 def check_version(current_version):
     """Check version against pypi.org information"""
