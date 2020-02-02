@@ -1,12 +1,13 @@
 """Installer for chickadee"""
 import setuptools
+from libchickadee import __version__
 
 with open('README.md') as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name='chickadee',
-    version=20200114,
+    version=__version__,
     description='Yet another GeoIP resolution tool.',
     author='Chapin Bryce',
     author_email='python@chapinb.com',

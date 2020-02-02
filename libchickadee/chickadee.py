@@ -16,6 +16,10 @@ import configparser
 # Third Party Libs
 from tqdm import tqdm
 
+# Import lib features
+from libchickadee import __version__
+from libchickadee.update import check_version
+
 # Import Backends
 from libchickadee.backends.ipapi import Resolver, ProResolver
 
@@ -387,7 +391,7 @@ def arg_handling():
     parser = argparse.ArgumentParser(
         description=__desc__,
         formatter_class=CustomArgFormatter,
-        epilog="Built by {}, v.{}".format(__author__, __date__)
+        epilog="Built by {}, v.{}".format(__author__, __version__)
     )
     parser.add_argument(
         'data',
@@ -504,12 +508,17 @@ def entry(args=None):
     config = config_handing(args.config)
     params = join_config_args(config, args)
 
+    # Check for update
+    check_version(__version__)
+
+    # Set up logging
     setup_logging(params.get('log'), params.get('verbose'))
     logger.debug("Starting Chickadee")
     for arg in vars(args):
         logger.debug("Argument {} is set to {}".format(
             arg, getattr(args, arg)
         ))
+
     logger.debug("Configuring Chickadee")
     chickadee = Chickadee(fields=params.get('fields'))
     chickadee.resolve_ips = not params.get('no-resolve')
