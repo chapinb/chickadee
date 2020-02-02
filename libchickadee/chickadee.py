@@ -345,7 +345,8 @@ def config_handing(config_file=None, search_conf_path=DEFAULT_CONF_PATHS):
         for location in search_conf_path:
             if not os.path.exists(location) or not os.path.isdir(location):
                 logger.debug(
-                    f"Unable to access config file location {location}.")
+                    "Unable to access config file location {}.".format(
+                        location))
             elif 'chickadee.ini' in os.listdir(location):
                 config_file = os.path.join(location, 'chickadee.ini')
             elif '.chickadee.ini' in os.listdir(location):
