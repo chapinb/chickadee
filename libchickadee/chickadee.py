@@ -325,7 +325,7 @@ def config_handing(config_file=None, search_conf_path=DEFAULT_CONF_PATHS):
     # Set the default values here.
     section_defs = {
         'main': {
-            'fields': [],
+            'fields': '',
             'output-format': '',
             'progress': False,
             'no-resolve': False,
@@ -478,7 +478,10 @@ def join_config_args(config, args, definitions={}):
 
     for k, v in definitions.items():
         args_val = getattr(args, k.replace('-', '_'), None)
-        config_val = config.get(k)
+        if config:
+            config_val = config.get(k)
+        else:
+            config_val = None
 
         # Get from args if non-default
         if args_val != v and args_val is not None:
@@ -522,7 +525,7 @@ def entry(args=None):
         ))
 
     logger.debug("Configuring Chickadee")
-    chickadee = Chickadee(fields=params.get('fields'))
+    chickadee = Chickadee(fields=params.get('fields').split(','))
     chickadee.resolve_ips = not params.get('no-resolve')
     chickadee.force_single = params.get('single')
     chickadee.lang = params.get('lang')
