@@ -103,3 +103,10 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+
+# CDB
+chickadee.ini
+.vscode/
+.*rc
+test_data/
