@@ -1,6 +1,7 @@
 """Script to check for available chickadee updates and alert the user."""
 
 import requests
+import sys
 
 __author__ = 'Chapin Bryce'
 __date__ = 20200202
@@ -16,10 +17,10 @@ def check_version(current_version):
 
     version = rdata.json().get('info', {}).get('version', '0')
 
-    if int(version) > current_version:
+    if float(version) > current_version:
         msg = "Chickadee v.{} is available. Please update ".format(version) + \
             "using 'pip3 install --upgrade chickadee'."
-        print(msg)
+        sys.stderr.write(msg+"\n")
 
 
 if __name__ == "__main__":
