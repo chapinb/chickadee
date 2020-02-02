@@ -171,26 +171,13 @@ _FIELDS = ','.join([  # Ordered list of fields to gather
     'status', 'message'
 ])
 
-# Config file search path order:
-# 1. Current directory
-# 2. User home directory
-# 3. System wide directory
-# Needs to be named chickadee.ini or .chickadee.ini for detection.
-DEFAULT_CONF_PATHS = [os.path.abspath('.'), os.path.expanduser('~')]
-if 'win32' in sys.platform:
-    DEFAULT_CONF_PATHS.append(os.path.join(os.getenv('APPDATA'), 'chickadee'))
-    DEFAULT_CONF_PATHS.append('C:\\ProgramData\\chickadee')
-elif 'linux' in sys.platform or 'darwin' in sys.platform:
-    DEFAULT_CONF_PATHS.append(os.path.expanduser('~/.config/chickadee'))
-    DEFAULT_CONF_PATHS.append('/etc/chickadee')
-
 
 class Chickadee(object):
     """Class to handle chickadee script operations.
 
     Args:
         outformat (str): One of ``json``, ``jsonl``, ``csv``
-        outfile (str or file-like obje): Destination to write report.
+        outfile (str or file_obj): Destination to write report.
         fields (list): Collection of fields to resolve and report on.
 
     Returns:
@@ -251,30 +238,6 @@ class Chickadee(object):
         return [{'query': k, 'count': v, 'message': 'No resolve'}
                 for k, v in result_dict.items()]
 
-    def write_output(self, results):
-        """Write results to output format and/or files.
-
-        Leverages the writers found in libchickadee.backends. Currently
-        supports csv, json, and json lines formats, specified in
-        ``self.outformat``.
-
-        Args:
-            results (list): List of GeoIP results
-
-        Returns:
-            None
-        """
-
-        if self.outformat == 'csv':
-            logger.debug("Writing CSV report")
-            Resolver.write_csv(self.outfile, results, self.fields)
-        elif self.outformat == 'json':
-            logger.debug("Writing json report")
-            Resolver.write_json(self.outfile, results, self.fields)
-        elif self.outformat == 'jsonl':
-            logger.debug("Writing json lines report")
-            Resolver.write_json(self.outfile, results, self.fields, lines=True)
-
     @staticmethod
     def get_api_key():
         """Retrieve an API key set as an envar. Looks for value in
@@ -315,6 +278,63 @@ class Chickadee(object):
                 data_dict[x] = 0
             data_dict[x] += 1
         return data_dict
+
+    @staticmethod
+    def file_handler(file_path):
+        """Handle parsing IP addresses from a file.
+
+        Will evaluate format of input file or file stream. Currently supports
+        plain text, gzipped compressed plain text, and xlsx.
+
+        Args:
+            file_path (str or file_obj): Path of file to read or stream.
+
+        Return:
+            data_dict (dict): dictionary of distinct IP addresses to resolve.
+        """
+        if isinstance(file_path, _io.TextIOWrapper):
+            is_stream = True
+            # Extract IPs with proper handler
+            logger.debug("Extracting IPs from STDIN")
+        else:
+            is_stream = False
+            # Extract IPs with proper handler
+            logger.debug("Extracting IPs from {}".format(file_path))
+
+        if not is_stream and file_path.endswith('xlsx'):
+            file_parser = XLSXParser()
+        else:
+            file_parser = PlainTextParser()
+        try:
+            file_parser.parse_file(file_path, is_stream)
+        except Exception:
+            logger.warning("Failed to parse {}".format(file_path))
+        return file_parser.ips
+
+    def dir_handler(self, folder_path):
+        """Handle parsing IP addresses from files recursively.
+
+        Passes discovered files to the ``self.file_handler`` method for further
+        processing.
+
+        Args:
+            folder_path (str): Directory path to recursively search for files.
+
+        Return:
+            data_dict (dict): dictionary of distinct IP addresses to resolve.
+        """
+        result_dict = {}
+        for root, _, files in os.walk(folder_path):
+            for fentry in files:
+                file_entry = os.path.join(root, fentry)
+                logger.debug("Parsing file {}".format(file_entry))
+                file_results = self.file_handler(file_entry)
+                logger.debug("Parsed file {}, {} results".format(
+                    file_entry, len(file_results)))
+                result_dict = dict(Counter(result_dict)+Counter(file_results))
+        logger.debug("{} total distinct IPs discovered".format(
+            len(result_dict)))
+        return result_dict
 
     def resolve(self, data_dict, api_key=None):
         """Resolve IP addresses stored as keys within `data_dict`. The values
@@ -366,62 +386,29 @@ class Chickadee(object):
             return updated_results
         return results
 
-    @staticmethod
-    def file_handler(file_path):
-        """Handle parsing IP addresses from a file.
+    def write_output(self, results):
+        """Write results to output format and/or files.
 
-        Will evaluate format of input file or file stream. Currently supports
-        plain text, gzipped compressed plain text, and xlsx.
-
-        Args:
-            file_path (str or file-like obj): Path of file to read or stream.
-
-        Return:
-            data_dict (dict): dictionary of distinct IP addresses to resolve.
-        """
-        if isinstance(file_path, _io.TextIOWrapper):
-            is_stream = True
-            # Extract IPs with proper handler
-            logger.debug("Extracting IPs from STDIN")
-        else:
-            is_stream = False
-            # Extract IPs with proper handler
-            logger.debug("Extracting IPs from {}".format(file_path))
-
-        if not is_stream and file_path.endswith('xlsx'):
-            file_parser = XLSXParser()
-        else:
-            file_parser = PlainTextParser()
-        try:
-            file_parser.parse_file(file_path, is_stream)
-        except Exception:
-            logger.warning("Failed to parse {}".format(file_path))
-        return file_parser.ips
-
-    def dir_handler(self, folder_path):
-        """Handle parsing IP addresses from files recursively.
-
-        Passes discovered files to the ``self.file_handler`` method for further
-        processing.
+        Leverages the writers found in libchickadee.backends. Currently
+        supports csv, json, and json lines formats, specified in
+        ``self.outformat``.
 
         Args:
-            folder_path (str): Directory path to recursively search for files.
+            results (list): List of GeoIP results
 
-        Return:
-            data_dict (dict): dictionary of distinct IP addresses to resolve.
+        Returns:
+            None
         """
-        result_dict = {}
-        for root, _, files in os.walk(folder_path):
-            for fentry in files:
-                file_entry = os.path.join(root, fentry)
-                logger.debug("Parsing file {}".format(file_entry))
-                file_results = self.file_handler(file_entry)
-                logger.debug("Parsed file {}, {} results".format(
-                    file_entry, len(file_results)))
-                result_dict = dict(Counter(result_dict)+Counter(file_results))
-        logger.debug("{} total distinct IPs discovered".format(
-            len(result_dict)))
-        return result_dict
+
+        if self.outformat == 'csv':
+            logger.debug("Writing CSV report")
+            Resolver.write_csv(self.outfile, results, self.fields)
+        elif self.outformat == 'json':
+            logger.debug("Writing json report")
+            Resolver.write_json(self.outfile, results, self.fields)
+        elif self.outformat == 'jsonl':
+            logger.debug("Writing json lines report")
+            Resolver.write_json(self.outfile, results, self.fields, lines=True)
 
 
 def setup_logging(path, verbose=False):
@@ -472,7 +459,7 @@ class CustomArgFormatter(argparse.RawTextHelpFormatter,
     """Custom argparse formatter class"""
 
 
-def config_handing(config_file=None, search_conf_path=DEFAULT_CONF_PATHS):
+def config_handing(config_file=None, search_conf_path=[]):
     """Parse config file and return argument values.
 
     Args:
@@ -504,10 +491,27 @@ def config_handing(config_file=None, search_conf_path=DEFAULT_CONF_PATHS):
     }
 
     if not config_file:
+        if not search_conf_path:
+            # Config file search path order:
+            # 1. Current directory
+            # 2. User home directory
+            # 3. System wide directory
+            # Needs to be named chickadee.ini or .chickadee.ini for detection.
+            search_conf_path = [os.path.abspath('.'), os.path.expanduser('~')]
+            if 'win32' in sys.platform:
+                search_conf_path.append(
+                    os.path.join(os.getenv('APPDATA'), 'chickadee'))
+                search_conf_path.append('C:\\ProgramData\\chickadee')
+            elif 'linux' in sys.platform or 'darwin' in sys.platform:
+                search_conf_path.append(
+                    os.path.expanduser('~/.config/chickadee'))
+                search_conf_path.append('/etc/chickadee')
+
         for location in search_conf_path:
             if not os.path.exists(location) or not os.path.isdir(location):
                 logger.debug(
-                    f"Unable to access config file location {location}.")
+                    "Unable to access config file location {}.".format(
+                        location))
             elif 'chickadee.ini' in os.listdir(location):
                 config_file = os.path.join(location, 'chickadee.ini')
             elif '.chickadee.ini' in os.listdir(location):
@@ -515,11 +519,12 @@ def config_handing(config_file=None, search_conf_path=DEFAULT_CONF_PATHS):
 
     fail_warn = 'Relying on argument defaults'
     if not config_file:
-        logger.debug(f'Config file not found. {fail_warn}')
+        logger.debug('Config file not found. ' +fail_warn)
         return
 
     if not os.path.exists(config_file) or not os.path.isfile(config_file):
-        logger.debug(f'Error accessing config file {config_file}. {fail_warn}')
+        logger.debug('Error accessing config file ' + config_file + '.'
+            + fail_warn)
         return
 
     conf = configparser.ConfigParser()
