@@ -11,4 +11,4 @@ install:
 - pip install .
 
 script:
-- python tests.py
+- python -m unittest discover
