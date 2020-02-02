@@ -1,6 +1,128 @@
-"""Chickadee
+"""
+chickadee.py
+============
 
-An application to provide context for an IP address
+A command-line application to provide context for an IP address.
+
+This utility leveraged libchickadee to extract, resolve, and report IP
+addresses. Please see installation instructions for details on setting up this
+tool on your system.
+
+Usage
+-----
+
+.. code-block:: text
+
+    usage: chickadee [-h] [-f FIELDS] [-t {json,jsonl,csv}] [-w FILENAME.JSON]
+                    [-n] [-s] [--lang {en,de,es,pt-BR,fr,ja,zh-CN,ru}]
+                    [-c CONFIG] [-p] [-v] [-V] [-l LOG]
+                    [data [data ...]]
+
+    Yet another GeoIP resolution tool.
+
+    Will use the free rate limited ip-api.com service for resolution.
+    Please set an environment variable named CHICKADEE_API_KEY with the
+    value of your API key to enabled unlimited requests with the
+    commercial API
+
+    positional arguments:
+    data         Either an IP address, comma delimited list of IP addresses, or
+                 path to a file or folder containing files to check for IP
+                 address values. Currently supported file types: plain text
+                 (ie logs, csv, json), gzipped plain text, xlsx (must be xlsx
+                 extension). Can accept plain text data as stdin.
+                 (default: <_io.TextIOWrapper name='<stdin>' mode='r'
+                            encoding='UTF-8'>)
+
+    optional arguments:
+    -h, --help            show this help message and exit
+    -f FIELDS, --fields FIELDS
+                            Comma separated fields to query
+                            (default: query,count,as,org,isp,continent,country,
+                                      regionName,city,district,zip,mobile,
+                                      proxy,hosting,reverse,lat,lon,timezone,
+                                      status,message)
+    -t {json,jsonl,csv}, --output-format {json,jsonl,csv}
+                            Output format (default: jsonl)
+    -w FILENAME.JSON, --output-file FILENAME.JSON
+                            Path to file to write output
+                            (default: <_io.TextIOWrapper name='<stdout>'
+                                       mode='w' encoding='UTF-8'>)
+    -n, --no-resolve      Only extract IP addresses, don't resolve.
+                          (default: False)
+    -s, --single          Use the significantly slower single item API.
+                          Adds reverse DNS. (default: False)
+    --lang {en,de,es,pt-BR,fr,ja,zh-CN,ru}
+                            Language (default: en)
+    -c CONFIG, --config CONFIG
+                            Path to config file to load (default: None)
+    -p, --progress        Enable progress bar (default: False)
+    -v, --verbose         Include debug log messages (default: False)
+    -V, --version         Displays version
+    -l LOG, --log LOG     Path to log file (default: ./chickadee.log)
+
+    Built by Chapin Bryce, v.20200202
+
+
+
+Examples
+--------
+
+Input options
+^^^^^^^^^^^^^
+
+Parsing a single IP address:
+
+``chickadee 1.1.1.1``
+
+Parsing multiple IP addresses:
+
+``chickadee 1.1.1.1,2.2.2.2``
+
+Parsing IPs from STDIN:
+
+``cat file.txt | chickadee``
+
+Parsing IPs from a file:
+
+``chickadee file.txt``
+
+Parsing IPs from a folder, recursively:
+
+``chickadee folder/``
+
+Output options
+^^^^^^^^^^^^^^
+
+Reporting to JSON format:
+
+``chickadee 1.1.1.1 -t json``
+
+Reporting to JSON lines format:
+
+``chickadee 1.1.1.1 -t jsonl``
+
+Reporting to CSV format:
+
+``chickadee 1.1.1.1 -t csv``
+
+Other Arguments
+^^^^^^^^^^^^^^^
+
+Changing the fields to resolve and report on:
+
+``chickadee -f query,count,asn,isp,org 1.1.1.1``
+
+Changing the output location (STDOUT by default)
+
+``chickadee 1.1.1.1 -w resolve.json``
+
+Only extract IP addresses, don't resolve:
+
+``chickadee -n 1.1.1.1``
+
+Module Documentation
+--------------------
 
 """
 
@@ -29,8 +151,8 @@ from libchickadee.parsers.xlsx import XLSXParser
 
 
 __author__ = 'Chapin Bryce'
-__date__ = 20200202
-__license__ = 'MIT Copyright 2020 Chapin Bryce'
+__date__ = 20200114
+__license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.
 
 Will use the free rate limited ip-api.com service for resolution.
@@ -345,8 +467,7 @@ def config_handing(config_file=None, search_conf_path=DEFAULT_CONF_PATHS):
         for location in search_conf_path:
             if not os.path.exists(location) or not os.path.isdir(location):
                 logger.debug(
-                    "Unable to access config file location {}.".format(
-                        location))
+                    f"Unable to access config file location {location}.")
             elif 'chickadee.ini' in os.listdir(location):
                 config_file = os.path.join(location, 'chickadee.ini')
             elif '.chickadee.ini' in os.listdir(location):
@@ -354,12 +475,11 @@ def config_handing(config_file=None, search_conf_path=DEFAULT_CONF_PATHS):
 
     fail_warn = 'Relying on argument defaults'
     if not config_file:
-        logger.debug('Config file not found. {}'.format(fail_warn))
+        logger.debug(f'Config file not found. {fail_warn}')
         return
 
     if not os.path.exists(config_file) or not os.path.isfile(config_file):
-        logger.debug('Error accessing config file {}. {}'.format(
-            config_file, fail_warn))
+        logger.debug(f'Error accessing config file {config_file}. {fail_warn}')
         return
 
     conf = configparser.ConfigParser()

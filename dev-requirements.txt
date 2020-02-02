@@ -4,3 +4,4 @@ tqdm
 twine
 coverage
 flake8
+sphinx
