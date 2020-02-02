@@ -354,11 +354,12 @@ def config_handing(config_file=None, search_conf_path=DEFAULT_CONF_PATHS):
 
     fail_warn = 'Relying on argument defaults'
     if not config_file:
-        logger.debug(f'Config file not found. {fail_warn}')
+        logger.debug('Config file not found. {}'.format(fail_warn))
         return
 
     if not os.path.exists(config_file) or not os.path.isfile(config_file):
-        logger.debug(f'Error accessing config file {config_file}. {fail_warn}')
+        logger.debug('Error accessing config file {}. {}'.format(
+            config_file, fail_warn))
         return
 
     conf = configparser.ConfigParser()
