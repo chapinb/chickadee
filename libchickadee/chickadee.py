@@ -186,7 +186,16 @@ elif 'linux' in sys.platform or 'darwin' in sys.platform:
 
 
 class Chickadee(object):
-    """Class to handle chickadee script operations."""
+    """Class to handle chickadee script operations.
+
+    Args:
+        outformat (str): One of ``json``, ``jsonl``, ``csv``
+        outfile (str or file-like obje): Destination to write report.
+        fields (list): Collection of fields to resolve and report on.
+
+    Returns:
+        None
+    """
     def __init__(self, outformat='json', outfile=sys.stdout, fields=_FIELDS):
         self.input_data = None
         self.outformat = outformat
@@ -200,13 +209,20 @@ class Chickadee(object):
     def run(self, input_data, api_key=None):
         """Evaluate the input data format to extract and resolve IP addresses.
 
+        Will check the ``self.input_data`` type and select the proper handler.
+        This includes handling files, directories, STDIN, and python strings
+        and sending to the proper handler to extract IPs
+
+        Once extracted, the IP addresses are passed to the ``self.resolve()``
+        method if the ``self.resolve_ips`` option is enabled.
+
         Args:
             input_data (str or file_obj): User provided data containing IPs to
                 resolve
             api_key (str): API Key for backend GeoIP resolver.
 
         Returns:
-            (list): List of dictionaries containing resolved hits
+            (list): List of dictionaries containing resolved hits.
         """
         self.input_data = input_data
         results = []
@@ -236,10 +252,17 @@ class Chickadee(object):
                 for k, v in result_dict.items()]
 
     def write_output(self, results):
-        """Write results to output format and/or files
+        """Write results to output format and/or files.
+
+        Leverages the writers found in libchickadee.backends. Currently
+        supports csv, json, and json lines formats, specified in
+        ``self.outformat``.
 
         Args:
             results (list): List of GeoIP results
+
+        Returns:
+            None
         """
 
         if self.outformat == 'csv':
@@ -254,7 +277,12 @@ class Chickadee(object):
 
     @staticmethod
     def get_api_key():
-        """Retrieve an API key set as an envar."""
+        """Retrieve an API key set as an envar. Looks for value in
+        ``CHICKADEE_API_KEY``. May be depreciated in the near future.
+
+        Returns:
+            (str): API key, if found
+        """
         api_key = os.environ.get('CHICKADEE_API_KEY', None)
         if api_key is not None and len(api_key):
             return api_key
@@ -262,11 +290,11 @@ class Chickadee(object):
 
     @staticmethod
     def str_handler(data):
-        """Handle string input of one or more IP addresses and executes the query
+        """Handle string input of one or more IP addresses and returns the
+        distinct IPs with their associated frequency count.
 
         Args:
-            input_data (str): raw input data from user
-            fields (list): List of fields to query for
+            data (str): raw input data from user
 
         Return:
             data_dict (dict): dictionary of distinct IP addresses to resolve.
@@ -294,11 +322,11 @@ class Chickadee(object):
         a data set.
 
         Args:
-            data_dict (dict): Structured as {'IP': COUNT}
+            data_dict (dict): Structured as ``{IP: COUNT}``
             api_key (str): API Key for GeoIP backend.
 
         Returns:
-            all_results (list): resolved GeoIP data
+            data_dict (dict): dictionary of distinct IP addresses to resolve.
         """
         distinct_ips = list(data_dict.keys())
 
@@ -340,14 +368,16 @@ class Chickadee(object):
 
     @staticmethod
     def file_handler(file_path):
-        """Handle parsing IP addresses from a file
+        """Handle parsing IP addresses from a file.
+
+        Will evaluate format of input file or file stream. Currently supports
+        plain text, gzipped compressed plain text, and xlsx.
 
         Args:
-            input_data (str): raw input data from use
-            fields (list): List of fields to query for
+            file_path (str or file-like obj): Path of file to read or stream.
 
         Return:
-            (list): all query results from extracted IPs
+            data_dict (dict): dictionary of distinct IP addresses to resolve.
         """
         if isinstance(file_path, _io.TextIOWrapper):
             is_stream = True
@@ -368,18 +398,20 @@ class Chickadee(object):
             logger.warning("Failed to parse {}".format(file_path))
         return file_parser.ips
 
-    def dir_handler(self, file_path):
-        """Handle parsing IP addresses from files recursively
+    def dir_handler(self, folder_path):
+        """Handle parsing IP addresses from files recursively.
+
+        Passes discovered files to the ``self.file_handler`` method for further
+        processing.
 
         Args:
-            input_data (str): raw input data from use
-            fields (list): List of fields to query for
+            folder_path (str): Directory path to recursively search for files.
 
         Return:
-            (list): all query results from extracted IPs
+            data_dict (dict): dictionary of distinct IP addresses to resolve.
         """
         result_dict = {}
-        for root, _, files in os.walk(file_path):
+        for root, _, files in os.walk(folder_path):
             for fentry in files:
                 file_entry = os.path.join(root, fentry)
                 logger.debug("Parsing file {}".format(file_entry))
@@ -393,7 +425,15 @@ class Chickadee(object):
 
 
 def setup_logging(path, verbose=False):
-    """Function to setup logging configuration and test it."""
+    """Function to setup logging configuration
+
+    Args:
+        path (str): File path to write log messages to
+        verbose (bool): Whether the debug messages should be displayed on STDERR
+
+    Returns:
+        None
+    """
     # Allow us to modify the `logger` variable within a function
     global logger
 
@@ -433,7 +473,7 @@ class CustomArgFormatter(argparse.RawTextHelpFormatter,
 
 
 def config_handing(config_file=None, search_conf_path=DEFAULT_CONF_PATHS):
-    """Parse config file and return argument values
+    """Parse config file and return argument values.
 
     Args:
         config_file (str): Path to config file to read values from.
@@ -509,7 +549,11 @@ def config_handing(config_file=None, search_conf_path=DEFAULT_CONF_PATHS):
 
 
 def arg_handling():
-    """Argument handling."""
+    """Parses command line arguments.
+
+    Returns:
+        argparse Namespace containing argument parameters.
+    """
     parser = argparse.ArgumentParser(
         description=__desc__,
         formatter_class=CustomArgFormatter,
@@ -572,6 +616,8 @@ def join_config_args(config, args, definitions={}):
         definitions (dict): Dictionary of parameters to check for in args and
             config.
 
+    Returns:
+        (dict): Parameter information to use for script execution.
     """
 
     final_config = {}
@@ -627,7 +673,11 @@ def join_config_args(config, args, definitions={}):
 
 
 def entry(args=None):
-    """Entrypoint for package script"""
+    """Entrypoint for package script.
+
+    Args:
+        args: Arguments from invocation.
+    """
     # Handle parameters from config file and command line.
     args = arg_handling()
     config = config_handing(args.config)
