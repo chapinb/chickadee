@@ -26,8 +26,24 @@ setuptools.setup(
         "tqdm >= 4.36.1"
     ],
     classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3 :: Only",
+        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
+        "Development Status :: 5 - Production/Stable",
+        "Environment :: Console",
+        "Intended Audience :: Telecommunications Industry",
+        "Intended Audience :: System Administrators",
+        "Intended Audience :: Other Audience",
+        "Intended Audience :: Information Technology",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Education",
+        "Natural Language :: English",
+        "Topic :: Scientific/Engineering :: Information Analysis",
+        "Topic :: Security",
+        "Topic :: Utilities"
     ]
 )
