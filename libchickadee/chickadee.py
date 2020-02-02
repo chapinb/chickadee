@@ -11,6 +11,7 @@ import logging
 from pathlib import PurePath
 from collections import Counter
 import _io
+import configparser
 
 # Third Party Libs
 from tqdm import tqdm
@@ -44,6 +45,19 @@ _FIELDS = ','.join([  # Ordered list of fields to gather
     'status', 'message'
 ])
 
+# Config file search path order:
+# 1. Current directory
+# 2. User home directory
+# 3. System wide directory
+# Needs to be named chickadee.ini or .chickadee.ini for detection.
+DEFAULT_CONF_PATHS = [os.path.abspath('.'), os.path.expanduser('~')]
+if 'win32' in sys.platform:
+    DEFAULT_CONF_PATHS.append(os.path.join(os.getenv('APPDATA'), 'chickadee'))
+    DEFAULT_CONF_PATHS.append('C:\\ProgramData\\chickadee')
+elif 'linux' in sys.platform or 'darwin' in sys.platform:
+    DEFAULT_CONF_PATHS.append(os.path.expanduser('~/.config/chickadee'))
+    DEFAULT_CONF_PATHS.append('/etc/chickadee')
+
 
 class Chickadee(object):
     """Class to handle chickadee script operations."""
@@ -57,12 +71,13 @@ class Chickadee(object):
         self.pbar = False
         self.resolve_ips = True
 
-    def run(self, input_data):
+    def run(self, input_data, api_key=None):
         """Evaluate the input data format to extract and resolve IP addresses.
 
         Args:
             input_data (str or file_obj): User provided data containing IPs to
                 resolve
+            api_key (str): API Key for backend GeoIP resolver.
 
         Returns:
             (list): List of dictionaries containing resolved hits
@@ -88,7 +103,7 @@ class Chickadee(object):
 
         # Resolve if requested
         if self.resolve_ips:
-            results = self.resolve(result_dict)
+            results = self.resolve(result_dict, api_key)
             return results
 
         return [{'query': k, 'count': v, 'message': 'No resolve'}
@@ -147,22 +162,22 @@ class Chickadee(object):
             data_dict[x] += 1
         return data_dict
 
-    def resolve(self, data_dict):
+    def resolve(self, data_dict, api_key=None):
         """Resolve IP addresses stored as keys within `data_dict`. The values
         for each key should represent the number of occurances of an IP within
         a data set.
 
         Args:
             data_dict (dict): Structured as {'IP': COUNT}
+            api_key (str): API Key for GeoIP backend.
 
         Returns:
             all_results (list): resolved GeoIP data
         """
         distinct_ips = list(data_dict.keys())
 
-        api_key = self.get_api_key()
-
         if api_key:
+            logger.debug("Using authenticated resolution service")
             resolver = ProResolver(api_key, fields=self.fields, lang=self.lang)
         else:
             resolver = Resolver(fields=self.fields, lang=self.lang)
@@ -291,6 +306,82 @@ class CustomArgFormatter(argparse.RawTextHelpFormatter,
     """Custom argparse formatter class"""
 
 
+def config_handing(config_file=None, search_conf_path=DEFAULT_CONF_PATHS):
+    """Parse config file and return argument values
+
+    Args:
+        config_file (str): Path to config file to read values from.
+        search_conf_path (list): List of paths to look for config file
+
+    Returns:
+        dictionary containing configuration options.
+    """
+
+    # Field definitions
+    # Set the default values here.
+    section_defs = {
+        'main': {
+            'fields': [],
+            'output-format': '',
+            'progress': False,
+            'no-resolve': False,
+            'log': '',
+            'verbose': False
+        },
+        'backends': {
+            'backend': {
+                # Map backend to additional variables to pull.
+                # For now, limited to api_key only.
+                'ip_api': {'api-key': 'ip_api'}
+            }
+        }
+    }
+
+    if not config_file:
+        for location in search_conf_path:
+            if not os.path.exists(location) or not os.path.isdir(location):
+                logger.debug(
+                    f"Unable to access config file location {location}.")
+            elif 'chickadee.ini' in os.listdir(location):
+                config_file = os.path.join(location, 'chickadee.ini')
+            elif '.chickadee.ini' in os.listdir(location):
+                config_file = os.path.join(location, '.chickadee.ini')
+
+    fail_warn = 'Relying on argument defaults'
+    if not config_file:
+        logger.debug(f'Config file not found. {fail_warn}')
+        return
+
+    if not os.path.exists(config_file) or not os.path.isfile(config_file):
+        logger.debug(f'Error accessing config file {config_file}. {fail_warn}')
+        return
+
+    conf = configparser.ConfigParser()
+    conf.read(config_file)
+
+    config = {}
+
+    for section in section_defs:
+        if section in conf:
+            for k, v in section_defs[section].items():
+                conf_section = conf[section]
+                conf_value = None
+                if isinstance(v, str):
+                    conf_value = conf_section.get(k)
+                elif isinstance(v, list):
+                    conf_value = conf_section.get(k).split(',')
+                elif isinstance(v, bool):
+                    conf_value = conf_section.getboolean(k)
+                elif isinstance(v, dict):
+                    conf_value = conf_section.get(k)
+                    # Set backend args through nested option
+                    for sk, sv, in v.get(conf_value, {}).items():
+                        config[sk] = conf_section[sv]
+                config[k] = conf_value
+
+    return config
+
+
 def arg_handling():
     """Argument handling."""
     parser = argparse.ArgumentParser(
@@ -318,7 +409,7 @@ def arg_handling():
     parser.add_argument('-w', '--output-file',
                         help='Path to file to write output',
                         default=sys.stdout, metavar='FILENAME.JSON')
-    parser.add_argument('-n', '--no-resolve', action='store_false',
+    parser.add_argument('-n', '--no-resolve', action='store_true',
                         help="Only extract IP addresses, don't resolve.")
     parser.add_argument('-s', '--single',
                         help="Use the significantly slower single item API. "
@@ -327,6 +418,7 @@ def arg_handling():
     parser.add_argument('--lang', help="Language", default='en',
                         choices=['en', 'de', 'es', 'pt-BR', 'fr', 'ja',
                                  'zh-CN', 'ru'])
+    parser.add_argument('-c', '--config', help="Path to config file to load")
     parser.add_argument('-p', '--progress', help="Enable progress bar",
                         action="store_true")
     parser.add_argument('-v', '--verbose', action='store_true',
@@ -345,35 +437,98 @@ def arg_handling():
     return args
 
 
+def join_config_args(config, args, definitions={}):
+    """Join config file and argument parameters, where the args override configs.
+
+    Args:
+        config (dict): Dictionary containing parameters from config file.
+        args (obj): Argparse namespace containing command line parameters.
+        definitions (dict): Dictionary of parameters to check for in args and
+            config.
+
+    """
+
+    final_config = {}
+
+    if not definitions:
+        # This must match the defaults for argparse in order for the logic to
+        # operate properly.
+        definitions = {
+            'fields': _FIELDS,
+            'output-format': 'jsonl',
+            'output-file': sys.stdout,
+            'progress': False,
+            'no-resolve': False,
+            'single': False,
+            'lang': 'en',
+            'log': os.path.abspath(os.path.join(
+                os.getcwd(),
+                PurePath(__file__).name.rsplit('.', 1)[0] + '.log')),
+            'verbose': False,
+            'backend': 'ip_api',
+            'api-key': '',
+            'data': ''
+        }
+
+    for k, v in definitions.items():
+        args_val = getattr(args, k.replace('-', '_'), None)
+        config_val = config.get(k)
+
+        # Get from args if non-default
+        if args_val != v and args_val is not None:
+            final_config[k] = args_val
+
+        # Special handling for API key
+        elif k == 'api-key' and not config_val:
+            final_config[k] = Chickadee.get_api_key()
+
+        # Next get from config
+        elif config_val:
+            final_config[k] = config_val
+
+        # Otherwise load from args if present
+        elif args_val is not None:
+            final_config[k] = args_val
+
+        # And if all else fails, load from the definitions dictionary
+        else:
+            final_config[k] = v
+
+    return final_config
+
+
 def entry(args=None):
     """Entrypoint for package script"""
+    # Handle parameters from config file and command line.
     args = arg_handling()
-    fields = args.fields.split(',')
-    setup_logging(args.log, args.verbose)
+    config = config_handing(args.config)
+    params = join_config_args(config, args)
+
+    setup_logging(params.get('log'), params.get('verbose'))
     logger.debug("Starting Chickadee")
     for arg in vars(args):
         logger.debug("Argument {} is set to {}".format(
             arg, getattr(args, arg)
         ))
     logger.debug("Configuring Chickadee")
-    chickadee = Chickadee(fields=fields)
-    chickadee.resolve_ips = args.no_resolve
-    chickadee.force_single = args.single
-    chickadee.lang = args.lang
-    chickadee.pbar = args.progress
+    chickadee = Chickadee(fields=params.get('fields'))
+    chickadee.resolve_ips = not params.get('no-resolve')
+    chickadee.force_single = params.get('single')
+    chickadee.lang = params.get('lang')
+    chickadee.pbar = params.get('progress')
 
     logger.debug("Parsing input")
-    if isinstance(args.data, list):
+    if isinstance(params.get('data'), list):
         data = []
-        for x in args.data:
+        for x in params.get('data'):
             res = chickadee.run(x)
             data += res
     else:
-        data = chickadee.run(args.data)
+        data = chickadee.run(params.get('data'))
 
     logger.debug("Writing output")
-    chickadee.outfile = args.output_file
-    chickadee.outformat = args.output_format
+    chickadee.outfile = params.get('output-file')
+    chickadee.outformat = params.get('output-format')
     chickadee.write_output(data)
 
     logger.debug("Chickadee complete")
