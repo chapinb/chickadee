@@ -1,4 +1,17 @@
-"""Base class for all backends."""
+"""
+ResolverBase
+============
+
+A base class for handling resolution of IP addresses.
+
+This class includes elemends common across backend resolution data sources.
+This includes common parameters, such as field names, and functions to handle
+querying the data sources. Additionally, this includes writers for CSV and JSON
+formats.
+
+Module Documentation
+--------------------
+"""
 import json
 import csv
 
@@ -9,7 +22,15 @@ __desc__ = '''Yet another GeoIP resolution tool.'''
 
 
 class ResolverBase(object):
-    """Generic base class for use by other backends."""
+    """Generic base class for use by other backends.
+
+    Args:
+        fields (list): Collection of fields to include in query.
+        lang (str): Language for results.
+
+    Returns:
+        (ResolverBase)
+    """
     def __init__(self, fields=list(), lang='en'):
         self.uri = None
         self.lang = lang
@@ -19,11 +40,16 @@ class ResolverBase(object):
         self.data = None
 
     def single(self):
-        """Base method to handle single queries"""
+        """Base method to handle single queries.
+
+        Not implemented in base class.
+        """
         raise NotImplementedError()
 
     def batch(self):
-        """Base method to handle batch queries"""
+        """Base method to handle batch queries.
+
+        Not implemented in base class."""
         raise NotImplementedError()
 
     def query(self, data):
@@ -31,10 +57,15 @@ class ResolverBase(object):
             method for querying.
 
         Args:
-            data (list, tuple,set or str): One or more IPs to resolve
+            data (list, tuple, set, str): One or more IPs to resolve
 
         Return:
             (yield) request data iterator
+
+        Example:
+            >>> records = ['1.1.1.1', '2.2.2.2']
+            >>> resolver = ResolverBase()
+            >>> resolved_data = resolver.query(records)
         """
         self.data = data
         if isinstance(data, (list, tuple, set)):
@@ -49,10 +80,19 @@ class ResolverBase(object):
         """Writes a list of dictionaries to a CSV file.
 
         Arguments:
-            outfile (str): Path to output file
+            outfile (str or file_obj): Path to output file
             data (list): List of dictionaries to write to file
             headers (list): Header row to use. If empty, will use the
                 first dictionary in the `data` list.
+
+        Returns:
+            None
+
+        Example:
+            >>> records = [{'query': '1.1.1.1', 'count': 2}]
+            >>> resolver = ResolverBase()
+            >>> resolver.write_csv('test.csv', records, ['query', 'count'])
+
         """
 
         if not headers:
@@ -75,10 +115,27 @@ class ResolverBase(object):
         """Writes output in JSON format
 
         Args:
-            outfile (str or fileobj): Path to or already open file
+            outfile (str or file_obj): Path to or already open file
             data (list): List of dictionaries containing resolved data
             lines (bool): Whether to export 1 dictionary object per line or
                 a whole json object.
+
+        Returns:
+            None
+
+        Examples:
+            Generation of a JSON report
+
+            >>> records = [{'query': '1.1.1.1', 'count': 2}]
+            >>> resolver = ResolverBase()
+            >>> resolver.write_json('test.json', records, ['query', 'count'])
+
+            Generation of a JSON Lines report
+
+            >>> records = [{'query': '1.1.1.1', 'count': 2}]
+            >>> resolver = ResolverBase()
+            >>> resolver.write_json('test.jsonl', records, ['query', 'count'], True)
+
         """
         if isinstance(outfile, str):
             open_file = open(outfile, 'w', newline="")

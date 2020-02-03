@@ -1,4 +1,80 @@
-"""Backend leveraging the ip-api.com JSON API."""
+"""
+IP-API Resolver
+===============
+
+Backend leveraging the ip-api.com JSON API.
+
+This is a third-party data source that provides GeoIP, ASN, Organization,
+ISP, and other resolution information for IPv4 and IPv6 addresses.
+
+Data Source Information
+-----------------------
+
+This data source is hosted at ip-api.com and requires an internet connection
+to use. It offers a free API, with terms described on their site. Please refer
+to the service's website for an authoritative source on API specifications.
+This documentation summarizes a point in time understanding of the data source
+though since it is a third party service, it may change in a manner that breaks
+this tool or causes this documentation to become inaccurate. In no way is
+inclusion of a data source in libchickadee an endorsement of the data source.
+
+**Data source documentation:** https://ip-api.com/docs
+
+Endpoints
+^^^^^^^^^
+
+The API supports a number of formats, though this resolver implementation
+leverages the JSON APIs. This includes both the ``single`` and ``batch`` APIs
+depending on the number of IP addresses requested for resolution.
+
+* ``http://ip-api.com/json/{query}``
+* ``http://ip-api.com/batch``
+
+Fields
+^^^^^^
+
+These fields are in no particular order.
+
+* status
+* message
+* continent
+* continentCode
+* country
+* countryCode
+* region
+* regionName
+* city
+* district
+* zip
+* lat
+* lon
+* timezone
+* currency
+* isp
+* org
+* as
+* asname
+* mobile
+* proxy
+* hosting
+* query
+
+Limitations
+^^^^^^^^^^^
+
+This service has a free tier for non-commercial use, and is rate limited to
+15 requests per minute. The returned HTTP header ``X-Rl`` contains the number of
+requests remaining in the current rate limit window. ``X-Ttl`` contains the
+seconds until the limit is reset.
+
+The professional service is supported by chickadee and allows the execution
+of unlimited requests, commercial use, and https endpoints. More details are
+available on the data source website.
+
+Module Documentation
+--------------------
+
+"""
 import logging
 import time
 from datetime import datetime, timedelta
@@ -27,7 +103,15 @@ FIELDS = [  # Ordered list of fields to gather
 
 
 class Resolver(ResolverBase):
-    """Class to handle ip-api.com API queries for IP addresses."""
+    """Class to handle ip-api.com API queries for IP addresses.
+
+    Sets endpoint to free API, confirms support for requested language,
+    configures rate limit sleep timers.
+
+    Args:
+        fields (list): Collection of fields to request in resolution.
+        lang (str): Language for returned results.
+    """
     def __init__(self, fields=FIELDS, lang='en'):
         self.supported_langs = [
             'en', 'de', 'es', 'pt-BR', 'fr', 'ja', 'zh-CN', 'ru'
@@ -42,13 +126,27 @@ class Resolver(ResolverBase):
         self.wait_time = datetime.now()
 
     def rate_limit(self, headers):
-        """Method to check rate limiting."""
+        """Method to check rate limiting. Checks ``X-Rl`` and ``X-Ttl`` headers.
+
+        Will set timer for rate limiting if ``X-Rl`` is less than 1 for
+        duration of ``X-Ttl`` + 1 second.
+
+        Args:
+            headers (dict): Request header information.
+
+        Return:
+            None
+        """
         if int(headers.get('X-Rl', '0')) < 1:
             self.wait_time = datetime.now() + \
                 timedelta(seconds=int(headers.get('X-Ttl', '0'))+1)
 
     def sleeper(self):
-        """Method to sleep operations for rate limiting."""
+        """Method to sleep operations for rate limiting. Executes sleep.
+
+        Return:
+            None
+        """
         while True:
             now = datetime.now()
             wait_time = self.wait_time - now
@@ -61,7 +159,14 @@ class Resolver(ResolverBase):
             time.sleep(wt_sec)
 
     def batch(self):
-        """Handle batch query operations."""
+        """Handle batch query operations.
+
+        Generally not called directly, should be called by ``self.query()`` to
+        allow for the logic to handle which endpoint is preferred.
+
+        Returns:
+            (list): List of resolved IP address records with specified fields.
+        """
         records = []
         for ip in self.data:
             records.append({'query': ip})
@@ -110,7 +215,14 @@ class Resolver(ResolverBase):
         return resolved_recs
 
     def single(self):
-        """Handle single item query operations."""
+        """Handle single item query operations.
+
+        Generally not called directly, should be called by ``self.query()`` to
+        allow for the logic to handle which endpoint is preferred.
+
+        Returns:
+            (list): List of resolved IP address records with specified fields.
+        """
         params = {
             'fields': ','.join(self.fields),
             'lang': self.lang,
@@ -139,7 +251,16 @@ class Resolver(ResolverBase):
 
 
 class ProResolver(Resolver):
-    """GeoIP resolver using the ip-api.com paid subscription."""
+    """GeoIP resolver using the ip-api.com paid subscription.
+
+    Sets endpoint to paid API, confirms support for requested language,
+    and disables sleep functionality.
+
+    Args:
+        api_key (str): IP-API.com paid API key for requests.
+        fields (list): Collection of fields to request in resolution.
+        lang (str): Language for returned results.
+    """
     def __init__(self, api_key, fields=FIELDS, lang='en'):
         Resolver.__init__(self, fields=fields, lang='en')
         self.uri = 'https://pro.ip-api.com/'

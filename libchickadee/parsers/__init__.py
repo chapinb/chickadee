@@ -1,4 +1,13 @@
-"""Collection of input parsers to extract IP addresses."""
+"""
+Common Parser Utilities
+=======================
+
+Collection of input parser utilities to extract IP addresses.
+
+This includes common regex patterns and utilities for extracting IP addresses
+for resolution.
+
+"""
 
 import re
 
@@ -50,7 +59,14 @@ IPv6Pattern = re.compile(IPV6ADDR)
 
 
 def strip_ipv6(ipv6_addr):
-    """Isolate IPv6 Value"""
+    """Isolate IPv6 Value containing a ``%`` symbol.
+
+    Args:
+        ipv6_addr (str): Raw IPv6 IP address to strip.
+
+    Returns:
+        (str): IP address base.
+    """
     if '%' in ipv6_addr:
         ip, _ = ipv6_addr.split('%')
     else:
