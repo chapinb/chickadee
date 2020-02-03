@@ -1,8 +1,14 @@
-"""Parse IP addresses from plain text files
-and feed to the Chickadee GeoIP API
+"""
+Plain Text Parser
+==================
 
-Plain text files include logs, csvs, json, and other formats where ascii
-strings contain IPv4 or IPv6 addresses.
+Parse IP addresses from plain text files. Plain text files include logs,
+CSVs, JSON, and other formats where ascii strings contain IPv4 or IPv6
+addresses.
+
+Also supported reading from gzipped compressed plain text data without needing
+to first decompress it.
+
 """
 
 import binascii
@@ -25,12 +31,31 @@ class PlainTextParser(object):
 
     @staticmethod
     def is_gz_file(filepath):
-        """Validate whether the input is GZipped."""
+        """Validate whether the input is GZipped.
+
+        Args:
+            filepath (str): File path to test.
+
+        Returns:
+            (bool): True if a gzip file signature is identified.
+        """
         with open(filepath, 'rb') as test_f:
             return binascii.hexlify(test_f.read(2)) == b'1f8b'
 
     def parse_file(self, file_entry, is_stream=False):
-        """Parse contents of the file."""
+        """Parse contents of the file and extract IP addresses.
+
+        Will read from STDIN or path to a file. Stores results in ``self.ips``.
+
+        Args:
+            file_entry (str or file_obj): Path to file for reading.
+            is_stream (bool): Whether the input file is a file to open or a
+                file-like object.
+
+
+        Returns:
+            None
+        """
         if not is_stream:
             if self.is_gz_file(file_entry):
                 file_data = GzipFile(filename=file_entry)
@@ -44,17 +69,29 @@ class PlainTextParser(object):
 
         for raw_line in file_data:
             line = raw_line.decode()
-            for ipv4 in IPv4Pattern.findall(line):
-                if ipv4 not in self.ips:
-                    self.ips[ipv4] = 0
-                self.ips[ipv4] += 1
-            for ipv6 in IPv6Pattern.findall(line):
-                if strip_ipv6(ipv6) not in self.ips:
-                    self.ips[strip_ipv6(ipv6)] = 0
-                self.ips[strip_ipv6(ipv6)] += 1
+            self.check_ips(line)
 
         if 'closed' in dir(file_data) and not file_data.closed:
             file_data.close()
+
+    def check_ips(self, data):
+        """Check data for IP addresses. Results stored in ``self.ips``.
+
+        Args:
+            data (str): String to search for IP address content.
+
+        Returns:
+            None
+        """
+        for ipv4 in IPv4Pattern.findall(data):
+            if ipv4 not in self.ips:
+                self.ips[ipv4] = 0
+            self.ips[ipv4] += 1
+        for ipv6 in IPv6Pattern.findall(data):
+            if strip_ipv6(ipv6) not in self.ips:
+                self.ips[strip_ipv6(ipv6)] = 0
+            self.ips[strip_ipv6(ipv6)] += 1
+
 
 
 if __name__ == "__main__":  # pragma: no cover

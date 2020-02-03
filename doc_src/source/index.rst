@@ -6,6 +6,7 @@ Chickadee Documentation
    :caption: Table of Contents:
 
    utilities
+   parsers
    backends
 
 .. automodule:: libchickadee
