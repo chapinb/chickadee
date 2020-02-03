@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Chickadee Documentation &#8212; chickadee 20200202 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Utilities" href="utilities.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="utilities.html" title="Utilities"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">chickadee 20200202 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="chickadee-documentation">
+<h1>Chickadee Documentation<a class="headerlink" href="#chickadee-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Table of Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parsers.html">Parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends.html">Backends</a></li>
+</ul>
+</div>
+<span class="target" id="module-libchickadee"></span><div class="section" id="libchickadee-overview">
+<h2>Libchickadee Overview<a class="headerlink" href="#libchickadee-overview" title="Permalink to this headline">¶</a></h2>
+<p>Yet another GeoIP resolution tool.</p>
+<p>Libchickadee is a library consisting of tools to extract IP addresses from
+files, resolve the IP address information using third-party data sources, and
+present the resolutions to the end-user in an easy to consume manner. While the
+library consists all of these components, it is primarily leveraged by a single
+command line utility, <code class="docutils literal notranslate"><span class="pre">chickadee</span></code>. The library components can be called
+outside of the <code class="docutils literal notranslate"><span class="pre">chickadee</span></code> utility and this documentation provides
+information on using the library in addition to the command line tool.</p>
+<div class="section" id="components">
+<h3>Components<a class="headerlink" href="#components" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="parsers">
+<h4>Parsers<a class="headerlink" href="#parsers" title="Permalink to this headline">¶</a></h4>
+<p>Collection of utilities for extracting IP addresses from different file
+formats. The <code class="docutils literal notranslate"><span class="pre">chickadee</span></code> utility handles IP addresses provided via STDIN
+and as argument parameters, though leverages these parsers to extract from
+file content. The <code class="docutils literal notranslate"><span class="pre">chickadee</span></code> utility does iterate over directories to
+expose files within folders recursively. With this, each parser needs to
+accept a path to a file to read.</p>
+</div>
+<div class="section" id="backends">
+<h4>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h4>
+<p>This is where the IP address is resolved by a third-party data source. Each
+component is responsible for accepting one or more IP address and returning
+resolution data. The third-party sources will not be distributed with this
+library, each new backend will have documentation to highlight the steps
+required to prepare the data source for use by the backend module.</p>
+<p>The writers for libchickadee are also stored in this module.</p>
+</div>
+<div class="section" id="utilities">
+<h4>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h4>
+<p>This includes the <code class="docutils literal notranslate"><span class="pre">chickadee</span></code> command line tool, used to interact with the
+library from the command line.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Chickadee Documentation</a><ul>
+<li><a class="reference internal" href="#libchickadee-overview">Libchickadee Overview</a><ul>
+<li><a class="reference internal" href="#components">Components</a><ul>
+<li><a class="reference internal" href="#parsers">Parsers</a></li>
+<li><a class="reference internal" href="#backends">Backends</a></li>
+<li><a class="reference internal" href="#utilities">Utilities</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="utilities.html"
+                        title="next chapter">Utilities</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="utilities.html" title="Utilities"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">chickadee 20200202 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright MIT 2020, Chapin Bryce.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>
