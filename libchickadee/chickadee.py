@@ -65,8 +65,8 @@ Usage
 
 
 
-Examples
---------
+chickadee.py Examples
+----------------------
 
 Input options
 ^^^^^^^^^^^^^
@@ -151,8 +151,8 @@ from libchickadee.parsers.xlsx import XLSXParser
 
 
 __author__ = 'Chapin Bryce'
-__date__ = 20200114
-__license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
+__date__ = 20200202
+__license__ = 'MIT Copyright 2020 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.
 
 Will use the free rate limited ip-api.com service for resolution.
@@ -182,6 +182,12 @@ class Chickadee(object):
 
     Returns:
         None
+
+    Examples:
+        >>> chickadee = Chickadee()
+        >>> resolution = chickadee.run('1.1.1.1')
+        >>> print(resolution)
+
     """
     def __init__(self, outformat='json', outfile=sys.stdout, fields=_FIELDS):
         self.input_data = None
