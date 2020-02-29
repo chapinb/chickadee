@@ -5,6 +5,7 @@ Yet another GeoIP resolution tool.
 ![build status](https://travis-ci.org/chapinb/chickadee.svg?branch=master)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/chapinb/chickadee.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/chapinb/chickadee/alerts/)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/chapinb/chickadee.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/chapinb/chickadee/context:python)
+![Unit Tests](https://github.com/chapinb/chickadee/workflows/Unit%20Tests/badge.svg)
 
 ```
          _          _
