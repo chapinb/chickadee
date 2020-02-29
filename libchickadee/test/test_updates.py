@@ -1,6 +1,5 @@
 """Plain-text parsing tests"""
 import unittest
-import os
 
 from libchickadee import __version__
 from libchickadee.update import update_available, get_pypi_version

@@ -223,7 +223,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
     def test_argparse(self):
         args = [
             "1.1.1.1", "-t", "csv", "-w", "test.out", "-n", "-s",
-            "--lang", "es", "-c", "test.config", "-p", "-v", 
+            "--lang", "es", "-c", "test.config", "-p", "-v",
             "--log", "test.log", "-f", "query,message,mobile,org"
         ]
         parsed = arg_handling(args)
