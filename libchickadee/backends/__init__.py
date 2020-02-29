@@ -132,9 +132,9 @@ class ResolverBase(object):
 
             Generation of a JSON Lines report
 
-            >>> records = [{'query': '1.1.1.1', 'count': 2}]
+            >>> recs = [{'query': '1.1.1.1', 'count': 2}]
             >>> resolver = ResolverBase()
-            >>> resolver.write_json('test.jsonl', records, ['query', 'count'], True)
+            >>> resolver.write_json('out.json', recs, ['query', 'count'], True)
 
         """
         if isinstance(outfile, str):

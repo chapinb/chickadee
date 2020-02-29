@@ -422,7 +422,7 @@ def setup_logging(path, verbose=False):
 
     Args:
         path (str): File path to write log messages to
-        verbose (bool): Whether the debug messages should be displayed on STDERR
+        verbose (bool): If the debug messages should be displayed on STDERR
 
     Returns:
         None
@@ -525,12 +525,12 @@ def config_handing(config_file=None, search_conf_path=[]):
 
     fail_warn = 'Relying on argument defaults'
     if not config_file:
-        logger.debug('Config file not found. ' +fail_warn)
+        logger.debug('Config file not found. ' + fail_warn)
         return
 
     if not os.path.exists(config_file) or not os.path.isfile(config_file):
         logger.debug('Error accessing config file ' + config_file + '.'
-            + fail_warn)
+                     + fail_warn)
         return
 
     conf = configparser.ConfigParser()

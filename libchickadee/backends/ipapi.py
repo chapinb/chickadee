@@ -63,8 +63,8 @@ Limitations
 ^^^^^^^^^^^
 
 This service has a free tier for non-commercial use, and is rate limited to
-15 requests per minute. The returned HTTP header ``X-Rl`` contains the number of
-requests remaining in the current rate limit window. ``X-Ttl`` contains the
+15 requests per minute. The returned HTTP header ``X-Rl`` contains the number
+of requests remaining in the current rate limit window. ``X-Ttl`` contains the
 seconds until the limit is reset.
 
 The professional service is supported by chickadee and allows the execution
@@ -93,11 +93,11 @@ __desc__ = '''Yet another GeoIP resolution tool.'''
 
 FIELDS = [  # Ordered list of fields to gather
     'query',
-    'as', 'org', 'isp'
+    'as', 'org', 'isp',
     'continent', 'country', 'regionName', 'city',
     'district', 'zip',
     'mobile', 'proxy', 'reverse',
-    'lat', 'lon', 'timezone'
+    'lat', 'lon', 'timezone',
     'status', 'message'
 ]
 
@@ -118,7 +118,7 @@ class Resolver(ResolverBase):
         ]
         if lang not in self.supported_langs:
             lang = 'en'
-        ResolverBase.__init__(self, fields=fields, lang='en')
+        ResolverBase.__init__(self, fields=fields, lang=lang)
 
         self.uri = 'http://ip-api.com/'
         self.api_key = None
