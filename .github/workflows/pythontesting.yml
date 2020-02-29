@@ -1,4 +1,4 @@
-name: Test Python 3.5 through 3.8
+name: Unit Tests
 
 on: [push]
 
