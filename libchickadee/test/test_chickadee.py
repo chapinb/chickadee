@@ -1,8 +1,10 @@
 """Chickadee script tests."""
 import unittest
 import os
+import sys
 
-from libchickadee.chickadee import Chickadee
+from libchickadee.chickadee import Chickadee, arg_handling, join_config_args
+from libchickadee.chickadee import config_handing
 
 __author__ = 'Chapin Bryce'
 __date__ = 20200114
@@ -148,8 +150,6 @@ class ChickadeeFileTestCase(unittest.TestCase):
         res = [x for x in data]
         batch_result = []  # No reverse field
         for item in self.txt_data_results:
-            if 'reverse' in item:
-                item.pop('reverse')
             batch_result.append(item)
         self.assertCountEqual(res, batch_result)
 
@@ -162,8 +162,6 @@ class ChickadeeFileTestCase(unittest.TestCase):
         res = [x for x in data]
         batch_result = []  # No reverse field
         for item in self.txt_data_results:
-            if 'reverse' in item:
-                item.pop('reverse')
             batch_result.append(item)
         self.assertCountEqual(res, batch_result)
 
@@ -175,8 +173,6 @@ class ChickadeeFileTestCase(unittest.TestCase):
         res = [x for x in data]
         batch_result = []  # No reverse field
         for item in self.xlsx_data_results:
-            if 'reverse' in item:
-                item.pop('reverse')
             batch_result.append(item)
         self.assertCountEqual(res, batch_result)
 
@@ -223,6 +219,169 @@ class ChickadeeFileTestCase(unittest.TestCase):
         data = chickadee.run(self.test_data_dir)
         res = [x for x in data]
         self.assertCountEqual(res, expected)
+
+    def test_argparse(self):
+        args = [
+            "1.1.1.1", "-t", "csv", "-w", "test.out", "-n", "-s",
+            "--lang", "es", "-c", "test.config", "-p", "-v", 
+            "--log", "test.log", "-f", "query,message,mobile,org"
+        ]
+        parsed = arg_handling(args)
+
+        self.assertEqual(parsed.data, ["1.1.1.1"])
+        self.assertEqual(parsed.fields, "query,message,mobile,org")
+        self.assertEqual(parsed.output_format, "csv")
+        self.assertEqual(parsed.output_file, "test.out")
+        self.assertEqual(parsed.lang, "es")
+        self.assertEqual(parsed.config, "test.config")
+        self.assertEqual(parsed.log, "test.log")
+        self.assertTrue(parsed.no_resolve)
+        self.assertTrue(parsed.single)
+        self.assertTrue(parsed.progress)
+        self.assertTrue(parsed.verbose)
+
+        joined = join_config_args({}, parsed)
+        self.assertDictEqual(
+            joined,
+            {
+                "data": ["1.1.1.1"],
+                "fields": "query,message,mobile,org",
+                "lang": "es",
+                "progress": True,
+                'log': 'test.log',
+                'verbose': True,
+                'backend': 'ip_api',
+                'api-key': None,
+                'no-resolve': True,
+                'single': True,
+                'output-format': 'csv',
+                'output-file': 'test.out',
+            }
+        )
+
+    def test_configparse(self):
+        args = ["1.1.1.1", "-f", "query,message,mobile,org"]
+        parsed = arg_handling(args)
+        opts = {
+            "fields": "query,message",
+            "progress": True,
+            "lang": "es"
+        }
+        joined = join_config_args(opts, parsed)
+
+        self.assertDictEqual(
+            joined,
+            {
+                "data": ["1.1.1.1"],
+                "fields": "query,message,mobile,org",
+                "lang": "es",
+                "progress": True,
+                'log': os.path.abspath(os.path.join(
+                    os.getcwd(), 'chickadee.log')),
+                'verbose': False,
+                'backend': 'ip_api',
+                'api-key': None,
+                'no-resolve': False,
+                'single': False,
+                'output-format': 'jsonl',
+                'output-file': sys.stdout,
+            }
+        )
+
+    def test_parse_config_file_provided(self):
+        # Str, list, bool, dict, int
+        test_conf = 'chickadee.ini'
+        open_file = open(test_conf, 'w')
+        body = """
+        [main]
+        output-format = csv
+        verbose = true
+        fields = query,country
+        [backends]
+        backend = ip_api
+        ip_api = not-an-api-key
+        """
+        open_file.write(body)
+        open_file.close()
+        data = config_handing(test_conf)
+        self.assertDictEqual(
+            data,
+            {
+                "output-format": "csv",
+                "verbose": True,
+                "fields": "query,country",
+                "progress": None,
+                "no-resolve": None,
+                "log": None,
+                "backend": "ip_api",
+                "api-key": "not-an-api-key"
+            }
+        )
+        os.remove(test_conf)
+
+    def test_parse_config_file_workdir(self):
+        # Str, list, bool, dict, int
+        test_conf = 'chickadee.ini'
+        open_file = open(test_conf, 'w')
+        body = """
+        [main]
+        output-format = csv
+        verbose = true
+        fields = query,country
+        [backends]
+        backend = ip_api
+        ip_api = not-an-api-key
+        """
+        open_file.write(body)
+        open_file.close()
+        data = config_handing()
+        self.assertDictEqual(
+            data,
+            {
+                "output-format": "csv",
+                "verbose": True,
+                "fields": "query,country",
+                "progress": None,
+                "no-resolve": None,
+                "log": None,
+                "backend": "ip_api",
+                "api-key": "not-an-api-key"
+            }
+        )
+        os.remove(test_conf)
+
+    def test_parse_config_file_userdir(self):
+        # Str, list, bool, dict, int
+        test_conf = '.chickadee.ini'
+        conf_path = os.path.join(
+            os.path.expanduser("~"), test_conf)
+        open_file = open(conf_path, 'w')
+        body = """
+        [main]
+        output-format = csv
+        verbose = true
+        fields = query,country
+        [backends]
+        backend = ip_api
+        ip_api = not-an-api-key
+        """
+        open_file.write(body)
+        open_file.close()
+        data = config_handing()
+        self.assertDictEqual(
+            data,
+            {
+                "output-format": "csv",
+                "verbose": True,
+                "fields": "query,country",
+                "progress": None,
+                "no-resolve": None,
+                "log": None,
+                "backend": "ip_api",
+                "api-key": "not-an-api-key"
+            }
+        )
+        os.remove(conf_path)
 
 
 if __name__ == '__main__':
