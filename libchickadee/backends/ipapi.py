@@ -240,11 +240,11 @@ class Resolver(ResolverBase):
         if rdata.status_code == 200:
             self.rate_limit(rdata.headers)
             return rdata.json()
-        elif rdata.status_code == 429:
+        elif rdata.status_code == 429:  # pragma: no cover
             self.rate_limit(rdata.headers)
             self.sleeper()
             return self.single()
-        else:
+        else:  # pragma: no cover
             msg = "Unknown error encountered: {}".format(rdata.status_code)
             logger.error(msg)
             return [{'query': self.data, 'status': 'failed', 'message': msg}]
