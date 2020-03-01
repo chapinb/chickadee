@@ -50,6 +50,60 @@
 <p>Collection of input parser utilities to extract IP addresses.</p>
 <p>This includes common regex patterns and utilities for extracting IP addresses
 for resolution.</p>
+<dl class="class">
+<dt id="libchickadee.parsers.ParserBase">
+<em class="property">class </em><code class="sig-prename descclassname">libchickadee.parsers.</code><code class="sig-name descname">ParserBase</code><span class="sig-paren">(</span><em class="sig-param">ignore_bogon=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.ParserBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for parsers, containing common utilities.</p>
+<dl class="method">
+<dt id="libchickadee.parsers.ParserBase.check_ips">
+<code class="sig-name descname">check_ips</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.ParserBase.check_ips" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check data for IP addresses. Results stored in <code class="docutils literal notranslate"><span class="pre">self.ips</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>str</em>) – String to search for IP address content.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libchickadee.parsers.ParserBase.is_bogon">
+<code class="sig-name descname">is_bogon</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.ParserBase.is_bogon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identifies whether an IP address is a known BOGON.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ip_addr</strong> (<em>str</em>) – Valid IP address to check.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whether or not the IP is a known BOGON address.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(bool)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="libchickadee.parsers.ParserBase.strip_ipv6">
+<em class="property">static </em><code class="sig-name descname">strip_ipv6</code><span class="sig-paren">(</span><em class="sig-param">ipv6_addr</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.ParserBase.strip_ipv6" title="Permalink to this definition">¶</a></dt>
+<dd><p>Isolate IPv6 Value containing a <code class="docutils literal notranslate"><span class="pre">%</span></code> symbol.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ipv6_addr</strong> (<em>str</em>) – Raw IPv6 IP address to strip.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>IP address base.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <span class="target" id="module-libchickadee.parsers.plain_text"></span><div class="section" id="plain-text-parser">
 <h2>Plain Text Parser<a class="headerlink" href="#plain-text-parser" title="Permalink to this headline">¶</a></h2>
