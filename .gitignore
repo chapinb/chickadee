@@ -108,5 +108,4 @@ venv.bak/
 # CDB
 chickadee.ini
 .vscode/
-.*rc
 test_data/
