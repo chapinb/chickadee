@@ -3,11 +3,19 @@ import unittest
 import os
 
 from libchickadee.parsers.plain_text import PlainTextParser
+from libchickadee.parsers import ParserBase
 
 __author__ = 'Chapin Bryce'
 __date__ = 20200107
 __license__ = 'MIT Copyright 2020 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
+
+
+class ParserBaseTestCase(unittest.TestCase):
+    def test_ipv6(self):
+        ip = "2001:4860:4860::8844%16"
+        bare_ip = ParserBase.strip_ipv6(ip)
+        self.assertEqual(ip.split("%")[0], bare_ip)
 
 
 class PlainTextParserTestCase(unittest.TestCase):

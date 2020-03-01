@@ -11,7 +11,7 @@ import os
 
 from openpyxl import load_workbook
 
-from libchickadee.parsers import IPv4Pattern, IPv6Pattern, strip_ipv6
+from libchickadee.parsers import ParserBase
 
 
 __author__ = 'Chapin Bryce'
@@ -20,9 +20,10 @@ __license__ = 'MIT Copyright 2020 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
 
-class XLSXParser(object):
+class XLSXParser(ParserBase):
     """Class to extract IP addresses from XLSX workbooks."""
     def __init__(self):
+        super()
         self.ips = dict()
 
     def parse_file(self, file_entry, is_stream=False):
@@ -42,24 +43,6 @@ class XLSXParser(object):
                 for cell in row:
                     if isinstance(cell.value, (str, bytes)):
                         self.check_ips(cell.value)
-
-    def check_ips(self, data):
-        """Check data for IP addresses. Results stored in ``self.ips``.
-
-        Args:
-            data (str): String to search for IP address content.
-
-        Returns:
-            None
-        """
-        for ipv4 in IPv4Pattern.findall(data):
-            if ipv4 not in self.ips:
-                self.ips[ipv4] = 0
-            self.ips[ipv4] += 1
-        for ipv6 in IPv6Pattern.findall(data):
-            if strip_ipv6(ipv6) not in self.ips:
-                self.ips[strip_ipv6(ipv6)] = 0
-            self.ips[strip_ipv6(ipv6)] += 1
 
 
 if __name__ == '__main__':  # pragma: no cover

@@ -58,17 +58,38 @@ IPv4Pattern = re.compile(IPV4ADDR)
 IPv6Pattern = re.compile(IPV6ADDR)
 
 
-def strip_ipv6(ipv6_addr):
-    """Isolate IPv6 Value containing a ``%`` symbol.
+class ParserBase(object):
 
-    Args:
-        ipv6_addr (str): Raw IPv6 IP address to strip.
+    def check_ips(self, data):
+        """Check data for IP addresses. Results stored in ``self.ips``.
 
-    Returns:
-        (str): IP address base.
-    """
-    if '%' in ipv6_addr:
-        ip, _ = ipv6_addr.split('%')
-    else:
-        ip = ipv6_addr
-    return ip
+        Args:
+            data (str): String to search for IP address content.
+
+        Returns:
+            None
+        """
+        for ipv4 in IPv4Pattern.findall(data):
+            if ipv4 not in self.ips:
+                self.ips[ipv4] = 0
+            self.ips[ipv4] += 1
+        for ipv6 in IPv6Pattern.findall(data):
+            if self.strip_ipv6(ipv6) not in self.ips:
+                self.ips[self.strip_ipv6(ipv6)] = 0
+            self.ips[self.strip_ipv6(ipv6)] += 1
+
+    @staticmethod
+    def strip_ipv6(ipv6_addr):
+        """Isolate IPv6 Value containing a ``%`` symbol.
+
+        Args:
+            ipv6_addr (str): Raw IPv6 IP address to strip.
+
+        Returns:
+            (str): IP address base.
+        """
+        if '%' in ipv6_addr:
+            ip, _ = ipv6_addr.split('%')
+        else:
+            ip = ipv6_addr
+        return ip
