@@ -195,6 +195,7 @@ class Chickadee(object):
         self.outfile = outfile
         self.fields = fields
         self.force_single = False
+        self.ignore_bogon = True
         self.lang = 'en'
         self.pbar = False
         self.resolve_ips = True
@@ -225,10 +226,13 @@ class Chickadee(object):
                 os.path.isdir(self.input_data):
             logger.debug("Detected the data source as a directory")
             result_dict = self.dir_handler(self.input_data)  # Dir handler
+
         elif isinstance(self.input_data, _io.TextIOWrapper) or \
                 os.path.isfile(self.input_data):
             logger.debug("Detected the data source as a file")
-            result_dict = self.file_handler(self.input_data)  # File handler
+            # File handler
+            result_dict = self.file_handler(self.input_data, self.ignore_bogon)
+
         elif isinstance(self.input_data, str):
             logger.debug("Detected the data source as raw value(s)")
             result_dict = self.str_handler(self.input_data)  # String handler
@@ -286,7 +290,7 @@ class Chickadee(object):
         return data_dict
 
     @staticmethod
-    def file_handler(file_path):
+    def file_handler(file_path, ignore_bogon):
         """Handle parsing IP addresses from a file.
 
         Will evaluate format of input file or file stream. Currently supports
@@ -294,6 +298,7 @@ class Chickadee(object):
 
         Args:
             file_path (str or file_obj): Path of file to read or stream.
+            ignore_bogon (bool): Whether to include BOGON addresses in results.
 
         Return:
             data_dict (dict): dictionary of distinct IP addresses to resolve.
@@ -308,13 +313,14 @@ class Chickadee(object):
             logger.debug("Extracting IPs from {}".format(file_path))
 
         if not is_stream and file_path.endswith('xlsx'):
-            file_parser = XLSXParser()
+            file_parser = XLSXParser(ignore_bogon)
         else:
-            file_parser = PlainTextParser()
+            file_parser = PlainTextParser(ignore_bogon)
         try:
             file_parser.parse_file(file_path, is_stream)
-        except Exception:
-            logger.warning("Failed to parse {}".format(file_path))
+        except Exception as e:
+            logger.error("Failed to parse {}".format(file_path))
+            logger.error("Error message: {}".format(e))
         return file_parser.ips
 
     def dir_handler(self, folder_path):
@@ -334,7 +340,7 @@ class Chickadee(object):
             for fentry in files:
                 file_entry = os.path.join(root, fentry)
                 logger.debug("Parsing file {}".format(file_entry))
-                file_results = self.file_handler(file_entry)
+                file_results = self.file_handler(file_entry, self.ignore_bogon)
                 logger.debug("Parsed file {}, {} results".format(
                     file_entry, len(file_results)))
                 result_dict = dict(Counter(result_dict)+Counter(file_results))
@@ -484,6 +490,7 @@ def config_handing(config_file=None, search_conf_path=[]):
             'output-format': '',
             'progress': False,
             'no-resolve': False,
+            'include-bogon': False,
             'log': '',
             'verbose': False
         },
@@ -599,6 +606,8 @@ def arg_handling(args):
     parser.add_argument('--lang', help="Language", default='en',
                         choices=['en', 'de', 'es', 'pt-BR', 'fr', 'ja',
                                  'zh-CN', 'ru'])
+    parser.add_argument('-b', '--include-bogon', action='store_true',
+                        help="Include BOGON addresses in results.")
     parser.add_argument('-c', '--config', help="Path to config file to load")
     parser.add_argument('-p', '--progress', help="Enable progress bar",
                         action="store_true")
@@ -641,6 +650,7 @@ def join_config_args(config, args, definitions={}):
             'output-file': sys.stdout,
             'progress': False,
             'no-resolve': False,
+            'include-bogon': False,
             'single': False,
             'lang': 'en',
             'log': os.path.abspath(os.path.join(
@@ -711,6 +721,7 @@ def entry(args=sys.argv):
     logger.debug("Configuring Chickadee")
     chickadee = Chickadee(fields=params.get('fields').split(','))
     chickadee.resolve_ips = not params.get('no-resolve')
+    chickadee.ignore_bogon = not params.get('include-bogon')
     chickadee.force_single = params.get('single')
     chickadee.lang = params.get('lang')
     chickadee.pbar = params.get('progress')

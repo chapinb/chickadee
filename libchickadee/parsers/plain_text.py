@@ -26,8 +26,8 @@ __desc__ = '''Yet another GeoIP resolution tool.'''
 class PlainTextParser(ParserBase):
     """Class to extract IP addresses from plain text
         and gzipped plain text files."""
-    def __init__(self):
-        super()
+    def __init__(self, ignore_bogon=True):
+        super().__init__(ignore_bogon)
         self.ips = dict()
 
     @staticmethod
@@ -62,13 +62,23 @@ class PlainTextParser(ParserBase):
             else:
                 file_data = open(file_entry, 'rb')
         else:
-            if binascii.hexlify(file_entry.buffer.read(2)) == b'1f8b':
+            # Encode if needed
+            if isinstance(file_entry.buffer.read(2), str):
+                two_bytes = file_entry.buffer.read(2).encode()
+            else:
+                two_bytes = file_entry.buffer.read(2)
+            file_entry.seek(0)
+            # Check for gzip stream
+            if binascii.hexlify(two_bytes) == b'1f8b':
                 file_data = GzipFile(fileobj=file_entry)
             else:
                 file_data = file_entry.buffer
 
         for raw_line in file_data:
-            line = raw_line.decode()
+            if isinstance(raw_line, str):
+                line = raw_line
+            else:
+                line = raw_line.decode()
             self.check_ips(line)
 
         if 'closed' in dir(file_data) and not file_data.closed:

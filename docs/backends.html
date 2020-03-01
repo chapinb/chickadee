@@ -8,15 +8,15 @@
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Utilities" href="utilities.html" /> 
+    <link rel="prev" title="Parsers" href="parsers.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -28,7 +28,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="utilities.html" title="Utilities"
+          <a href="parsers.html" title="Parsers"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200202 documentation</a> &#187;</li> 
       </ul>
@@ -152,9 +152,9 @@ a whole json object.</p></li>
 </pre></div>
 </div>
 <p>Generation of a JSON Lines report</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">records</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;1.1.1.1&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}]</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">recs</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;1.1.1.1&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">resolver</span> <span class="o">=</span> <span class="n">ResolverBase</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">resolver</span><span class="o">.</span><span class="n">write_json</span><span class="p">(</span><span class="s1">&#39;test.jsonl&#39;</span><span class="p">,</span> <span class="n">records</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">],</span> <span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resolver</span><span class="o">.</span><span class="n">write_json</span><span class="p">(</span><span class="s1">&#39;out.json&#39;</span><span class="p">,</span> <span class="n">recs</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">],</span> <span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -220,8 +220,8 @@ depending on the number of IP addresses requested for resolution.</p>
 <div class="section" id="limitations">
 <h4>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h4>
 <p>This service has a free tier for non-commercial use, and is rate limited to
-15 requests per minute. The returned HTTP header <code class="docutils literal notranslate"><span class="pre">X-Rl</span></code> contains the number of
-requests remaining in the current rate limit window. <code class="docutils literal notranslate"><span class="pre">X-Ttl</span></code> contains the
+15 requests per minute. The returned HTTP header <code class="docutils literal notranslate"><span class="pre">X-Rl</span></code> contains the number
+of requests remaining in the current rate limit window. <code class="docutils literal notranslate"><span class="pre">X-Ttl</span></code> contains the
 seconds until the limit is reset.</p>
 <p>The professional service is supported by chickadee and allows the execution
 of unlimited requests, commercial use, and https endpoints. More details are
@@ -232,7 +232,7 @@ available on the data source website.</p>
 <h3>Module Documentation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="libchickadee.backends.ipapi.ProResolver">
-<em class="property">class </em><code class="sig-prename descclassname">libchickadee.backends.ipapi.</code><code class="sig-name descname">ProResolver</code><span class="sig-paren">(</span><em class="sig-param">api_key, fields=['query', 'as', 'org', 'ispcontinent', 'country', 'regionName', 'city', 'district', 'zip', 'mobile', 'proxy', 'reverse', 'lat', 'lon', 'timezonestatus', 'message'], lang='en'</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.backends.ipapi.ProResolver" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">libchickadee.backends.ipapi.</code><code class="sig-name descname">ProResolver</code><span class="sig-paren">(</span><em class="sig-param">api_key, fields=['query', 'as', 'org', 'isp', 'continent', 'country', 'regionName', 'city', 'district', 'zip', 'mobile', 'proxy', 'reverse', 'lat', 'lon', 'timezone', 'status', 'message'], lang='en'</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.backends.ipapi.ProResolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>GeoIP resolver using the ip-api.com paid subscription.</p>
 <p>Sets endpoint to paid API, confirms support for requested language,
 and disables sleep functionality.</p>
@@ -249,7 +249,7 @@ and disables sleep functionality.</p>
 
 <dl class="class">
 <dt id="libchickadee.backends.ipapi.Resolver">
-<em class="property">class </em><code class="sig-prename descclassname">libchickadee.backends.ipapi.</code><code class="sig-name descname">Resolver</code><span class="sig-paren">(</span><em class="sig-param">fields=['query', 'as', 'org', 'ispcontinent', 'country', 'regionName', 'city', 'district', 'zip', 'mobile', 'proxy', 'reverse', 'lat', 'lon', 'timezonestatus', 'message'], lang='en'</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.backends.ipapi.Resolver" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">libchickadee.backends.ipapi.</code><code class="sig-name descname">Resolver</code><span class="sig-paren">(</span><em class="sig-param">fields=['query', 'as', 'org', 'isp', 'continent', 'country', 'regionName', 'city', 'district', 'zip', 'mobile', 'proxy', 'reverse', 'lat', 'lon', 'timezone', 'status', 'message'], lang='en'</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.backends.ipapi.Resolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class to handle ip-api.com API queries for IP addresses.</p>
 <p>Sets endpoint to free API, confirms support for requested language,
 configures rate limit sleep timers.</p>
@@ -363,8 +363,8 @@ allow for the logic to handle which endpoint is preferred.</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="utilities.html"
-                        title="previous chapter">Utilities</a></p>
+  <p class="topless"><a href="parsers.html"
+                        title="previous chapter">Parsers</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -381,7 +381,7 @@ allow for the logic to handle which endpoint is preferred.</p>
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -396,14 +396,14 @@ allow for the logic to handle which endpoint is preferred.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="utilities.html" title="Utilities"
+          <a href="parsers.html" title="Parsers"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200202 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright MIT 2020, Chapin Bryce.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.3.
     </div>
   </body>
 </html>

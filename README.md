@@ -6,6 +6,7 @@ Yet another GeoIP resolution tool.
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/chapinb/chickadee.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/chapinb/chickadee/alerts/)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/chapinb/chickadee.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/chapinb/chickadee/context:python)
 ![Unit Tests](https://github.com/chapinb/chickadee/workflows/Unit%20Tests/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/chapinb/chickadee/badge.svg?branch=issue-7)](https://coveralls.io/github/chapinb/chickadee?branch=issue-7)
 
 ```
          _          _

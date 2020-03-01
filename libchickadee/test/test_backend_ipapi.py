@@ -111,11 +111,12 @@ class WritersTestCase(unittest.TestCase):
         )
 
     def test_write_json_headers(self):
-        Resolver.write_json(self.testfile, self.data, ['a'])
+        Resolver.write_json(self.testfile, self.data, ['a', 'none'])
         self.open_file = open("testfile")
         read_data = json.load(self.open_file)
         rec = self.data[0]
         rec.pop("b")
+        rec["none"] = None
         self.assertDictEqual(
             rec,
             read_data[0]

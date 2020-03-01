@@ -23,7 +23,7 @@ class XLSXParserTestCase(unittest.TestCase):
             '2001:4860:4860::8844': 2,
             '2001:4860:4860::8888': 1
         }
-        self.parser = XLSXParser()
+        self.parser = XLSXParser(ignore_bogon=False)
         self.test_data_dir = os.path.join(
             os.path.dirname(__file__), 'test_data')
 
