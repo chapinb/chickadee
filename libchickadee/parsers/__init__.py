@@ -11,6 +11,8 @@ for resolution.
 
 import re
 
+from netaddr import IPAddress
+
 __author__ = 'Chapin Bryce'
 __date__ = 20200107
 __license__ = 'MIT Copyright 2020 Chapin Bryce'
@@ -59,6 +61,8 @@ IPv6Pattern = re.compile(IPV6ADDR)
 
 
 class ParserBase(object):
+    def __init__(self, ignore_bogon=True):
+        self.ignore_bogon = ignore_bogon
 
     def check_ips(self, data):
         """Check data for IP addresses. Results stored in ``self.ips``.
@@ -70,10 +74,14 @@ class ParserBase(object):
             None
         """
         for ipv4 in IPv4Pattern.findall(data):
+            if self.ignore_bogon and self.is_bogon(ipv4):
+                continue
             if ipv4 not in self.ips:
                 self.ips[ipv4] = 0
             self.ips[ipv4] += 1
         for ipv6 in IPv6Pattern.findall(data):
+            if self.ignore_bogon and self.is_bogon(ipv6):
+                continue
             if self.strip_ipv6(ipv6) not in self.ips:
                 self.ips[self.strip_ipv6(ipv6)] = 0
             self.ips[self.strip_ipv6(ipv6)] += 1
@@ -93,3 +101,18 @@ class ParserBase(object):
         else:
             ip = ipv6_addr
         return ip
+
+    def is_bogon(ip_addr):
+        """Identifies whether an IP address is a known BOGON.
+
+        Args:
+            ip_addr (str): Valid IP address to check.
+
+        Returns:
+            (bool): Whether or not the IP is a known BOGON address.
+        """
+        ip = IPAddress(ip_addr)
+        if (ip.is_private() or ip.is_link_local() or
+                ip.is_reserved() or ip.is_multicast()):
+            return True
+        return False
