@@ -53,6 +53,46 @@ class ParserBaseTestCase(unittest.TestCase):
         for ip in ip_list:
             self.assertFalse(ParserBase.is_bogon(ip))
 
+    def test_check_ips_nobogon(self):
+        parser = ParserBase()
+        parser.ips = dict()
+        ip = [
+            "2001:4860:4860::8844",
+            "fe80::175:a2ad:8508:a655%16",
+            '1.1.1.1',
+            '127.0.0.1',
+            '1.1.1.1'
+        ]
+        parser.check_ips(",".join(ip))
+        self.assertDictEqual(
+            parser.ips,
+            {
+                "2001:4860:4860::8844": 1,
+                '1.1.1.1': 2
+            }
+        )
+
+    def test_check_ips_bogon(self):
+        parser = ParserBase(ignore_bogon=False)
+        parser.ips = dict()
+        ip = [
+            "2001:4860:4860::8844",
+            "fe80::175:a2ad:8508:a655%16",
+            '1.1.1.1',
+            '127.0.0.1',
+            '1.1.1.1'
+        ]
+        parser.check_ips(",".join(ip))
+        self.assertDictEqual(
+            parser.ips,
+            {
+                "2001:4860:4860::8844": 1,
+                "fe80::175:a2ad:8508:a655": 1,
+                '127.0.0.1': 1,
+                '1.1.1.1': 2
+            }
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

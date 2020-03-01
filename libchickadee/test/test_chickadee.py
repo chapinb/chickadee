@@ -2,6 +2,7 @@
 import unittest
 import os
 import sys
+import io
 
 from libchickadee.chickadee import Chickadee, arg_handling, join_config_args
 from libchickadee.chickadee import config_handing
@@ -237,6 +238,25 @@ class ChickadeeStringTestCase(unittest.TestCase):
         res = [x for x in data]
         self.assertCountEqual(res, self.expected_result)
 
+    def test_chickadee_force_single(self):
+        """Batch Query Method Test"""
+        chickadee = Chickadee()
+        chickadee.ignore_bogon = False
+        chickadee.force_single = True
+        chickadee.fields = self.fields
+        data = chickadee.run(','.join(self.test_data_ips))
+        res = [x for x in data]
+        self.assertCountEqual(res, self.expected_result)
+
+    def test_improper_type(self):
+        failed = False
+        try:
+            # Provide improper data type
+            Chickadee.str_handler(['test'])
+        except TypeError:
+            failed = True
+        self.assertTrue(failed)
+
 
 class ChickadeeFileTestCase(unittest.TestCase):
     """Chickadee script tests."""
@@ -396,6 +416,22 @@ class ChickadeeFileTestCase(unittest.TestCase):
         data = chickadee.run(self.test_data_dir)
         res = [x for x in data]
         self.assertCountEqual(res, expected)
+
+    def test_file_handler_stream(self):
+        stream = io.TextIOWrapper(io.StringIO("test 1.1.1.1 ip"))
+        ips = Chickadee.file_handler(stream, ignore_bogon=True)
+        self.assertDictEqual(
+            ips,
+            {"1.1.1.1": 1}
+        )
+
+
+# class ChickadeeUtilityTestCase(unittest.TestCase):
+#     def test_get_apikey(self):
+#         os.environ["CHICKADEE_API_KEY"] = "test123"
+#         api_key = Chickadee.get_api_key()
+#         os.environ.pop("CHICKADEE_API_KEY")
+#         self.assertEqual(api_key, "test123")
 
 
 if __name__ == '__main__':

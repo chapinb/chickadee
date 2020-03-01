@@ -318,8 +318,9 @@ class Chickadee(object):
             file_parser = PlainTextParser(ignore_bogon)
         try:
             file_parser.parse_file(file_path, is_stream)
-        except Exception:
-            logger.warning("Failed to parse {}".format(file_path))
+        except Exception as e:
+            logger.error("Failed to parse {}".format(file_path))
+            logger.error("Error message: {}".format(e))
         return file_parser.ips
 
     def dir_handler(self, folder_path):
