@@ -1,5 +1,9 @@
 """IP-API Backend Tests."""
 import unittest
+import csv
+import json
+import os
+from collections import OrderedDict
 
 from libchickadee.backends.ipapi import Resolver
 
@@ -41,8 +45,6 @@ class IPAPITestCase(unittest.TestCase):
         res = [x for x in data]
         batch_result = []  # No reverse field
         for item in self.expected_result:
-            if 'reverse' in item:
-                item.pop('reverse')
             batch_result.append(item)
         self.assertCountEqual(res, batch_result)
 
@@ -73,6 +75,60 @@ class IPAPITestCase(unittest.TestCase):
                     continue
                 expected[field] = self.expected_result[count].get(field, None)
             self.assertEqual(data, expected)
+
+
+class WritersTestCase(unittest.TestCase):
+    def setUp(self):
+        self.data = [
+            OrderedDict(**{"a": '1', "b": "2"})
+        ]
+        self.testfile = "testfile"
+        self.open_file = None
+
+    def tearDown(self):
+        self.open_file.close()
+        os.remove(self.testfile)
+
+    def test_write_csv(self):
+        Resolver.write_csv(self.testfile, self.data)
+        self.open_file = open("testfile")
+        read_data = next(csv.DictReader(self.open_file))
+        self.assertDictEqual(
+            self.data[0],
+            read_data
+        )
+
+    def test_write_json(self):
+        data = [
+            {"a": '1', "b": "2"}
+        ]
+        Resolver.write_json(self.testfile, self.data)
+        self.open_file = open("testfile")
+        read_data = json.load(self.open_file)
+        self.assertEqual(
+            data,
+            read_data
+        )
+
+    def test_write_json_headers(self):
+        Resolver.write_json(self.testfile, self.data, ['a'])
+        self.open_file = open("testfile")
+        read_data = json.load(self.open_file)
+        rec = self.data[0]
+        rec.pop("b")
+        self.assertDictEqual(
+            rec,
+            read_data[0]
+        )
+
+    def test_write_json_lines(self):
+        Resolver.write_json(self.testfile, self.data, lines=True)
+        self.open_file = open("testfile")
+        read_data = json.load(self.open_file)
+        self.assertDictEqual(
+            self.data[0],
+            read_data
+        )
 
 
 '''

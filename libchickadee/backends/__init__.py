@@ -99,8 +99,10 @@ class ResolverBase(object):
             # Use the first line of data
             headers = [str(x) for x in data[0].keys()]
 
+        was_opened = False
         if isinstance(outfile, str):
             open_file = open(outfile, 'w', newline="")
+            was_opened = True
         else:
             open_file = outfile
 
@@ -109,6 +111,8 @@ class ResolverBase(object):
                                  extrasaction='ignore')
         csvfile.writeheader()
         csvfile.writerows(data)
+        if was_opened:
+            open_file.close()
 
     @staticmethod
     def write_json(outfile, data, headers=None, lines=False):
@@ -137,8 +141,10 @@ class ResolverBase(object):
             >>> resolver.write_json('out.json', recs, ['query', 'count'], True)
 
         """
+        was_opened = False
         if isinstance(outfile, str):
             open_file = open(outfile, 'w', newline="")
+            was_opened = True
         else:
             open_file = outfile
 
@@ -162,3 +168,6 @@ class ResolverBase(object):
                 open_file.write(json.dumps(entry)+"\n")
         else:
             open_file.write(json.dumps(data))
+
+        if was_opened:
+            open_file.close()

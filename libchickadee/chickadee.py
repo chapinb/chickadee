@@ -140,7 +140,7 @@ from tqdm import tqdm
 
 # Import lib features
 from libchickadee import __version__
-from libchickadee.update import check_version
+from libchickadee.update import update_available
 
 # Import Backends
 from libchickadee.backends.ipapi import Resolver, ProResolver
@@ -559,7 +559,7 @@ def config_handing(config_file=None, search_conf_path=[]):
     return config
 
 
-def arg_handling():
+def arg_handling(args):
     """Parses command line arguments.
 
     Returns:
@@ -614,8 +614,7 @@ def arg_handling():
         default=os.path.abspath(os.path.join(
             os.getcwd(), PurePath(__file__).name.rsplit('.', 1)[0] + '.log'))
     )
-    args = parser.parse_args()
-    return args
+    return parser.parse_args(args)
 
 
 def join_config_args(config, args, definitions={}):
@@ -683,19 +682,23 @@ def join_config_args(config, args, definitions={}):
     return final_config
 
 
-def entry(args=None):
+def entry(args=sys.argv):
     """Entrypoint for package script.
 
     Args:
         args: Arguments from invocation.
     """
     # Handle parameters from config file and command line.
-    args = arg_handling()
+    args = arg_handling(args)
     config = config_handing(args.config)
     params = join_config_args(config, args)
 
     # Check for update
-    check_version(__version__)
+    if update_available(__version__):
+        sys.stderr.write(
+            "Chickadee update is available. Please update "
+            "using 'pip3 install --upgrade chickadee'.\n"
+        )
 
     # Set up logging
     setup_logging(params.get('log'), params.get('verbose'))
