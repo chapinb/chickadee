@@ -15,7 +15,7 @@ import binascii
 import os
 from gzip import GzipFile
 
-from libchickadee.parsers import IPv4Pattern, IPv6Pattern, strip_ipv6
+from libchickadee.parsers import ParserBase
 
 __author__ = 'Chapin Bryce'
 __date__ = 20200114
@@ -23,10 +23,11 @@ __license__ = 'MIT Copyright 2020 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
 
-class PlainTextParser(object):
+class PlainTextParser(ParserBase):
     """Class to extract IP addresses from plain text
         and gzipped plain text files."""
     def __init__(self):
+        super()
         self.ips = dict()
 
     @staticmethod
@@ -52,7 +53,6 @@ class PlainTextParser(object):
             is_stream (bool): Whether the input file is a file to open or a
                 file-like object.
 
-
         Returns:
             None
         """
@@ -73,24 +73,6 @@ class PlainTextParser(object):
 
         if 'closed' in dir(file_data) and not file_data.closed:
             file_data.close()
-
-    def check_ips(self, data):
-        """Check data for IP addresses. Results stored in ``self.ips``.
-
-        Args:
-            data (str): String to search for IP address content.
-
-        Returns:
-            None
-        """
-        for ipv4 in IPv4Pattern.findall(data):
-            if ipv4 not in self.ips:
-                self.ips[ipv4] = 0
-            self.ips[ipv4] += 1
-        for ipv6 in IPv6Pattern.findall(data):
-            if strip_ipv6(ipv6) not in self.ips:
-                self.ips[strip_ipv6(ipv6)] = 0
-            self.ips[strip_ipv6(ipv6)] += 1
 
 
 if __name__ == "__main__":  # pragma: no cover
