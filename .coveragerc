@@ -1,6 +1,7 @@
 [run]
 source = libchickadee
 omit =
+    libchickadee/test/**
     test*.py
 [report]
 exclude_lines =
