@@ -81,11 +81,12 @@ class ParserBase(object):
                 self.ips[ipv4] = 0
             self.ips[ipv4] += 1
         for ipv6 in IPv6Pattern.findall(data):
+            ipv6 = self.strip_ipv6(ipv6)
             if self.ignore_bogon and self.is_bogon(ipv6):
                 continue
-            if self.strip_ipv6(ipv6) not in self.ips:
-                self.ips[self.strip_ipv6(ipv6)] = 0
-            self.ips[self.strip_ipv6(ipv6)] += 1
+            if ipv6 not in self.ips:
+                self.ips[ipv6] = 0
+            self.ips[ipv6] += 1
 
     @staticmethod
     def strip_ipv6(ipv6_addr):
