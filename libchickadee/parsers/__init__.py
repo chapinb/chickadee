@@ -103,6 +103,7 @@ class ParserBase(object):
             ip = ipv6_addr
         return ip
 
+    @staticmethod
     def is_bogon(ip_addr):
         """Identifies whether an IP address is a known BOGON.
 
