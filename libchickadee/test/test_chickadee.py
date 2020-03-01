@@ -426,12 +426,12 @@ class ChickadeeFileTestCase(unittest.TestCase):
         )
 
 
-# class ChickadeeUtilityTestCase(unittest.TestCase):
-#     def test_get_apikey(self):
-#         os.environ["CHICKADEE_API_KEY"] = "test123"
-#         api_key = Chickadee.get_api_key()
-#         os.environ.pop("CHICKADEE_API_KEY")
-#         self.assertEqual(api_key, "test123")
+class ChickadeeUtilityTestCase(unittest.TestCase):
+    def test_get_apikey(self):
+        os.environ["CHICKADEE_API_KEY"] = "test123"
+        api_key = Chickadee.get_api_key()
+        os.environ.pop("CHICKADEE_API_KEY")
+        self.assertEqual(api_key, "test123")
 
 
 if __name__ == '__main__':
