@@ -423,7 +423,7 @@ class Chickadee(object):
             Resolver.write_json(self.outfile, results, self.fields, lines=True)
 
 
-def setup_logging(path, verbose=False):
+def setup_logging(path, verbose=False):  # pragma: no cover
     """Function to setup logging configuration
 
     Args:
@@ -692,7 +692,7 @@ def join_config_args(config, args, definitions={}):
     return final_config
 
 
-def entry(args=sys.argv):
+def entry(args=sys.argv):  # pragma: no cover
     """Entrypoint for package script.
 
     Args:

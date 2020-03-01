@@ -199,11 +199,11 @@ class Resolver(ResolverBase):
                 self.rate_limit(rdata.headers)
                 result_list = [x for x in rdata.json()]
                 resolved_recs += result_list
-            elif rdata.status_code == 429:
+            elif rdata.status_code == 429:  # pragma: no cover
                 self.rate_limit(rdata.headers)
                 self.sleeper()
                 return self.batch()
-            else:
+            else:  # pragma: no cover
                 msg = "Unknown error encountered: {}".format(rdata.status_code)
                 logger.error(msg)
                 result_list = []
@@ -261,7 +261,7 @@ class ProResolver(Resolver):
         fields (list): Collection of fields to request in resolution.
         lang (str): Language for returned results.
     """
-    def __init__(self, api_key, fields=FIELDS, lang='en'):
+    def __init__(self, api_key, fields=FIELDS, lang='en'):  # pragma: no cover
         Resolver.__init__(self, fields=fields, lang='en')
         self.uri = 'https://pro.ip-api.com/'
         self.api_key = api_key
