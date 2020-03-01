@@ -2,12 +2,6 @@
 
 Yet another GeoIP resolution tool.
 
-![build status](https://travis-ci.org/chapinb/chickadee.svg?branch=master)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/chapinb/chickadee.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/chapinb/chickadee/alerts/)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/chapinb/chickadee.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/chapinb/chickadee/context:python)
-![Unit Tests](https://github.com/chapinb/chickadee/workflows/Unit%20Tests/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/chapinb/chickadee/badge.svg)](https://coveralls.io/github/chapinb/chickadee)
-
 ```
          _          _
         ('<        >')
@@ -20,6 +14,15 @@ Yet another GeoIP resolution tool.
            _|   |_            \_____|_| |_|_|\___|_|\_\__,_|\__,_|\___|\___|
           (_______)
 ```
+
+![build status](https://travis-ci.org/chapinb/chickadee.svg?branch=master)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/chapinb/chickadee.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/chapinb/chickadee/alerts/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/chapinb/chickadee.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/chapinb/chickadee/context:python)
+![Unit Tests](https://github.com/chapinb/chickadee/workflows/Unit%20Tests/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/chapinb/chickadee/badge.svg)](https://coveralls.io/github/chapinb/chickadee)
+[![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
+[![PyPI version](https://badge.fury.io/py/chickadee.svg)](https://badge.fury.io/py/chickadee)
+[![PyPi downloads](https://pypip.in/d/chickadee/badge.png)](https://pypistats.org/packages/chickadee)
 
 Supported GeoIP back-ends:
 
