@@ -33,3 +33,6 @@ goto end
 
 :end
 popd
+
+REM copy HTML to docs folder
+robocopy build\html ..\docs /S /E /NFL /NDL /NJH /NJS
