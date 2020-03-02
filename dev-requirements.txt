@@ -1,6 +1,5 @@
 setuptools
 wheel
-tqdm
 twine
 coverage
 flake8
