@@ -1,6 +1,6 @@
 # Chickadee
 
-Yet another GeoIP resolution tool.
+Yet another IP address enrichment tool.
 
 ```
          _          _
