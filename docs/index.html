@@ -59,6 +59,87 @@ library consists all of these components, it is primarily leveraged by a single
 command line utility, <code class="docutils literal notranslate"><span class="pre">chickadee</span></code>. The library components can be called
 outside of the <code class="docutils literal notranslate"><span class="pre">chickadee</span></code> utility and this documentation provides
 information on using the library in addition to the command line tool.</p>
+<div class="section" id="installation">
+<span id="id1"></span><h3>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h3>
+<p>You may install Chickadee on your platform using <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">chickadee</span></code> (you
+may need to use <code class="docutils literal notranslate"><span class="pre">pip3</span></code> depending on your system configuration).
+<strong>Please ensure you are using Python 3</strong></p>
+<p>You may also install via the source code as detailed below.</p>
+<div class="section" id="macos-and-linux">
+<h4>macOS and Linux<a class="headerlink" href="#macos-and-linux" title="Permalink to this headline">¶</a></h4>
+<p>Requirements:</p>
+<ul class="simple">
+<li><p>Python 3+, installed on your path</p></li>
+<li><p>Virtualenv (<code class="docutils literal notranslate"><span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">virtualenv</span></code>)</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>Clone the git repo: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/chapinb/chickadee.git</span></code></p></li>
+<li><p>Create your virtual environment <code class="docutils literal notranslate"><span class="pre">virtualenv</span> <span class="pre">-p</span> <span class="pre">python3</span> <span class="pre">venv3</span></code> and
+activate it (<code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">venv3/bin/activate</span></code>)</p></li>
+<li><p>Install dependencies: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">.</span></code></p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">chickadee</span> <span class="pre">--help</span></code> to get started.</p></li>
+</ol>
+</div>
+<div class="section" id="windows">
+<h4>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h4>
+<p>Requirements:</p>
+<ul class="simple">
+<li><p>Python 3+, installed on your path</p></li>
+<li><p>Virtualenv (<code class="docutils literal notranslate"><span class="pre">pip.exe</span> <span class="pre">install</span> <span class="pre">virtualenv</span></code>)</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>Clone the git repo: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/chapinb/chickadee.git</span></code></p></li>
+<li><p>Create your virtual environment <code class="docutils literal notranslate"><span class="pre">virtualenv</span> <span class="pre">-p</span> <span class="pre">python3</span> <span class="pre">venv3</span></code> and activate
+it (<code class="docutils literal notranslate"><span class="pre">.\venv3\Scripts\activate</span></code>)</p></li>
+<li><p>Install dependencies: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">.</span></code></p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">chickadee</span> <span class="pre">--help</span></code> to get started.</p></li>
+</ol>
+</div>
+</div>
+<div class="section" id="contribution">
+<h3>Contribution<a class="headerlink" href="#contribution" title="Permalink to this headline">¶</a></h3>
+<p>We appreciate contributions to the project! If you have an idea,
+big or small, and want to lend a hand - feel free to follow the
+steps in this guide to get started.</p>
+<p>Looking for some inspiration? Check out the project <a class="reference external" href="https://github.com/chapinb/chickadee/issues">issues page</a> for inspiration.
+You are also welcome to contribute new ideas, features, or improvements.</p>
+<p>We are happy to assist with any questions you have as you are working
+on the project. Feel free to throw it as a new issue in GitHub. When
+in doubt, just ask :) happy to provide guidance to those new to
+contributing to projects!</p>
+<p>The below steps outline the technical process for contributing to chickadee:</p>
+<ol class="arabic simple">
+<li><p>A <a class="reference external" href="https://github.com/join">GitHub account</a></p></li>
+<li><p>Create a fork of the chickadee repository</p></li>
+<li><p>Install git tools on your system</p></li>
+<li><p>Clone your fork to your local system</p></li>
+<li><p>Check out a new branch with a descriptive name.
+ie <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">-b</span> <span class="pre">zipfile-support</span></code></p></li>
+<li><p>Install development dependencies in dev-requirements.txt</p></li>
+<li><p>Make your modifications and write unit tests for new functionality</p></li>
+<li><p>Submit a pull request to the main chickadee repository</p></li>
+</ol>
+<p>A few tips to help get your new feature integrated smoothly:</p>
+<ul class="simple">
+<li><p>Ensure the whole project passes with <code class="docutils literal notranslate"><span class="pre">flake8</span></code>. Avoid excluding linting
+warnings whenever possible.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">coverage</span> <span class="pre">run</span> <span class="pre">-m</span> <span class="pre">unittest</span> <span class="pre">discover</span></code> and ensure all tests pass
+and all code files have at least 80% coverage. Avoid pragma statements
+whenever possible.</p></li>
+<li><p>Add documentation to your new functions/scripts and integrate into
+the overall project documentation. Build the documentation before
+submitting the pull request.</p></li>
+<li><p>As needed, update the argument and config file handling with help
+information to ensure users understand the purpose and functionality
+of the new capabilities.</p></li>
+</ul>
+<p>When in doubt, reach out - we are happy to help with any of the above.</p>
+</div>
+<div class="section" id="usage-examples">
+<h3>Usage &amp; Examples<a class="headerlink" href="#usage-examples" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference internal" href="utilities.html#chickadee-usage"><span class="std std-ref">Usage</span></a> and <a class="reference internal" href="utilities.html#chickadee-examples"><span class="std std-ref">chickadee Examples</span></a>
+for examples on using the <code class="docutils literal notranslate"><span class="pre">chickadee</span></code> command line tool.</p>
+</div>
 <div class="section" id="components">
 <h3>Components<a class="headerlink" href="#components" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="parsers">
@@ -106,6 +187,13 @@ library from the command line.</p>
   <ul>
 <li><a class="reference internal" href="#">Chickadee Documentation</a><ul>
 <li><a class="reference internal" href="#libchickadee-overview">Libchickadee Overview</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#macos-and-linux">macOS and Linux</a></li>
+<li><a class="reference internal" href="#windows">Windows</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#contribution">Contribution</a></li>
+<li><a class="reference internal" href="#usage-examples">Usage &amp; Examples</a></li>
 <li><a class="reference internal" href="#components">Components</a><ul>
 <li><a class="reference internal" href="#parsers">Parsers</a></li>
 <li><a class="reference internal" href="#backends">Backends</a></li>

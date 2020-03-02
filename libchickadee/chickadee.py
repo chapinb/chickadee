@@ -5,8 +5,10 @@ chickadee.py
 A command-line application to provide context for an IP address.
 
 This utility leveraged libchickadee to extract, resolve, and report IP
-addresses. Please see installation instructions for details on setting up this
-tool on your system.
+addresses. Please see :ref:`installation` instructions for details
+on setting up this tool on your system.
+
+.. _chickadee-usage:
 
 Usage
 -----
@@ -63,9 +65,9 @@ Usage
 
     Built by Chapin Bryce, v.20200202
 
+.. _chickadee-examples:
 
-
-chickadee.py Examples
+chickadee Examples
 ----------------------
 
 Input options
