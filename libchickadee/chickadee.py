@@ -153,7 +153,7 @@ from libchickadee.parsers.xlsx import XLSXParser
 
 
 __author__ = 'Chapin Bryce'
-__date__ = 20200114
+__date__ = 20200407
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.
 
@@ -694,7 +694,7 @@ def join_config_args(config, args, definitions={}):
     return final_config
 
 
-def entry(args=sys.argv):  # pragma: no cover
+def entry(args=sys.argv[1:]):  # pragma: no cover
     """Entrypoint for package script.
 
     Args:
@@ -731,11 +731,11 @@ def entry(args=sys.argv):  # pragma: no cover
     logger.debug("Parsing input")
     if isinstance(params.get('data'), list):
         data = []
-        for x in params.get('data'):
+        for x in params.get('data', params.get('api-key', None)):
             res = chickadee.run(x)
             data += res
     else:
-        data = chickadee.run(params.get('data'))
+        data = chickadee.run(params.get('data'), params.get('api-key', None))
 
     logger.debug("Writing output")
     chickadee.outfile = params.get('output-file')
