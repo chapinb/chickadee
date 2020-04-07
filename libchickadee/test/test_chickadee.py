@@ -8,7 +8,7 @@ from libchickadee.chickadee import Chickadee, arg_handling, join_config_args
 from libchickadee.chickadee import config_handing
 
 __author__ = 'Chapin Bryce'
-__date__ = 20200114
+__date__ = 20200407
 __license__ = 'MIT Copyright 2020 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
@@ -294,7 +294,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
              "country": "United States", "org": "Google LLC",
              "proxy": False, "query": "2001:4860:4860::8888", "count": 1},
 
-            {"as": "AS3356 Level 3 Communications, Inc.",
+            {"as": "AS3356 Level 3 Parent, LLC",
              "country": "United States", "org": "Informs",
              "proxy": True, "query": "4.4.4.4", "count": 1},
 
@@ -326,7 +326,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
              "country": "France", "org": "", "proxy": True,
              "query": "2.2.2.2", "count": 1},
 
-            {"as": "AS3356 Level 3 Communications, Inc.",
+            {"as": "AS3356 Level 3 Parent, LLC",
              "country": "United States", "org": "Informs",
              "proxy": True, "query": "4.4.4.4", "count": 1},
 
@@ -390,7 +390,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
              "proxy": False, "query": "2001:4860:4860::8888", "count": 3},
 
             {"country": "United States", "org": "Informs",
-             "as": "AS3356 Level 3 Communications, Inc.", "proxy": True,
+             "as": "AS3356 Level 3 Parent, LLC", "proxy": True,
              "query": "4.4.4.4",
              "count": 3},
 
