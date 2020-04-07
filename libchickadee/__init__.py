@@ -135,6 +135,6 @@ library from the command line.
 
 __author__ = 'Chapin Bryce'
 __date__ = 20200407
-__version__ = 20200407.1
+__version__ = 20200407.2
 __license__ = 'MIT Copyright 2020 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
