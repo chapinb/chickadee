@@ -112,10 +112,12 @@ class Resolver(ResolverBase):
         fields (list): Collection of fields to request in resolution.
         lang (str): Language for returned results.
     """
-    def __init__(self, fields=FIELDS, lang='en'):
+    def __init__(self, fields=None, lang='en'):
         self.supported_langs = [
             'en', 'de', 'es', 'pt-BR', 'fr', 'ja', 'zh-CN', 'ru'
         ]
+        if not fields:
+            fields = FIELDS
         if lang not in self.supported_langs:
             lang = 'en'
         ResolverBase.__init__(self, fields=fields, lang=lang)
@@ -261,7 +263,9 @@ class ProResolver(Resolver):
         fields (list): Collection of fields to request in resolution.
         lang (str): Language for returned results.
     """
-    def __init__(self, api_key, fields=FIELDS, lang='en'):  # pragma: no cover
+    def __init__(self, api_key, fields=None, lang='en'):  # pragma: no cover
+        if not fields:
+            fields = FIELDS
         Resolver.__init__(self, fields=fields, lang='en')
         self.uri = 'https://pro.ip-api.com/'
         self.api_key = api_key
