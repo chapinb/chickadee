@@ -259,7 +259,7 @@ class Chickadee(object):
             (str): API key, if found
         """
         api_key = os.environ.get('CHICKADEE_API_KEY', None)
-        if api_key is not None and len(api_key):
+        if api_key:
             return api_key
         return None
 
@@ -473,7 +473,7 @@ class CustomArgFormatter(argparse.RawTextHelpFormatter,
     """Custom argparse formatter class"""
 
 
-def config_handing(config_file=None, search_conf_path=[]):
+def config_handing(config_file=None, search_conf_path=None):
     """Parse config file and return argument values.
 
     Args:
@@ -534,12 +534,12 @@ def config_handing(config_file=None, search_conf_path=[]):
 
     fail_warn = 'Relying on argument defaults'
     if not config_file:
-        logger.debug('Config file not found. ' + fail_warn)
+        logger.debug('Config file not found. {}'.format(fail_warn))
         return
 
     if not os.path.exists(config_file) or not os.path.isfile(config_file):
-        logger.debug('Error accessing config file ' + config_file + '.'
-                     + fail_warn)
+        logger.debug('Error accessing config file {}. {}'.format(
+            config_file, fail_warn))
         return
 
     conf = configparser.ConfigParser()
@@ -628,7 +628,7 @@ def arg_handling(args):
     return parser.parse_args(args)
 
 
-def join_config_args(config, args, definitions={}):
+def join_config_args(config, args, definitions=None):
     """Join config file and argument parameters, where the args override configs.
 
     Args:

@@ -31,11 +31,14 @@ class ResolverBase(object):
     Returns:
         (ResolverBase)
     """
-    def __init__(self, fields=list(), lang='en'):
+    def __init__(self, fields=None, lang='en'):
         self.uri = None
         self.lang = lang
         self.supported_langs = []
-        self.fields = fields  # Ordered list of fields to gather
+        if not fields:
+            self.fields = []
+        else:
+            self.fields = fields  # Ordered list of fields to gather
         self.pbar = False  # Enable progress bars
         self.data = None
 

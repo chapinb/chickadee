@@ -54,7 +54,7 @@ IPV6GROUPS = (
 )
 
 # Reverse rows for greedy match
-IPV6ADDR = '|'.join(['(?:{})'.format(g) for g in IPV6GROUPS[::-1]])
+IPV6ADDR = '|'.join('(?:{})'.format(g) for g in IPV6GROUPS[::-1])
 
 IPv4Pattern = re.compile(IPV4ADDR)
 IPv6Pattern = re.compile(IPV6ADDR)
