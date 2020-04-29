@@ -28,7 +28,7 @@ class PlainTextParser(ParserBase):
         and gzipped plain text files."""
     def __init__(self, ignore_bogon=True):
         super().__init__(ignore_bogon)
-        self.ips = dict()
+        self.ips = {}
 
     @staticmethod
     def is_gz_file(filepath):

@@ -163,7 +163,7 @@ value of your API key to enabled unlimited requests with the
 commercial API
 '''
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("chickadee")
 _FIELDS = ','.join([  # Ordered list of fields to gather
     'query',
     'count', 'as', 'org', 'isp',
@@ -174,7 +174,7 @@ _FIELDS = ','.join([  # Ordered list of fields to gather
 ])
 
 
-class Chickadee(object):
+class Chickadee:
     """Class to handle chickadee script operations.
 
     Args:
@@ -435,12 +435,6 @@ def setup_logging(path, verbose=False):  # pragma: no cover
     Returns:
         None
     """
-    # Allow us to modify the `logger` variable within a function
-    global logger
-
-    # Set logger object, uses module's name
-    logger = logging.getLogger(name=__name__)
-
     # Set default logger level to DEBUG. You can change this later
     logger.setLevel(logging.DEBUG)
 
@@ -717,11 +711,15 @@ def entry(args=sys.argv[1:]):  # pragma: no cover
     logger.debug("Starting Chickadee")
     for arg in vars(args):
         logger.debug("Argument {} is set to {}".format(
-            arg, getattr(args, arg)
+            arg, getattr(args, arg, "<Not Set>")
         ))
 
     logger.debug("Configuring Chickadee")
-    chickadee = Chickadee(fields=params.get('fields').split(','))
+    raw_fields = params.get('fields')
+    fields = []
+    if raw_fields:
+        fields = raw_fields.split()
+    chickadee = Chickadee(fields=fields)
     chickadee.resolve_ips = not params.get('no-resolve')
     chickadee.ignore_bogon = not params.get('include-bogon')
     chickadee.force_single = params.get('single')

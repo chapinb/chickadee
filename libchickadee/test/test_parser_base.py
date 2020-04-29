@@ -55,7 +55,7 @@ class ParserBaseTestCase(unittest.TestCase):
 
     def test_check_ips_nobogon(self):
         parser = ParserBase()
-        parser.ips = dict()
+        parser.ips = {}
         ip = [
             "2001:4860:4860::8844",
             "fe80::175:a2ad:8508:a655%16",
@@ -74,7 +74,7 @@ class ParserBaseTestCase(unittest.TestCase):
 
     def test_check_ips_bogon(self):
         parser = ParserBase(ignore_bogon=False)
-        parser.ips = dict()
+        parser.ips = {}
         ip = [
             "2001:4860:4860::8844",
             "fe80::175:a2ad:8508:a655%16",

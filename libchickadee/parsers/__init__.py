@@ -60,7 +60,7 @@ IPv4Pattern = re.compile(IPV4ADDR)
 IPv6Pattern = re.compile(IPV6ADDR)
 
 
-class ParserBase(object):
+class ParserBase:
     """Base class for parsers, containing common utilities."""
     def __init__(self, ignore_bogon=True):
         self.ignore_bogon = ignore_bogon

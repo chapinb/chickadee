@@ -84,7 +84,7 @@ from tqdm import trange
 
 from . import ResolverBase
 
-logger = logging.getLogger('libchickadee.chickadee')
+logger = logging.getLogger('chickadee')
 
 __author__ = 'Chapin Bryce'
 __date__ = 20200114
@@ -242,7 +242,7 @@ class Resolver(ResolverBase):
         if rdata.status_code == 200:
             self.rate_limit(rdata.headers)
             return rdata.json()
-        elif rdata.status_code == 429:  # pragma: no cover
+        if rdata.status_code == 429:  # pragma: no cover
             self.rate_limit(rdata.headers)
             self.sleeper()
             return self.single()
