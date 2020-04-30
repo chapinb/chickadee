@@ -84,7 +84,9 @@ class IPAPITestCase(unittest.TestCase):
 
 
 class WritersTestCase(unittest.TestCase):
+    """Test writers"""
     def setUp(self):
+        """Test setup"""
         self.data = [
             OrderedDict(**{"a": '1', "b": "2"})
         ]
@@ -92,10 +94,12 @@ class WritersTestCase(unittest.TestCase):
         self.open_file = None
 
     def tearDown(self):
+        """Test cleanup"""
         self.open_file.close()
         os.remove(self.testfile)
 
     def test_write_csv(self):
+        """Test writing to CSV"""
         Resolver.write_csv(self.testfile, self.data)
         self.open_file = open("testfile")
         read_data = next(csv.DictReader(self.open_file))
@@ -105,6 +109,7 @@ class WritersTestCase(unittest.TestCase):
         )
 
     def test_write_json(self):
+        """Test writing to JSON"""
         data = [
             {"a": '1', "b": "2"}
         ]
@@ -117,6 +122,7 @@ class WritersTestCase(unittest.TestCase):
         )
 
     def test_write_json_headers(self):
+        """Test writing to JSON with headers"""
         Resolver.write_json(self.testfile, self.data, ['a', 'none'])
         self.open_file = open("testfile")
         read_data = json.load(self.open_file)
@@ -129,6 +135,7 @@ class WritersTestCase(unittest.TestCase):
         )
 
     def test_write_json_lines(self):
+        """Test writing to JSON with one object per line"""
         Resolver.write_json(self.testfile, self.data, lines=True)
         self.open_file = open("testfile")
         read_data = json.load(self.open_file)

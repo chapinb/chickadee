@@ -15,6 +15,7 @@ __desc__ = '''Yet another GeoIP resolution tool.'''
 
 class ChickadeeConfigTestCase(unittest.TestCase):
     def test_argparse(self):
+        """Test argument parsing"""
         args = [
             "1.1.1.1", "-t", "csv", "-w", "test.out", "-n", "-s",
             "--lang", "es", "-c", "test.config", "-p", "-v",
@@ -55,6 +56,7 @@ class ChickadeeConfigTestCase(unittest.TestCase):
         )
 
     def test_configparse(self):
+        """Test config file parsing"""
         args = ["1.1.1.1", "-f", "query,message,mobile,org"]
         parsed = arg_handling(args)
         opts = {
@@ -85,6 +87,7 @@ class ChickadeeConfigTestCase(unittest.TestCase):
         )
 
     def test_parse_config_file_provided(self):
+        """Test config file parsing"""
         # Str, list, bool, dict, int
         test_conf = 'chickadee.ini'
         open_file = open(test_conf, 'w')
@@ -117,6 +120,7 @@ class ChickadeeConfigTestCase(unittest.TestCase):
         os.remove(test_conf)
 
     def test_parse_config_file_workdir(self):
+        """Test config file parsing"""
         # Str, list, bool, dict, int
         test_conf = 'chickadee.ini'
         open_file = open(test_conf, 'w')
@@ -149,6 +153,7 @@ class ChickadeeConfigTestCase(unittest.TestCase):
         os.remove(test_conf)
 
     def test_parse_config_file_userdir(self):
+        """Test config file parsing"""
         # Str, list, bool, dict, int
         test_conf = '.chickadee.ini'
         conf_path = os.path.join(
@@ -204,6 +209,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
         self.fields = ['query', 'count', 'as', 'country', 'org', 'proxy']
 
     def test_no_resolve(self):
+        """Test disabled resolution"""
         results = [
             {'query': '10.0.1.2', 'count': 1, 'message': 'No resolve'},
             {'query': '8.8.8.8', 'count': 1, 'message': 'No resolve'},
@@ -249,6 +255,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
         self.assertCountEqual(res, self.expected_result)
 
     def test_improper_type(self):
+        """Test handling of improper types"""
         failed = False
         try:
             # Provide improper data type
@@ -418,6 +425,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
         self.assertCountEqual(res, expected)
 
     def test_file_handler_stream(self):
+        """Test parsing of stream data"""
         stream = io.TextIOWrapper(io.StringIO("test 1.1.1.1 ip"))
         ips = Chickadee.file_handler(stream, ignore_bogon=True)
         self.assertDictEqual(
@@ -427,7 +435,9 @@ class ChickadeeFileTestCase(unittest.TestCase):
 
 
 class ChickadeeUtilityTestCase(unittest.TestCase):
+    """Test of chickadee utilities"""
     def test_get_apikey(self):
+        """Test API key retrieval"""
         os.environ["CHICKADEE_API_KEY"] = "test123"
         api_key = Chickadee.get_api_key()
         os.environ.pop("CHICKADEE_API_KEY")

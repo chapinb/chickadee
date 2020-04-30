@@ -11,6 +11,7 @@ __desc__ = '''Yet another GeoIP resolution tool.'''
 
 
 class TestUpdate(unittest.TestCase):
+    """Tests supporting the update reminder component"""
     def test_up_to_date(self):
         """Test version up to date"""
         last_public_release = get_pypi_version()

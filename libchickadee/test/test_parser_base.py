@@ -10,12 +10,15 @@ __desc__ = '''Yet another GeoIP resolution tool.'''
 
 
 class ParserBaseTestCase(unittest.TestCase):
+    """Test parsing components."""
     def test_ipv6(self):
+        """Test IPv6 Parsing"""
         ip = "2001:4860:4860::8844%16"
         bare_ip = ParserBase.strip_ipv6(ip)
         self.assertEqual(ip.split("%")[0], bare_ip)
 
     def test_bogon_ipv4(self):
+        """Test IPv4 Bogon detection"""
         ip_list = ['10.1.1.1', '192.168.1.1', '127.0.0.1',
                    '172.16.1.1', '0.0.0.0', '100.64.1.1',
                    '169.254.1.1', '192.0.0.23', '192.0.2.1',
@@ -25,12 +28,14 @@ class ParserBaseTestCase(unittest.TestCase):
             self.assertTrue(ParserBase.is_bogon(ip))
 
     def test_nonbogon_ipv4(self):
+        """Test non-bogon IPv4 Detection"""
         ip_list = ['1.1.1.1', '192.169.1.1', '172.36.1.1',
                    '198.51.101.1']
         for ip in ip_list:
             self.assertFalse(ParserBase.is_bogon(ip))
 
     def test_bogon_ipv6(self):
+        """Test IPv6 Bogon detection"""
         ip_list = [
             "fe80::175:a2ad:8508:a655",
             "fec0::517b:deaa:fb23:5013",
@@ -42,6 +47,7 @@ class ParserBaseTestCase(unittest.TestCase):
             self.assertTrue(ParserBase.is_bogon(ip))
 
     def test_nonbogon_ipv6(self):
+        """Test non-bogon IPv6 Detection"""
         ip_list = [
             "2607:f8b0:4006:803::200e",
             "2a03:2880:f112:83:face:b00c:0:25de",
@@ -54,6 +60,7 @@ class ParserBaseTestCase(unittest.TestCase):
             self.assertFalse(ParserBase.is_bogon(ip))
 
     def test_check_ips_nobogon(self):
+        """Test filtering bogons"""
         parser = ParserBase()
         parser.ips = {}
         ip = [
@@ -73,6 +80,7 @@ class ParserBaseTestCase(unittest.TestCase):
         )
 
     def test_check_ips_bogon(self):
+        """Test inclusion of bogons"""
         parser = ParserBase(ignore_bogon=False)
         parser.ips = {}
         ip = [
