@@ -115,7 +115,5 @@ class ParserBase(object):
             (bool): Whether or not the IP is a known BOGON address.
         """
         ip = IPAddress(ip_addr)
-        if (ip.is_private() or ip.is_link_local() or
-                ip.is_reserved() or ip.is_multicast()):
-            return True
-        return False
+        return bool((ip.is_private() or ip.is_link_local() or
+                ip.is_reserved() or ip.is_multicast()))

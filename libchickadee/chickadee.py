@@ -523,7 +523,7 @@ def config_handing(config_file=None, search_conf_path=None):
                 search_conf_path.append('/etc/chickadee')
 
         for location in search_conf_path:
-            if not os.path.exists(location) or not os.path.isdir(location):
+            if not (os.path.exists(location) and os.path.isdir(location)):
                 logger.debug(
                     "Unable to access config file location {}.".format(
                         location))
@@ -537,7 +537,7 @@ def config_handing(config_file=None, search_conf_path=None):
         logger.debug('Config file not found. {}'.format(fail_warn))
         return
 
-    if not os.path.exists(config_file) or not os.path.isfile(config_file):
+    if not (os.path.exists(config_file) and os.path.isfile(config_file)):
         logger.debug('Error accessing config file {}. {}'.format(
             config_file, fail_warn))
         return
@@ -547,9 +547,9 @@ def config_handing(config_file=None, search_conf_path=None):
 
     config = {}
 
-    for section in section_defs:
+    for section, value in section_defs.items():
         if section in conf:
-            for k, v in section_defs[section].items():
+            for k, v in value.items():
                 conf_section = conf[section]
                 conf_value = None
                 if isinstance(v, str):

@@ -77,7 +77,7 @@ class IPAPITestCase(unittest.TestCase):
             self.assertEqual(data, expected)
 
     def test_ipapi_rate_limiting(self):
-        for x in range(20):
+        for _ in range(20):
             for count, ip in enumerate(self.test_data_ips):
                 data = self.resolver.query(ip)
                 self.assertEqual(data, self.expected_result[count])

@@ -208,11 +208,9 @@ class Resolver(ResolverBase):
             else:  # pragma: no cover
                 msg = "Unknown error encountered: {}".format(rdata.status_code)
                 logger.error(msg)
-                result_list = []
-                for result in records[x:x+100]:
-                    result_list.append({'query': result,
+                result_list = [{'query': result,
                                         'status': 'failed',
-                                        'message': msg})
+                                        'message': msg} for result in records[x:x+100]]
                 resolved_recs += result_list
         return resolved_recs
 

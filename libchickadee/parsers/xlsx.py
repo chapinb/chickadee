@@ -24,7 +24,7 @@ class XLSXParser(ParserBase):
     """Class to extract IP addresses from XLSX workbooks."""
     def __init__(self, ignore_bogon=True):
         super().__init__(ignore_bogon)
-        self.ips = dict()
+        self.ips = {}
 
     def parse_file(self, file_entry, is_stream=False):
         """Parse xlsx contents. Must be a path to an existing XLSX workbook.

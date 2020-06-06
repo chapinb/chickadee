@@ -28,7 +28,7 @@ class PlainTextParser(ParserBase):
         and gzipped plain text files."""
     def __init__(self, ignore_bogon=True):
         super().__init__(ignore_bogon)
-        self.ips = dict()
+        self.ips = {}
 
     @staticmethod
     def is_gz_file(filepath):
@@ -75,10 +75,7 @@ class PlainTextParser(ParserBase):
                 file_data = file_entry.buffer
 
         for raw_line in file_data:
-            if isinstance(raw_line, str):
-                line = raw_line
-            else:
-                line = raw_line.decode()
+            line = raw_line if isinstance(raw_line, str) else raw_line.decode()
             self.check_ips(line)
 
         if 'closed' in dir(file_data) and not file_data.closed:
