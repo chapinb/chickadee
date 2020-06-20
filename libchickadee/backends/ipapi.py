@@ -134,7 +134,7 @@ class Resolver(ResolverBase):
         duration of ``X-Ttl`` + 1 second.
 
         Args:
-            headers (dict): Request header information.
+            headers (dict, CaseInsensitiveDict): Request header information.
 
         Return:
             None
@@ -201,18 +201,14 @@ class Resolver(ResolverBase):
                 self.rate_limit(rdata.headers)
                 result_list = [x for x in rdata.json()]
                 resolved_recs += result_list
-            elif rdata.status_code == 429:  # pragma: no cover
+            elif rdata.status_code == 429:
                 self.rate_limit(rdata.headers)
                 self.sleeper()
                 return self.batch()
             else:  # pragma: no cover
                 msg = "Unknown error encountered: {}".format(rdata.status_code)
                 logger.error(msg)
-                result_list = []
-                for result in records[x:x+100]:
-                    result_list.append({'query': result,
-                                        'status': 'failed',
-                                        'message': msg})
+                result_list = [{'query': result, 'status': 'failed', 'message': msg} for result in records[x:x+100]]
                 resolved_recs += result_list
         return resolved_recs
 
@@ -242,7 +238,7 @@ class Resolver(ResolverBase):
         if rdata.status_code == 200:
             self.rate_limit(rdata.headers)
             return rdata.json()
-        elif rdata.status_code == 429:  # pragma: no cover
+        elif rdata.status_code == 429:
             self.rate_limit(rdata.headers)
             self.sleeper()
             return self.single()
@@ -266,7 +262,7 @@ class ProResolver(Resolver):
     def __init__(self, api_key, fields=None, lang='en'):  # pragma: no cover
         if not fields:
             fields = FIELDS
-        Resolver.__init__(self, fields=fields, lang='en')
+        Resolver.__init__(self, fields=fields, lang=lang)
         self.uri = 'https://pro.ip-api.com/'
         self.api_key = api_key
         self.enable_sleep = False

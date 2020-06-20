@@ -137,7 +137,6 @@ from collections import Counter
 import _io
 import configparser
 
-# Third Party Libs
 from tqdm import tqdm
 
 # Import lib features
@@ -221,7 +220,6 @@ class Chickadee(object):
             (list): List of dictionaries containing resolved hits.
         """
         self.input_data = input_data
-        results = []
         result_dict = {}
         # Extract and resolve IP addresses
         if not isinstance(self.input_data, _io.TextIOWrapper) and \
@@ -244,8 +242,7 @@ class Chickadee(object):
 
         # Resolve if requested
         if self.resolve_ips:
-            results = self.resolve(result_dict, api_key)
-            return results
+            return self.resolve(result_dict, api_key)
 
         return [{'query': k, 'count': v, 'message': 'No resolve'}
                 for k, v in result_dict.items()]
@@ -269,7 +266,7 @@ class Chickadee(object):
         distinct IPs with their associated frequency count.
 
         Args:
-            data (str): raw input data from user
+            data (list, str): raw input data from user
 
         Return:
             data_dict (dict): dictionary of distinct IP addresses to resolve.
@@ -352,7 +349,7 @@ class Chickadee(object):
 
     def resolve(self, data_dict, api_key=None):
         """Resolve IP addresses stored as keys within `data_dict`. The values
-        for each key should represent the number of occurances of an IP within
+        for each key should represent the number of occurrences of an IP within
         a data set.
 
         Args:
@@ -394,6 +391,7 @@ class Chickadee(object):
             updated_results = []
             for result in results:
                 query = str(result.get('query', ''))
+                # noinspection PyTypeChecker
                 result['count'] = int(data_dict.get(query, '0'))
                 updated_results.append(result)
 
@@ -444,7 +442,7 @@ def setup_logging(path, verbose=False):  # pragma: no cover
     # Set default logger level to DEBUG. You can change this later
     logger.setLevel(logging.DEBUG)
 
-    # Logging formatter. Best to keep consistent for most usecases
+    # Logging formatter. Best to keep consistent for most use cases
     log_format = logging.Formatter(
         '%(asctime)s %(filename)s %(levelname)s %(module)s '
         '%(funcName)s:%(lineno)d - %(message)s')
@@ -506,38 +504,14 @@ def config_handing(config_file=None, search_conf_path=None):
     }
 
     if not config_file:
-        if not search_conf_path:
-            # Config file search path order:
-            # 1. Current directory
-            # 2. User home directory
-            # 3. System wide directory
-            # Needs to be named chickadee.ini or .chickadee.ini for detection.
-            search_conf_path = [os.path.abspath('.'), os.path.expanduser('~')]
-            if 'win32' in sys.platform:
-                search_conf_path.append(
-                    os.path.join(os.getenv('APPDATA'), 'chickadee'))
-                search_conf_path.append('C:\\ProgramData\\chickadee')
-            elif 'linux' in sys.platform or 'darwin' in sys.platform:
-                search_conf_path.append(
-                    os.path.expanduser('~/.config/chickadee'))
-                search_conf_path.append('/etc/chickadee')
-
-        for location in search_conf_path:
-            if not os.path.exists(location) or not os.path.isdir(location):
-                logger.debug(
-                    "Unable to access config file location {}.".format(
-                        location))
-            elif 'chickadee.ini' in os.listdir(location):
-                config_file = os.path.join(location, 'chickadee.ini')
-            elif '.chickadee.ini' in os.listdir(location):
-                config_file = os.path.join(location, '.chickadee.ini')
+        config_file = find_config_file(search_conf_path)
 
     fail_warn = 'Relying on argument defaults'
     if not config_file:
         logger.debug('Config file not found. {}'.format(fail_warn))
         return
 
-    if not os.path.exists(config_file) or not os.path.isfile(config_file):
+    if not (os.path.exists(config_file) and os.path.isfile(config_file)):
         logger.debug('Error accessing config file {}. {}'.format(
             config_file, fail_warn))
         return
@@ -545,27 +519,64 @@ def config_handing(config_file=None, search_conf_path=None):
     conf = configparser.ConfigParser()
     conf.read(config_file)
 
+    return parse_config_sections(conf, section_defs)
+
+
+def parse_config_sections(conf, section_defs):
     config = {}
-
-    for section in section_defs:
-        if section in conf:
-            for k, v in section_defs[section].items():
-                conf_section = conf[section]
-                conf_value = None
-                if isinstance(v, str):
-                    conf_value = conf_section.get(k)
-                elif isinstance(v, list):
-                    conf_value = conf_section.get(k).split(',')
-                elif isinstance(v, bool):
-                    conf_value = conf_section.getboolean(k)
-                elif isinstance(v, dict):
-                    conf_value = conf_section.get(k)
-                    # Set backend args through nested option
-                    for sk, sv, in v.get(conf_value, {}).items():
-                        config[sk] = conf_section[sv]
-                config[k] = conf_value
-
+    for section, value in section_defs.items():
+        if section not in conf:
+            continue
+        for k, v in value.items():
+            conf_section = conf[section]
+            conf_value = None
+            if isinstance(v, str):
+                conf_value = conf_section.get(k)
+            elif isinstance(v, list):
+                conf_value = conf_section.get(k).split(',')
+            elif isinstance(v, bool):
+                conf_value = conf_section.getboolean(k)
+            elif isinstance(v, dict):
+                conf_value = conf_section.get(k)
+                # Set backend args through nested option
+                for sk, sv, in v.get(conf_value, {}).items():
+                    config[sk] = conf_section[sv]
+            config[k] = conf_value
     return config
+
+
+def find_config_file(search_conf_path=None, filename_patterns=None):
+    if not filename_patterns:
+        # Needs to end with chickadee.ini or .chickadee.ini for detection.
+        filename_patterns = ['chickadee.ini']
+
+    if not search_conf_path:
+        search_conf_path = _generate_default_config_search_path()
+
+    for location in search_conf_path:
+        if not (os.path.exists(location) and os.path.isdir(location)):
+            logger.debug("Unable to access config file location {}.".format(location))
+        for file_name in os.listdir(location):
+            for pattern in filename_patterns:
+                if file_name.endswith(pattern):
+                    return os.path.join(location, file_name)
+
+
+def _generate_default_config_search_path():
+    # Config file search path order:
+    # 1. Current directory
+    # 2. User home directory
+    # 3. System wide directory
+    search_conf_path = [os.path.abspath('.'), os.path.expanduser('~')]
+    if 'win32' in sys.platform:
+        search_conf_path.append(
+            os.path.join(os.getenv('APPDATA'), 'chickadee'))
+        search_conf_path.append('C:\\ProgramData\\chickadee')
+    elif 'linux' in sys.platform or 'darwin' in sys.platform:
+        search_conf_path.append(
+            os.path.expanduser('~/.config/chickadee'))
+        search_conf_path.append('/etc/chickadee')
+    return search_conf_path
 
 
 def arg_handling(args):
@@ -574,6 +585,7 @@ def arg_handling(args):
     Returns:
         argparse Namespace containing argument parameters.
     """
+    # noinspection PyTypeChecker
     parser = argparse.ArgumentParser(
         description=__desc__,
         formatter_class=CustomArgFormatter,
@@ -694,12 +706,14 @@ def join_config_args(config, args, definitions=None):
     return final_config
 
 
-def entry(args=sys.argv[1:]):  # pragma: no cover
+def entry(args=None):  # pragma: no cover
     """Entrypoint for package script.
 
     Args:
         args: Arguments from invocation.
     """
+    if not args:
+        args = sys.argv[1:]
     # Handle parameters from config file and command line.
     args = arg_handling(args)
     config = config_handing(args.config)

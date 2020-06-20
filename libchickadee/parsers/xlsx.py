@@ -7,12 +7,9 @@ values (not formulas) across all tabs within a spreadsheet.
 
 """
 
-import os
-
 from openpyxl import load_workbook
 
-from libchickadee.parsers import ParserBase
-
+from libchickadee.parsers import ParserBase, run_parser_from_cli
 
 __author__ = 'Chapin Bryce'
 __date__ = 20200107
@@ -24,7 +21,7 @@ class XLSXParser(ParserBase):
     """Class to extract IP addresses from XLSX workbooks."""
     def __init__(self, ignore_bogon=True):
         super().__init__(ignore_bogon)
-        self.ips = dict()
+        self.ips = {}
 
     def parse_file(self, file_entry, is_stream=False):
         """Parse xlsx contents. Must be a path to an existing XLSX workbook.
@@ -35,6 +32,9 @@ class XLSXParser(ParserBase):
             is_stream (bool): Unused argument, required for implementation.
                 Does not change functionality.
         """
+        if is_stream:
+            raise NotImplementedError("Providing XLSX files as an input stream of data is not yet supported.")
+
         wb = load_workbook(file_entry)
 
         for sheet in wb.sheetnames:
@@ -51,11 +51,5 @@ if __name__ == '__main__':  # pragma: no cover
     parser.add_argument('path', help="File or folder to parse")
     args = parser.parse_args()
 
-    xlparser = XLSXParser()
-    if os.path.isdir(args.path):
-        for root, _, files in os.walk(args.path):
-            for fentry in files:
-                xlparser.parse_file(os.path.join(root, fentry))
-    else:
-        xlparser.parse_file(args.path)
-    print("{} unique IPs discovered".format(len(xlparser.ips)))
+    xl_parser = XLSXParser()
+    run_parser_from_cli(args=args, parser_obj=xl_parser)

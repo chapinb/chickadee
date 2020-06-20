@@ -4,7 +4,7 @@ ResolverBase
 
 A base class for handling resolution of IP addresses.
 
-This class includes elemends common across backend resolution data sources.
+This class includes elements common across backend resolution data sources.
 This includes common parameters, such as field names, and functions to handle
 querying the data sources. Additionally, this includes writers for CSV and JSON
 formats.
@@ -62,14 +62,15 @@ class ResolverBase(object):
         Args:
             data (list, tuple, set, str): One or more IPs to resolve
 
-        Return:
-            (yield) request data iterator
+        Yield:
+            (dict) request data iterator
 
         Example:
             >>> records = ['1.1.1.1', '2.2.2.2']
             >>> resolver = ResolverBase()
             >>> resolved_data = resolver.query(records)
         """
+
         self.data = data
         if isinstance(data, (list, tuple, set)):
             return self.batch()
@@ -124,6 +125,7 @@ class ResolverBase(object):
         Args:
             outfile (str or file_obj): Path to or already open file
             data (list): List of dictionaries containing resolved data
+            headers (list): List of column headers. Will use the first element of data if not present.
             lines (bool): Whether to export 1 dictionary object per line or
                 a whole json object.
 
@@ -145,26 +147,13 @@ class ResolverBase(object):
 
         """
         was_opened = False
+        open_file = outfile
         if isinstance(outfile, str):
             open_file = open(outfile, 'w', newline="")
             was_opened = True
-        else:
-            open_file = outfile
 
         if headers:
-            # Only include fields in headers
-            # Include headers with no value if not present in original
-            selected_data = []
-            for x in data:
-                d = {}
-                for k, v in x.items():
-                    if k in headers:
-                        d[k] = v
-                for h in headers:
-                    if h not in d:
-                        d[h] = None
-                selected_data.append(d)
-            data = selected_data
+            data = ResolverBase.normalize_data_headers(data, headers)
 
         if lines:
             for entry in data:
@@ -174,3 +163,19 @@ class ResolverBase(object):
 
         if was_opened:
             open_file.close()
+
+    @staticmethod
+    def normalize_data_headers(data, headers):
+        # Only include fields in headers
+        # Include headers with no value if not present in original
+        selected_data = []
+        for x in data:
+            d = {}
+            for k, v in x.items():
+                if k in headers:
+                    d[k] = v
+            for h in headers:
+                if h not in d:
+                    d[h] = None
+            selected_data.append(d)
+        return selected_data
