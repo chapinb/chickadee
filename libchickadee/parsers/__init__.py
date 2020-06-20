@@ -60,7 +60,7 @@ IPv4Pattern = re.compile(IPV4ADDR)
 IPv6Pattern = re.compile(IPV6ADDR)
 
 
-def run_parser_from_cli(args, parser_obj):
+def run_parser_from_cli(args, parser_obj):  # pragma: no cover
     if os.path.isdir(args.path):
         for root, _, files in os.walk(args.path):
             for fentry in files:

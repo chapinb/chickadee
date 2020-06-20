@@ -101,18 +101,33 @@ class IPAPITestCase(unittest.TestCase):
             self.assertEqual(data, expected)
 
     @patch("libchickadee.backends.ipapi.requests.get")
-    def test_ipapi_rate_limiting(self, mock_query):
-        test_ip = self.test_data_ips[1]
-        mock_query.side_effect = [
-            MockResponse(json_data={}, status_code=429, rl='0', ttl='2'),
-            MockResponse(json_data=self.expected_result[1], status_code=200, rl='0', ttl='2')
-        ]
-        start_time = datetime.now()
-        data = self.resolver.query(test_ip)
-        delta = datetime.now() - start_time
-        print(delta.total_seconds())
-        self.assertTrue(delta.total_seconds() > 2)
-        self.assertEqual(data, self.expected_result[1])
+    @patch("libchickadee.backends.ipapi.requests.post")
+    def test_ipapi_rate_limiting(self, mock_get, mock_post):
+        single = {
+            "test_data": self.test_data_ips[1],
+            "expected_data": self.expected_result[1],
+            "mock_data": [
+                MockResponse(json_data={}, status_code=429, rl='0', ttl='2'),
+                MockResponse(json_data=self.expected_result[1], status_code=200, rl='0', ttl='0')
+            ]
+        }
+        batch = {
+            "test_data": self.test_data_ips,
+            "expected_data": self.expected_result,
+            "mock_data": [
+                MockResponse(json_data={}, status_code=429, rl='0', ttl='2'),
+                MockResponse(json_data=self.expected_result, status_code=200, rl='0', ttl='0')
+            ]
+        }
+        for test in [single, batch]:
+            test_ip = test['test_data']
+            mock_get.side_effect = test['mock_data']
+            mock_post.side_effect = test['mock_data']
+            start_time = datetime.now()
+            data = self.resolver.query(test_ip)
+            delta = datetime.now() - start_time
+            self.assertTrue(delta.total_seconds() > 1)
+            self.assertEqual(data, test['expected_data'])
 
 
 class WritersTestCase(unittest.TestCase):

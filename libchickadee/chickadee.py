@@ -504,7 +504,7 @@ def config_handing(config_file=None, search_conf_path=None):
     }
 
     if not config_file:
-        config_file = find_config_file(config_file, search_conf_path)
+        config_file = find_config_file(search_conf_path)
 
     fail_warn = 'Relying on argument defaults'
     if not config_file:
@@ -545,32 +545,38 @@ def parse_config_sections(conf, section_defs):
     return config
 
 
-def find_config_file(config_file, search_conf_path):
+def find_config_file(search_conf_path=None, filename_patterns=None):
+    if not filename_patterns:
+        # Needs to end with chickadee.ini or .chickadee.ini for detection.
+        filename_patterns = ['chickadee.ini']
+
     if not search_conf_path:
-        # Config file search path order:
-        # 1. Current directory
-        # 2. User home directory
-        # 3. System wide directory
-        # Needs to be named chickadee.ini or .chickadee.ini for detection.
-        search_conf_path = [os.path.abspath('.'), os.path.expanduser('~')]
-        if 'win32' in sys.platform:
-            search_conf_path.append(
-                os.path.join(os.getenv('APPDATA'), 'chickadee'))
-            search_conf_path.append('C:\\ProgramData\\chickadee')
-        elif 'linux' in sys.platform or 'darwin' in sys.platform:
-            search_conf_path.append(
-                os.path.expanduser('~/.config/chickadee'))
-            search_conf_path.append('/etc/chickadee')
+        search_conf_path = _generate_default_config_search_path()
+
     for location in search_conf_path:
         if not (os.path.exists(location) and os.path.isdir(location)):
-            logger.debug(
-                "Unable to access config file location {}.".format(
-                    location))
-        elif 'chickadee.ini' in os.listdir(location):
-            config_file = os.path.join(location, 'chickadee.ini')
-        elif '.chickadee.ini' in os.listdir(location):
-            config_file = os.path.join(location, '.chickadee.ini')
-    return config_file
+            logger.debug("Unable to access config file location {}.".format(location))
+        for file_name in os.listdir(location):
+            for pattern in filename_patterns:
+                if file_name.endswith(pattern):
+                    return os.path.join(location, file_name)
+
+
+def _generate_default_config_search_path():
+    # Config file search path order:
+    # 1. Current directory
+    # 2. User home directory
+    # 3. System wide directory
+    search_conf_path = [os.path.abspath('.'), os.path.expanduser('~')]
+    if 'win32' in sys.platform:
+        search_conf_path.append(
+            os.path.join(os.getenv('APPDATA'), 'chickadee'))
+        search_conf_path.append('C:\\ProgramData\\chickadee')
+    elif 'linux' in sys.platform or 'darwin' in sys.platform:
+        search_conf_path.append(
+            os.path.expanduser('~/.config/chickadee'))
+        search_conf_path.append('/etc/chickadee')
+    return search_conf_path
 
 
 def arg_handling(args):
