@@ -194,7 +194,7 @@ class Chickadee(object):
         self.input_data = None
         self.outformat = outformat
         self.outfile = outfile
-        self.fields = fields
+        self.fields = fields if isinstance(fields, list) else fields.split(',')
         self.force_single = False
         self.ignore_bogon = True
         self.lang = 'en'
@@ -380,7 +380,7 @@ class Chickadee(object):
 
             for element in data:
                 resolver.data = element
-                results.append(resolver.single())
+                results += resolver.single()
         else:
             results = resolver.query(distinct_ips)
 

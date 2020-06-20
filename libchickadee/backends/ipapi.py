@@ -182,7 +182,7 @@ class Resolver(ResolverBase):
 
         for x in orig_recs:
             params = {
-                'fields': ','.join(self.fields),
+                'fields': ','.join(self.fields) if isinstance(self.fields, list) else self.fields,
                 'lang': self.lang,
             }
             if self.api_key:
@@ -237,7 +237,7 @@ class Resolver(ResolverBase):
         )
         if rdata.status_code == 200:
             self.rate_limit(rdata.headers)
-            return rdata.json()
+            return [rdata.json()]
         elif rdata.status_code == 429:
             self.rate_limit(rdata.headers)
             self.sleeper()
