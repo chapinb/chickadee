@@ -188,7 +188,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
         chickadee = Chickadee()
         chickadee.ignore_bogon = False
         chickadee.fields = self.fields
-        mock_query.return_value = self.expected_result.copy()
+        mock_query.return_value = self.expected_result
         data = chickadee.run(','.join(self.test_data_ips))
         res = [x for x in data]
         self.assertCountEqual(res, self.expected_result)
@@ -202,7 +202,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
                 self.data = None
 
             def single(self):
-                return [x for x in expected_results if x['query'] == self.data][0]
+                return [x for x in expected_results if x['query'] == self.data]
 
         chickadee = Chickadee()
         chickadee.ignore_bogon = False
@@ -221,6 +221,13 @@ class ChickadeeStringTestCase(unittest.TestCase):
         except TypeError:
             failed = True
         self.assertTrue(failed)
+
+    @patch("libchickadee.backends.ipapi.Resolver.batch")
+    def test_manual_run(self, mock_query):
+        chick = Chickadee(fields=self.fields)
+        mock_query.return_value = [self.expected_result[1]]
+        actual = chick.run(self.test_data_ips[1])
+        self.assertDictEqual(self.expected_result[1], actual[0])
 
 
 class ChickadeeFileTestCase(unittest.TestCase):

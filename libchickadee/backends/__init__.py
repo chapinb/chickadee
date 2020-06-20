@@ -62,13 +62,18 @@ class ResolverBase(object):
         Args:
             data (list, tuple, set, str): One or more IPs to resolve
 
-        Yield:
-            (dict) request data iterator
+        Returns:
+            (list) List of collected records.
 
         Example:
             >>> records = ['1.1.1.1', '2.2.2.2']
             >>> resolver = ResolverBase()
             >>> resolved_data = resolver.query(records)
+            >>> print(resolved_data)
+            [
+             {"query": "1.1.1.1", "country": "Australia", ...},
+             {"query": "2.2.2.2", "country": "France", ...}
+            ]
         """
 
         self.data = data

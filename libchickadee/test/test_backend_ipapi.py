@@ -72,7 +72,7 @@ class IPAPITestCase(unittest.TestCase):
             mock_query.return_value = MockResponse(json_data=self.expected_result[count], status_code=200)
             self.resolver.data = ip
             data = self.resolver.single()
-            self.assertEqual(data, self.expected_result[count])
+            self.assertEqual(data, [self.expected_result[count]])
 
     @patch("libchickadee.backends.ipapi.requests.post")
     def test_ipapi_resolve_batch(self, mock_query):
@@ -105,7 +105,7 @@ class IPAPITestCase(unittest.TestCase):
     def test_ipapi_rate_limiting(self, mock_get, mock_post):
         single = {
             "test_data": self.test_data_ips[1],
-            "expected_data": self.expected_result[1],
+            "expected_data": [self.expected_result[1]],
             "mock_data": [
                 MockResponse(json_data={}, status_code=429, rl='0', ttl='2'),
                 MockResponse(json_data=self.expected_result[1], status_code=200, rl='0', ttl='0')
