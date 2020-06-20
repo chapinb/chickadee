@@ -18,9 +18,7 @@ def get_pypi_version():
 def update_available(current_version):
     """Check version against pypi.org information"""
     pypi_version = get_pypi_version()
-    if pypi_version > current_version:
-        return True
-    return False
+    return pypi_version > current_version
 
 
 if __name__ == "__main__":

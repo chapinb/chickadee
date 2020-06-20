@@ -1,5 +1,7 @@
 """IP-API Backend Tests."""
 import unittest
+from datetime import datetime
+from unittest.mock import patch
 import csv
 import json
 import os
@@ -11,6 +13,17 @@ __author__ = 'Chapin Bryce'
 __date__ = 20200114
 __license__ = 'MIT Copyright 2020 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
+
+
+class MockResponse:
+    def __init__(self, json_data, status_code, rl='100', ttl='1'):
+        self.run_count = 0
+        self.json_data = json_data
+        self.status_code = status_code
+        self.headers = {'X-Rl': rl, 'X-Ttl': ttl}
+
+    def json(self):
+        return self.json_data
 
 
 class IPAPITestCase(unittest.TestCase):
@@ -33,14 +46,18 @@ class IPAPITestCase(unittest.TestCase):
         self.resolver = Resolver(fields=['query', 'count', 'as',
                                          'country', 'org', 'proxy'])
 
-    def test_ipapi_resolve_query_single(self):
+    @patch("libchickadee.backends.ipapi.Resolver.single")
+    def test_ipapi_resolve_query_single(self, mock_query):
         """Query Method Test"""
         for count, ip in enumerate(self.test_data_ips):
+            mock_query.return_value = self.expected_result[count]
             data = self.resolver.query(ip)
             self.assertEqual(data, self.expected_result[count])
 
-    def test_ipapi_resolve_query_batch(self):
+    @patch("libchickadee.backends.ipapi.Resolver.batch")
+    def test_ipapi_resolve_query_batch(self, mock_query):
         """Batch Query Method Test"""
+        mock_query.return_value = self.expected_result.copy()
         data = self.resolver.query(self.test_data_ips)
         res = [x for x in data]
         batch_result = []  # No reverse field
@@ -48,39 +65,54 @@ class IPAPITestCase(unittest.TestCase):
             batch_result.append(item)
         self.assertCountEqual(res, batch_result)
 
-    def test_ipapi_resolve_single(self):
+    @patch("libchickadee.backends.ipapi.requests.get")
+    def test_ipapi_resolve_single(self, mock_query):
         """Single Query Method Test"""
         for count, ip in enumerate(self.test_data_ips):
+            mock_query.return_value = MockResponse(json_data=self.expected_result[count], status_code=200)
             self.resolver.data = ip
             data = self.resolver.single()
             self.assertEqual(data, self.expected_result[count])
 
-    def test_ipapi_resolve_batch(self):
+    @patch("libchickadee.backends.ipapi.requests.post")
+    def test_ipapi_resolve_batch(self, mock_query):
         """Batch Query Method Test"""
+        mock_query.return_value = MockResponse(json_data=self.expected_result, status_code=200)
         self.resolver.data = self.test_data_ips
         data = self.resolver.batch()
         res = [x for x in data]
-        self.assertCountEqual(res, self.expected_result)
+        self.assertEqual(len(res), len(self.expected_result))
 
-    def test_ipapi_resolve_single_field(self):
+    @patch("libchickadee.backends.ipapi.Resolver.single")
+    def test_ipapi_resolve_single_field(self, mock_query):
         """Single Query Method Test"""
         for count, ip in enumerate(self.test_data_ips):
+            expected = {
+                'query': self.expected_result[count].get('query', None),
+                'country': self.expected_result[count].get('country', None),
+                'as': self.expected_result[count].get('as', None),
+            }
+
+            mock_query.return_value = expected
             self.resolver.data = ip
             self.resolver.fields = ['query', 'country', 'as']
             data = self.resolver.single()
 
-            expected = {}
-            for field in ['query', 'country', 'as']:
-                if field not in data:
-                    continue
-                expected[field] = self.expected_result[count].get(field, None)
             self.assertEqual(data, expected)
 
-    def test_ipapi_rate_limiting(self):
-        for x in range(20):
-            for count, ip in enumerate(self.test_data_ips):
-                data = self.resolver.query(ip)
-                self.assertEqual(data, self.expected_result[count])
+    @patch("libchickadee.backends.ipapi.requests.get")
+    def test_ipapi_rate_limiting(self, mock_query):
+        test_ip = self.test_data_ips[1]
+        mock_query.side_effect = [
+            MockResponse(json_data={}, status_code=429, rl='0', ttl='2'),
+            MockResponse(json_data=self.expected_result[1], status_code=200, rl='0', ttl='2')
+        ]
+        start_time = datetime.now()
+        data = self.resolver.query(test_ip)
+        delta = datetime.now() - start_time
+        print(delta.total_seconds())
+        self.assertTrue(delta.total_seconds() > 2)
+        self.assertEqual(data, self.expected_result[1])
 
 
 class WritersTestCase(unittest.TestCase):
@@ -136,87 +168,6 @@ class WritersTestCase(unittest.TestCase):
             self.data[0],
             read_data
         )
-
-
-'''
-import os
-from libchickadee.backends.ipapi import ProResolver
-# Disabled - Unit test only run locally due to use of API key
-class IPAPIProTestCase(unittest.TestCase):
-    """IP-API Backend Tests."""
-    def setUp(self):
-        """Test config"""
-        self.test_data_ips = [
-            '10.0.1.2', '8.8.8.8', '1.1.1.1', '2.2.2.2', '2001:4860:4860::8888'
-        ]
-        self.expected_result = [
-            {'message': 'private range', 'query': '10.0.1.2'},
-
-            {'as': 'AS15169 Google LLC', 'city': 'Ashburn',
-             'country': 'United States', 'district': '', 'lat': 39.0438,
-             'lon': -77.4874, 'mobile': False, 'org': 'Google Inc.',
-             'proxy': False, 'query': '8.8.8.8', 'reverse': 'dns.google',
-             'regionName': 'Virginia', 'zip': '20149'},
-
-            {'as': 'AS13335 Cloudflare, Inc.', 'city': 'Sydney',
-             'country': 'Australia', 'district': '', 'lat': -33.8688,
-             'lon': 151.209, 'mobile': False, 'org': '', 'proxy': False,
-             'query': '1.1.1.1', 'regionName': 'New South Wales',
-             'zip': '1001', 'reverse': 'one.one.one.one'},
-
-            {'as': 'AS3215 Orange S.A.', 'city': 'Aubervilliers',
-             'country': 'France', 'district': '', 'lat': 48.9123,
-             'lon': 2.38405, 'mobile': False, 'org': '', 'proxy': True,
-             'query': '2.2.2.2', 'regionName': 'Île-de-France',
-             'zip': '93300', 'reverse': ''},
-
-            {'as': 'AS15169 Google LLC', 'city': 'Newark',
-             'country': 'United States', 'district': '', 'lat': 40.7357,
-             'lon': -74.1724, 'mobile': False, 'org': 'Google LLC',
-             'proxy': False, 'query': '2001:4860:4860::8888',
-             'regionName': 'New Jersey', 'zip': '07175',
-             'reverse': 'dns.google',}
-        ]
-        self.resolver = ProResolver(os.environ.get('CHICKADEE_API_KEY', ''))
-
-    def test_ipapi_resolve_query_single(self):
-        """Query Method Test"""
-        for count, ip in enumerate(self.test_data_ips):
-            data = self.resolver.query(ip)
-            res = [x for x in data]
-            self.assertEqual(res, [self.expected_result[count]])
-
-    def test_ipapi_resolve_query_batch(self):
-        """Batch Query Method Test"""
-        data = self.resolver.query(self.test_data_ips)
-        res = [x for x in data]
-        batch_result = [] # No reverse field
-        for item in self.expected_result:
-            if 'reverse' in item:
-                item.pop('reverse')
-            batch_result.append(item)
-        self.assertCountEqual(res, batch_result)
-
-    def test_ipapi_resolve_single(self):
-        """Single Query Method Test"""
-        for count, ip in enumerate(self.test_data_ips):
-            self.resolver.data = ip
-            data = self.resolver.single()
-            res = [x for x in data]
-            self.assertEqual(res, [self.expected_result[count]])
-
-    def test_ipapi_resolve_batch(self):
-        """Batch Query Method Test"""
-        self.resolver.data = self.test_data_ips
-        data = self.resolver.batch()
-        res = [x for x in data]
-        batch_result = [] # No reverse field
-        for item in self.expected_result:
-            if 'reverse' in item:
-                item.pop('reverse')
-            batch_result.append(item)
-        self.assertCountEqual(res, batch_result)
-# '''
 
 
 if __name__ == '__main__':
