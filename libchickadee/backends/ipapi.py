@@ -118,7 +118,7 @@ class Resolver(ResolverBase):
         ]
         if lang not in self.supported_langs:
             lang = 'en'
-        ResolverBase.__init__(self, fields=fields, lang=lang)
+        super().__init__(self, fields=fields, lang=lang)
 
         self.uri = 'http://ip-api.com/'
         self.api_key = None
@@ -262,7 +262,7 @@ class ProResolver(Resolver):
         lang (str): Language for returned results.
     """
     def __init__(self, api_key, fields=FIELDS, lang='en'):  # pragma: no cover
-        Resolver.__init__(self, fields=fields, lang='en')
+        super().__init__(self, fields=fields, lang='en')
         self.uri = 'https://pro.ip-api.com/'
         self.api_key = api_key
         self.enable_sleep = False

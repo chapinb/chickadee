@@ -76,6 +76,10 @@ class ResolverBase(object):
         raise NotImplementedError()
 
     @staticmethod
+    def defang_ioc(ioc):
+        return ioc.replace(".", "[.]")
+
+    @staticmethod
     def write_csv(outfile, data, headers=None):
         """Writes a list of dictionaries to a CSV file.
 

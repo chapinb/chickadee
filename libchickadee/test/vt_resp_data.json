@@ -1,0 +1,170 @@
+{
+    "Test0": {
+        "query": "164.77.130.222",
+        "test": {
+            "asn": 6471,
+            "undetected_urls": [
+                ["http://164.77.130.222/JRjkjrtgpUqUoXxN/xNNCDech/8OgNItt31dhU8/", "cb5af93d399c18d35f9ad66b0c10b7025527b3de5c9daf81df6ab956f495e101", 0, 71, "2020-03-02 08:36:31"],
+                ["http://164.77.130.222/V6WP5Y3w8CSqJiYC/OqaRh3uOVwJ/iH4eRlDSPkHOK/MI5xZBvJv5srfV547Ub/69ODd6WCn1yghi/", "2c69adced2f9520369ea9d7914008d8b401949c4673f85258375afa83e03728a", 0, 71, "2020-03-02 08:12:39"],
+                ["http://164.77.130.222/qyZJ/", "64cb37c06dbbf4b62f297e075eb2e494cb589986481aa4b90b1c793169d410a1", 0, 71, "2020-03-02 08:01:12"]
+            ],
+            "whois": "NetRange: 164.77.0.0 - 164.77.255.255\nCIDR: 164.77.0.0/16\nNetName: LACNIC-ERX-164-77-0-0\nNetHandle: NET-164-77-0-0-1\nParent: NET164 (NET-164-0-0-0-0)\nNetType: Transferred to LACNIC\nOriginAS: \nOrganization: Latin American and Caribbean IP address Regional Registry (LACNIC)\nRegDate: 2003-07-23\nUpdated: 2007-12-17\nComment: This IP address range is under LACNIC responsibility\nComment: for further allocations to users in LACNIC region.\nComment: Please see http://www.lacnic.net/ for further details,\nComment: or check the WHOIS server located at http://whois.lacnic.net\nRef: https://rdap.arin.net/registry/ip/164.77.0.0\nResourceLink: http://lacnic.net/cgi-bin/lacnic/whois\nResourceLink: whois.lacnic.net\nOrgName: Latin American and Caribbean IP address Regional Registry\nOrgId: LACNIC\nAddress: Rambla Republica de Mexico 6125\nCity: Montevideo\nStateProv: \nPostalCode: 11400\nCountry: UY\nRegDate: 2002-07-26\nUpdated: 2018-03-15\nRef: https://rdap.arin.net/registry/entity/LACNIC\nReferralServer: whois://whois.lacnic.net\nResourceLink: http://lacnic.net/cgi-bin/lacnic/whois\nOrgAbuseHandle: LWI100-ARIN\nOrgAbuseName: LACNIC Whois Info\nOrgAbusePhone: +598-2604-2222 \nOrgAbuseEmail: abuse@lacnic.net\nOrgAbuseRef: https://rdap.arin.net/registry\/entity/LWI100-ARIN\nOrgTechHandle: LACNIC-ARIN\nOrgTechName: LACNIC Whois Info\nOrgTechPhone: +598-2604-2222 \nOrgTechEmail: whois-contact@lacnic.net\nOrgTechRef: https://rdap.arin.net/registry/entity/LACNIC-ARIN\n",
+            "whois_timestamp": 1582899609,
+            "country": "CL",
+            "response_code": 1,
+            "as_owner": "ENTEL CHILE S.A.",
+            "verbose_msg": "IP address in dataset",
+            "resolutions": [],
+            "detected_urls": [{
+                    "url": "http://164.77.130.222/HwvdlWybYJX3yyql/indf/GTvkUz/",
+                    "positives": 3,
+                    "total": 71,
+                    "scan_date": "2020-03-03 10:36:32"
+                },
+                {
+                    "url": "http://164.77.130.222/W7oxB6AkBSFBfWAxo/9lcW2O9/",
+                    "positives": 1,
+                    "total": 71,
+                    "scan_date": "2020-03-02 09:34:42"
+                },
+                {
+                    "url": "http://164.77.130.222/ofPF5LKTR/Ir8iUhNyIO24bvHcT8l/R3PJaMy0O1iCl/UfMFqzXeTfVblwXois/pEW3/2QimGk/",
+                    "positives": 1,
+                    "total": 71,
+                    "scan_date": "2020-03-02 09:14:56"
+                }
+            ],
+            "detected_communicating_samples": [{
+                    "date": "2020-03-03 10:16:54",
+                    "positives": 11,
+                    "total": 73,
+                    "sha256": "c5be8c6765bc7de2e2488e112ddb69795d7c7c36f678e951d1369257f688afa1"
+                },
+                {
+                    "date": "2020-03-03 03:28:10",
+                    "positives": 6,
+                    "total": 75,
+                    "sha256": "6f8eddc2e74aa0fe47a70a0654139b703c6c0d3b08b7d8c2cc2927d3d4dcf590"
+                },
+                {
+                    "date": "2020-02-28 14:07:09",
+                    "positives": 6,
+                    "total": 75,
+                    "sha256": "80630a33d8feff543ecc7b98c07056a148caea7dbf0ab1cefdf5dd55f898f523"
+                }
+            ],
+            "undetected_communicating_samples": [{
+                    "date": "2020-03-02 13:27:18",
+                    "positives": 0,
+                    "total": 0,
+                    "sha256": "c92d68028f65d572913c12193661282b0a891e271e61cfcb37068ffca66b4188"
+                },
+                {
+                    "date": "2020-03-02 13:23:07",
+                    "positives": 0,
+                    "total": 0,
+                    "sha256": "29c8980d2f2d54e8ba096b4521ddfa610732830cccb8640cae05fe6822a9ac40"
+                }
+            ],
+            "continent": "SA",
+            "network": "164.77.128.0/22"
+        },
+        "expected": {
+            "query": "164.77.130.222",
+            "asn": "AS6471 ENTEL CHILE S.A.",
+            "continent": "SA",
+            "country": "CL",
+            "subnet": "164.77.128.0/22",
+            "status": 1,
+            "message": null,
+            "whois": {
+                "OtherRemarks": "",
+                "NetRange": "164.77.0.0 - 164.77.255.255",
+                "CIDR": "164.77.0.0/16",
+                "NetName": "LACNIC-ERX-164-77-0-0",
+                "NetHandle": "NET-164-77-0-0-1",
+                "Parent": "NET164 (NET-164-0-0-0-0)",
+                "NetType": "Transferred to LACNIC",
+                "OriginAS": "",
+                "Organization": "Latin American and Caribbean IP address Regional Registry (LACNIC)",
+                "RegDate": "2002-07-26",
+                "Updated": "2018-03-15",
+                "Comment": "or check the WHOIS server located at http://whois.lacnic.net",
+                "Ref": "https://rdap.arin.net/registry/entity/LACNIC",
+                "ResourceLink": "http://lacnic.net/cgi-bin/lacnic/whois",
+                "OrgName": "Latin American and Caribbean IP address Regional Registry",
+                "OrgId": "LACNIC",
+                "Address": "Rambla Republica de Mexico 6125",
+                "City": "Montevideo",
+                "StateProv": "",
+                "PostalCode": "11400",
+                "Country": "UY",
+                "ReferralServer": "whois://whois.lacnic.net",
+                "OrgAbuseHandle": "LWI100-ARIN",
+                "OrgAbuseName": "LACNIC Whois Info",
+                "OrgAbusePhone": "+598-2604-2222",
+                "OrgAbuseEmail": "abuse@lacnic.net",
+                "OrgAbuseRef": "https://rdap.arin.net/registry/entity/LWI100-ARIN",
+                "OrgTechHandle": "LACNIC-ARIN",
+                "OrgTechName": "LACNIC Whois Info",
+                "OrgTechPhone": "+598-2604-2222",
+                "OrgTechEmail": "whois-contact@lacnic.net",
+                "OrgTechRef": "https://rdap.arin.net/registry/entity/LACNIC-ARIN"
+            },
+            "resolution_count": 0,
+            "resolutions": [],
+            "detected_sample_count": 3,
+            "detected_samples": {
+                "c5be8c6765bc7de2e2488e112ddb69795d7c7c36f678e951d1369257f688afa1": 11,
+                "6f8eddc2e74aa0fe47a70a0654139b703c6c0d3b08b7d8c2cc2927d3d4dcf590": 6,
+                "80630a33d8feff543ecc7b98c07056a148caea7dbf0ab1cefdf5dd55f898f523": 6
+            },
+            "undetected_sample_count": 2,
+            "undetected_samples": ["29c8980d2f2d54e8ba096b4521ddfa610732830cccb8640cae05fe6822a9ac40", "c92d68028f65d572913c12193661282b0a891e271e61cfcb37068ffca66b4188"],
+            "detected_url_count": 3,
+            "detected_urls": {
+                "http://164[.]77[.]130[.]222/HwvdlWybYJX3yyql/indf/GTvkUz/": 3,
+                "http://164[.]77[.]130[.]222/W7oxB6AkBSFBfWAxo/9lcW2O9/": 1,
+                "http://164[.]77[.]130[.]222/ofPF5LKTR/Ir8iUhNyIO24bvHcT8l/R3PJaMy0O1iCl/UfMFqzXeTfVblwXois/pEW3/2QimGk/": 1
+            },
+            "undetected_url_count": 3,
+            "undetected_urls": ["http://164[.]77[.]130[.]222/JRjkjrtgpUqUoXxN/xNNCDech/8OgNItt31dhU8/", "http://164[.]77[.]130[.]222/V6WP5Y3w8CSqJiYC/OqaRh3uOVwJ/iH4eRlDSPkHOK/MI5xZBvJv5srfV547Ub/69ODd6WCn1yghi/", "http://164[.]77[.]130[.]222/qyZJ/"]
+        }
+    },
+    "Test1": {
+        "query": "165.227.86.122",
+        "test": {
+            "response_code": 1,
+            "undetected_urls": [
+                ["http://165.227.86.122/",
+                    "5ac89fc780039d05464a69e89d8eebe27e1a5de39d1bb2f220f0842f3ef70a59",
+                    0, 70, "2020-03-03 12:52:34"
+                ]
+            ],
+            "detected_urls": [],
+            "resolutions": [{
+                "last_resolved": "2020-03-03 12:53:27",
+                "hostname": "awsip.chapinb.com"
+            }],
+            "verbose_msg": "IP address in dataset"
+        },
+        "expected": {"asn": "",
+            "continent": null,
+            "country": null,
+            "detected_sample_count": 0,
+            "detected_samples": {},
+            "detected_url_count": 0,
+            "detected_urls": {},
+            "message": null,
+            "query": "165.227.86.122",
+            "resolution_count": 1,
+            "resolutions": ["awsip.chapinb.com"],
+            "status": 1,
+            "subnet": null,
+            "undetected_sample_count": 0,
+            "undetected_samples": [],
+            "undetected_url_count": 1,
+            "undetected_urls": ["http://165[.]227[.]86[.]122/"],
+            "whois": {"OtherRemarks": ""}}
+    }
+}

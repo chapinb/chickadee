@@ -2,7 +2,7 @@
 
 Yet another IP address enrichment tool.
 
-```
+```text
          _          _
         ('<        >')
        \(_)________( \
