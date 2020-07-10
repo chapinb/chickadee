@@ -51,6 +51,17 @@ Requirements:
 #. Install dependencies: ``pip install .``
 #. Run ``chickadee --help`` to get started.
 
+Install the latest features without Git
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you would like to install the latest pre-release version, feel free to use
+the above steps to clone the repository and install. You can also use pip
+to directly install the latest master branch from GitHub by running:
+
+```
+pip install git+https://github.com/chapinb/chickadee.git
+```
+
 Contribution
 ------------
 
