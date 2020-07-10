@@ -8,8 +8,10 @@ This includes common regex patterns and utilities for extracting IP addresses
 for resolution.
 
 """
+import json
 import os
 import re
+import sys
 
 from netaddr import IPAddress
 
@@ -67,7 +69,9 @@ def run_parser_from_cli(args, parser_obj):  # pragma: no cover
                 parser_obj.parse_file(os.path.join(root, fentry))
     else:
         parser_obj.parse_file(args.path)
-    print("{} unique IPs discovered".format(len(parser_obj.ips)))
+    sys.stderr.write("{} unique IPs discovered, shown below with their frequency.\n".format(len(parser_obj.ips)))
+    for ip, count in parser_obj.ips.items():
+        print(json.dumps({"count": count, "ip": ip}))
 
 
 class ParserBase(object):

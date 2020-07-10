@@ -1,5 +1,31 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+List of new features
+
+* Added support to extract IP addresses from Windows Event logs (evtx files.)
+
+### Fixed
+
+Bugs addressed:
+
+* [Issue-54](https://github.com/chapinb/chickadee/issues/54) - Fixed bug where an inconsistent data type was returned
+  by the resolver.
+
+### Changed
+
+Modifications to existing functionality
+
+* Increased unit test coverage. Leverage mocking for API requests.
+* Improved code per Deepsource, PyCharm, and Sourcery recommendations.
+
+### Removed
+
+Features removed
+
 ## 20200407.2
 
 This release includes:
