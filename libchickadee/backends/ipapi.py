@@ -84,7 +84,7 @@ from tqdm import trange
 
 from . import ResolverBase
 
-logger = logging.getLogger('libchickadee.chickadee')
+logger = logging.getLogger(__name__)
 
 __author__ = 'Chapin Bryce'
 __date__ = 20200114

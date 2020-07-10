@@ -149,6 +149,7 @@ from libchickadee.backends.ipapi import Resolver, ProResolver
 # Import Parsers
 from libchickadee.parsers.plain_text import PlainTextParser
 from libchickadee.parsers.xlsx import XLSXParser
+from libchickadee.parsers.evtx import EVTXParser
 
 
 __author__ = 'Chapin Bryce'
@@ -311,8 +312,10 @@ class Chickadee(object):
             # Extract IPs with proper handler
             logger.debug("Extracting IPs from {}".format(file_path))
 
-        if not is_stream and file_path.endswith('xlsx'):
+        if not is_stream and file_path.lower().endswith('xlsx'):
             file_parser = XLSXParser(ignore_bogon)
+        elif not is_stream and file_path.lower().endswith('evtx'):
+            file_parser = EVTXParser(ignore_bogon)
         else:
             file_parser = PlainTextParser(ignore_bogon)
         try:
@@ -437,7 +440,7 @@ def setup_logging(path, verbose=False):  # pragma: no cover
     global logger
 
     # Set logger object, uses module's name
-    logger = logging.getLogger(name=__name__)
+    logger = logging.getLogger(__name__)
 
     # Set default logger level to DEBUG. You can change this later
     logger.setLevel(logging.DEBUG)
@@ -556,6 +559,7 @@ def find_config_file(search_conf_path=None, filename_patterns=None):
     for location in search_conf_path:
         if not (os.path.exists(location) and os.path.isdir(location)):
             logger.debug("Unable to access config file location {}.".format(location))
+            continue
         for file_name in os.listdir(location):
             for pattern in filename_patterns:
                 if file_name.endswith(pattern):
