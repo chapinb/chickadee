@@ -1,6 +1,6 @@
 """Extract IP addresses from EVTX files."""
 
-from libchickadee.parsers import ParserBase
+from libchickadee.parsers import ParserBase, run_parser_from_cli
 
 import Evtx.Evtx
 
@@ -28,3 +28,14 @@ class EVTXParser(ParserBase):
             for record in event_log.records():
                 # Send event data to self.check_ips()
                 self.check_ips(record.xml())
+
+
+if __name__ == "__main__":  # pragma: no cover
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('path', help="File or folder to parse")
+    args = parser.parse_args()
+
+    ev_parser = EVTXParser()
+    run_parser_from_cli(args=args, parser_obj=ev_parser)
+
