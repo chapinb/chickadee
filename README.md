@@ -23,6 +23,7 @@ Yet another IP address enrichment tool.
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 [![PyPI version](https://badge.fury.io/py/chickadee.svg)](https://badge.fury.io/py/chickadee)
 [![PyPi downloads](https://pypip.in/d/chickadee/badge.png)](https://pypistats.org/packages/chickadee)
+[![DeepSource](https://static.deepsource.io/deepsource-badge-light-mini.svg)](https://deepsource.io/gh/chapinb/chickadee/?ref=repository-badge)
 
 Supported GeoIP back-ends:
 

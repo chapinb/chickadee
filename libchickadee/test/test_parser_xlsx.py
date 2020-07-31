@@ -29,7 +29,7 @@ class XLSXParserTestCase(unittest.TestCase):
 
     def test_ip_extraction_xlsx(self):
         """Extraction test."""
-        self.parser.parse_file(self.test_data_dir+'/test_ips.xlsx')
+        self.parser.parse_file(os.path.join(self.test_data_dir, 'test_ips.xlsx'))
         self.assertEqual(self.test_data_ips, self.parser.ips)
 
 

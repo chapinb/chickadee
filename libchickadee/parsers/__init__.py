@@ -8,8 +8,10 @@ This includes common regex patterns and utilities for extracting IP addresses
 for resolution.
 
 """
-
+import json
+import os
 import re
+import sys
 
 from netaddr import IPAddress
 
@@ -54,16 +56,29 @@ IPV6GROUPS = (
 )
 
 # Reverse rows for greedy match
-IPV6ADDR = '|'.join(['(?:{})'.format(g) for g in IPV6GROUPS[::-1]])
+IPV6ADDR = '|'.join('(?:{})'.format(g) for g in IPV6GROUPS[::-1])
 
 IPv4Pattern = re.compile(IPV4ADDR)
 IPv6Pattern = re.compile(IPV6ADDR)
+
+
+def run_parser_from_cli(args, parser_obj):  # pragma: no cover
+    if os.path.isdir(args.path):
+        for root, _, files in os.walk(args.path):
+            for fentry in files:
+                parser_obj.parse_file(os.path.join(root, fentry))
+    else:
+        parser_obj.parse_file(args.path)
+    sys.stderr.write("{} unique IPs discovered, shown below with their frequency.\n".format(len(parser_obj.ips)))
+    for ip, count in parser_obj.ips.items():
+        print(json.dumps({"count": count, "ip": ip}))
 
 
 class ParserBase(object):
     """Base class for parsers, containing common utilities."""
     def __init__(self, ignore_bogon=True):
         self.ignore_bogon = ignore_bogon
+        self.ips = {}
 
     def check_ips(self, data):
         """Check data for IP addresses. Results stored in ``self.ips``.
@@ -115,7 +130,5 @@ class ParserBase(object):
             (bool): Whether or not the IP is a known BOGON address.
         """
         ip = IPAddress(ip_addr)
-        if (ip.is_private() or ip.is_link_local() or
-                ip.is_reserved() or ip.is_multicast()):
-            return True
-        return False
+        return bool((ip.is_private() or ip.is_link_local() or
+                     ip.is_reserved() or ip.is_multicast()))

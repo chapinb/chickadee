@@ -12,10 +12,9 @@ to first decompress it.
 """
 
 import binascii
-import os
 from gzip import GzipFile
 
-from libchickadee.parsers import ParserBase
+from libchickadee.parsers import ParserBase, run_parser_from_cli
 
 __author__ = 'Chapin Bryce'
 __date__ = 20200114
@@ -28,7 +27,7 @@ class PlainTextParser(ParserBase):
         and gzipped plain text files."""
     def __init__(self, ignore_bogon=True):
         super().__init__(ignore_bogon)
-        self.ips = dict()
+        self.ips = {}
 
     @staticmethod
     def is_gz_file(filepath):
@@ -57,28 +56,18 @@ class PlainTextParser(ParserBase):
             None
         """
         if not is_stream:
-            if self.is_gz_file(file_entry):
-                file_data = GzipFile(filename=file_entry)
-            else:
-                file_data = open(file_entry, 'rb')
+            file_data = GzipFile(filename=file_entry) if self.is_gz_file(file_entry) else open(file_entry, 'rb')
         else:
             # Encode if needed
-            if isinstance(file_entry.buffer.read(2), str):
-                two_bytes = file_entry.buffer.read(2).encode()
-            else:
-                two_bytes = file_entry.buffer.read(2)
+            two_bytes = file_entry.buffer.read(2)
+            two_bytes = two_bytes.encode() if isinstance(two_bytes, str) else two_bytes.read(2)
+
             file_entry.seek(0)
             # Check for gzip stream
-            if binascii.hexlify(two_bytes) == b'1f8b':
-                file_data = GzipFile(fileobj=file_entry)
-            else:
-                file_data = file_entry.buffer
+            file_data = GzipFile(fileobj=file_entry) if binascii.hexlify(two_bytes) == b'1f8b' else file_entry.buffer
 
         for raw_line in file_data:
-            if isinstance(raw_line, str):
-                line = raw_line
-            else:
-                line = raw_line.decode()
+            line = raw_line if isinstance(raw_line, str) else raw_line.decode()
             self.check_ips(line)
 
         if 'closed' in dir(file_data) and not file_data.closed:
@@ -91,11 +80,5 @@ if __name__ == "__main__":  # pragma: no cover
     parser.add_argument('path', help="File or folder to parse")
     args = parser.parse_args()
 
-    ptparser = PlainTextParser()
-    if os.path.isdir(args.path):
-        for root, _, files in os.walk(args.path):
-            for fentry in files:
-                ptparser.parse_file(os.path.join(root, fentry))
-    else:
-        ptparser.parse_file(args.path)
-    print("{} unique IPs discovered".format(len(ptparser.ips)))
+    pt_parser = PlainTextParser()
+    run_parser_from_cli(args=args, parser_obj=pt_parser)

@@ -1,5 +1,46 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+List of new features
+
+* Added support to extract IP addresses from Windows Event logs (evtx files.)
+
+### Fixed
+
+Bugs addressed:
+
+* [Issue-54](https://github.com/chapinb/chickadee/issues/54) - Fixed bug where an inconsistent data type was returned
+  by the resolver.
+
+### Changed
+
+Modifications to existing functionality
+
+* Increased unit test coverage. Leverage mocking for API requests.
+* Improved code per Deepsource, PyCharm, and Sourcery recommendations.
+
+### Removed
+
+Features removed
+
+## 20200407.2
+
+This release includes:
+
+* Features
+  * BOGON IP Address filtering. Defaults to excluding BOGON IPs from resolution
+* Bugs/Fixes
+  * Adjusted argparse logic to ensure proper handling of `data` inputs
+  * Added parameters to pass along the `api-key` configuration item
+* Additional documentation, hosted at https://chapinb.com/chickadee
+* Unit tests for reporting
+* Refactored argument and update handling
+* Moved common parser logic to init file
+
+
 ## 20191014
 
 This release includes:

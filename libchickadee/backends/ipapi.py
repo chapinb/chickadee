@@ -84,7 +84,7 @@ from tqdm import trange
 
 from . import ResolverBase
 
-logger = logging.getLogger('libchickadee.chickadee')
+logger = logging.getLogger(__name__)
 
 __author__ = 'Chapin Bryce'
 __date__ = 20200114
@@ -112,10 +112,12 @@ class Resolver(ResolverBase):
         fields (list): Collection of fields to request in resolution.
         lang (str): Language for returned results.
     """
-    def __init__(self, fields=FIELDS, lang='en'):
+    def __init__(self, fields=None, lang='en'):
         self.supported_langs = [
             'en', 'de', 'es', 'pt-BR', 'fr', 'ja', 'zh-CN', 'ru'
         ]
+        if not fields:
+            fields = FIELDS
         if lang not in self.supported_langs:
             lang = 'en'
         super().__init__(self, fields=fields, lang=lang)
@@ -132,7 +134,7 @@ class Resolver(ResolverBase):
         duration of ``X-Ttl`` + 1 second.
 
         Args:
-            headers (dict): Request header information.
+            headers (dict, CaseInsensitiveDict): Request header information.
 
         Return:
             None
@@ -180,7 +182,7 @@ class Resolver(ResolverBase):
 
         for x in orig_recs:
             params = {
-                'fields': ','.join(self.fields),
+                'fields': ','.join(self.fields) if isinstance(self.fields, list) else self.fields,
                 'lang': self.lang,
             }
             if self.api_key:
@@ -199,18 +201,14 @@ class Resolver(ResolverBase):
                 self.rate_limit(rdata.headers)
                 result_list = [x for x in rdata.json()]
                 resolved_recs += result_list
-            elif rdata.status_code == 429:  # pragma: no cover
+            elif rdata.status_code == 429:
                 self.rate_limit(rdata.headers)
                 self.sleeper()
                 return self.batch()
             else:  # pragma: no cover
                 msg = "Unknown error encountered: {}".format(rdata.status_code)
                 logger.error(msg)
-                result_list = []
-                for result in records[x:x+100]:
-                    result_list.append({'query': result,
-                                        'status': 'failed',
-                                        'message': msg})
+                result_list = [{'query': result, 'status': 'failed', 'message': msg} for result in records[x:x+100]]
                 resolved_recs += result_list
         return resolved_recs
 
@@ -239,8 +237,8 @@ class Resolver(ResolverBase):
         )
         if rdata.status_code == 200:
             self.rate_limit(rdata.headers)
-            return rdata.json()
-        elif rdata.status_code == 429:  # pragma: no cover
+            return [rdata.json()]
+        elif rdata.status_code == 429:
             self.rate_limit(rdata.headers)
             self.sleeper()
             return self.single()
@@ -261,8 +259,10 @@ class ProResolver(Resolver):
         fields (list): Collection of fields to request in resolution.
         lang (str): Language for returned results.
     """
-    def __init__(self, api_key, fields=FIELDS, lang='en'):  # pragma: no cover
-        super().__init__(self, fields=fields, lang='en')
+    def __init__(self, api_key, fields=None, lang='en'):  # pragma: no cover
+        if not fields:
+            fields = FIELDS
+        super().__init__(self, fields=fields, lang=lang)
         self.uri = 'https://pro.ip-api.com/'
         self.api_key = api_key
         self.enable_sleep = False

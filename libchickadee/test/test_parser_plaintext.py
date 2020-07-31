@@ -31,7 +31,7 @@ class PlainTextParserTestCase(unittest.TestCase):
 
     def test_ip_extraction_txt(self):
         """Test text file extraction"""
-        self.parser.parse_file(self.test_data_dir+'/txt_ips.txt')
+        self.parser.parse_file(os.path.join(self.test_data_dir, 'txt_ips.txt'))
         self.assertEqual(self.test_data_ips, self.parser.ips)
 
     def test_ip_extraction_gz(self):

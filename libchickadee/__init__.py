@@ -51,6 +51,17 @@ Requirements:
 #. Install dependencies: ``pip install .``
 #. Run ``chickadee --help`` to get started.
 
+Install the latest features without Git
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you would like to install the latest pre-release version, feel free to use
+the above steps to clone the repository and install. You can also use pip
+to directly install the latest master branch from GitHub by running:
+
+```
+pip install git+https://github.com/chapinb/chickadee.git
+```
+
 Contribution
 ------------
 
@@ -134,7 +145,7 @@ library from the command line.
 """
 
 __author__ = 'Chapin Bryce'
-__date__ = 20200107
-__version__ = 20200202.2
+__date__ = 20200407
+__version__ = 20200407.2
 __license__ = 'MIT Copyright 2020 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
