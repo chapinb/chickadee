@@ -2,7 +2,7 @@
 
 Yet another IP address enrichment tool.
 
-```
+```text
          _          _
         ('<        >')
        \(_)________( \
@@ -25,10 +25,11 @@ Yet another IP address enrichment tool.
 [![PyPi downloads](https://pypip.in/d/chickadee/badge.png)](https://pypistats.org/packages/chickadee)
 [![DeepSource](https://static.deepsource.io/deepsource-badge-light-mini.svg)](https://deepsource.io/gh/chapinb/chickadee/?ref=repository-badge)
 
-Supported GeoIP back-ends:
+Supported IP address resolvers:
 
-* http://ip-api.com/ - Free to query up to 45 requests per minute. Unlimited
+* https://ip-api.com/ - Free to query up to 45 requests per minute. Unlimited
   API keys available for purchase.
+* https://virustotal.com/ - API key needed to query. Rate limited to 4 requests per minute.
 
 ## Documentation
 
@@ -41,7 +42,7 @@ Specific documentation:
 * [Using chickadee](https://chapinb.com/chickadee/utilities.html#usage)
 * [Examples](https://chapinb.com/chickadee/utilities.html#chickadee-examples)
 * [Contributing](https://chapinb.com/chickadee/index.html#contribution)
-* [Backend resolution documentation](https://chapinb.com/chickadee/backends.html)
+* [Resolver documentation](https://chapinb.com/chickadee/resolvers.html)
 * [File parser documentation](https://chapinb.com/chickadee/parsers.html)
 
 ## Known bugs

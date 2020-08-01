@@ -7,7 +7,8 @@ Parsers
    :members:
 .. automodule:: libchickadee.parsers.xlsx
    :members:
-
+.. automodule:: libchickadee.parsers.evtx
+   :members:
 
 Indices and tables
 ==================

@@ -2,7 +2,7 @@
 IP-API Resolver
 ===============
 
-Backend leveraging the ip-api.com JSON API.
+Resolver leveraging the ip-api.com JSON API.
 
 This is a third-party data source that provides GeoIP, ASN, Organization,
 ISP, and other resolution information for IPv4 and IPv6 addresses.
@@ -92,7 +92,7 @@ __license__ = 'MIT Copyright 2020 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
 FIELDS = [  # Ordered list of fields to gather
-    'query',
+    'query', 'count',
     'as', 'org', 'isp',
     'continent', 'country', 'regionName', 'city',
     'district', 'zip',
@@ -116,12 +116,10 @@ class Resolver(ResolverBase):
         self.supported_langs = [
             'en', 'de', 'es', 'pt-BR', 'fr', 'ja', 'zh-CN', 'ru'
         ]
-        if not fields:
-            fields = FIELDS
-        if lang not in self.supported_langs:
-            lang = 'en'
-        ResolverBase.__init__(self, fields=fields, lang=lang)
+        super().__init__()
 
+        self.lang = 'en' if lang not in self.supported_langs else lang
+        self.fields = [] if not fields else fields
         self.uri = 'http://ip-api.com/'
         self.api_key = None
         self.enable_sleep = True
@@ -141,7 +139,7 @@ class Resolver(ResolverBase):
         """
         if int(headers.get('X-Rl', '0')) < 1:
             self.wait_time = datetime.now() + \
-                timedelta(seconds=int(headers.get('X-Ttl', '0'))+1)
+                timedelta(seconds=int(headers.get('X-Ttl', '0'))+0.25)
 
     def sleeper(self):
         """Method to sleep operations for rate limiting. Executes sleep.
@@ -238,7 +236,7 @@ class Resolver(ResolverBase):
         if rdata.status_code == 200:
             self.rate_limit(rdata.headers)
             return [rdata.json()]
-        elif rdata.status_code == 429:
+        if rdata.status_code == 429:
             self.rate_limit(rdata.headers)
             self.sleeper()
             return self.single()
@@ -260,9 +258,9 @@ class ProResolver(Resolver):
         lang (str): Language for returned results.
     """
     def __init__(self, api_key, fields=None, lang='en'):  # pragma: no cover
-        if not fields:
-            fields = FIELDS
-        Resolver.__init__(self, fields=fields, lang=lang)
+        super().__init__()
+        self.lang = 'en' if lang not in self.supported_langs else lang
+        self.fields = [] if not fields else fields
         self.uri = 'https://pro.ip-api.com/'
         self.api_key = api_key
         self.enable_sleep = False

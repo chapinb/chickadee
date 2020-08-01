@@ -48,13 +48,15 @@ class ChickadeeConfigTestCase(unittest.TestCase):
                 "progress": True,
                 'log': 'test.log',
                 'verbose': True,
-                'backend': 'ip_api',
-                'api-key': None,
+                'resolver': 'ip_api',
+                'virustotal': '',
+                'ip_api': '',
+                'no-count': False,
                 'no-resolve': True,
                 'include-bogon': False,
                 'single': True,
                 'output-format': 'csv',
-                'output-file': 'test.out',
+                'output-file': 'test.out'
             }
         )
 
@@ -78,8 +80,10 @@ class ChickadeeConfigTestCase(unittest.TestCase):
                 'log': os.path.abspath(os.path.join(
                     os.getcwd(), 'chickadee.log')),
                 'verbose': False,
-                'backend': 'ip_api',
-                'api-key': None,
+                'resolver': 'ip_api',
+                'ip_api': '',
+                'virustotal': '',
+                'no-count': False,
                 'no-resolve': False,
                 'include-bogon': False,
                 'single': False,
@@ -93,13 +97,13 @@ class ChickadeeConfigTestCase(unittest.TestCase):
         test_conf = 'chickadee.ini'
         open_file = open(test_conf, 'w')
         body = """
-        [main]
-        output-format = csv
-        verbose = true
-        fields = query,country
-        [backends]
-        backend = ip_api
-        ip_api = not-an-api-key
+[main]
+output-format = csv
+verbose = true
+fields = query,country
+[resolvers]
+resolver = ip_api
+ip_api = not-an-api-key
         """
         open_file.write(body)
         open_file.close()
@@ -114,8 +118,9 @@ class ChickadeeConfigTestCase(unittest.TestCase):
                 "no-resolve": None,
                 'include-bogon': None,
                 "log": None,
-                "backend": "ip_api",
-                "api-key": "not-an-api-key"
+                "resolver": "ip_api",
+                'virustotal': None,
+                "ip_api": "not-an-api-key"
             }
         )
         os.remove(test_conf)
@@ -170,7 +175,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
             res = [x for x in data]
             self.assertEqual(res, [results[count]])
 
-    @patch("libchickadee.backends.ipapi.Resolver.batch")
+    @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_chickadee_single(self, mock_batch):
         """Query Method Test"""
         for count, ip in enumerate(self.test_data_ips):
@@ -182,7 +187,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
             res = [x for x in data]
             self.assertEqual(res, [self.expected_result[count]])
 
-    @patch("libchickadee.backends.ipapi.Resolver.batch")
+    @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_chickadee_csv_str(self, mock_query):
         """Batch Query Method Test"""
         chickadee = Chickadee()
@@ -208,7 +213,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
         chickadee.ignore_bogon = False
         chickadee.force_single = True
         chickadee.fields = self.fields
-        with patch("libchickadee.chickadee.Resolver", MockResolver):
+        with patch("libchickadee.chickadee.ipapi.Resolver", MockResolver):
             data = chickadee.run(','.join(self.test_data_ips))
         res = [x for x in data]
         self.assertCountEqual(res, self.expected_result)
@@ -222,7 +227,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
             failed = True
         self.assertTrue(failed)
 
-    @patch("libchickadee.backends.ipapi.Resolver.batch")
+    @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_manual_run(self, mock_query):
         chick = Chickadee(fields=self.fields)
         mock_query.return_value = [self.expected_result[1]]
@@ -310,7 +315,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
              "query": "1.1.1.1", "count": 2}
         ]
 
-    @patch("libchickadee.backends.ipapi.Resolver.batch")
+    @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_ipapi_resolve_query_txt_file(self, mock_query):
         """Batch Query Method Test"""
         chickadee = Chickadee()
@@ -324,7 +329,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
             batch_result.append(item)
         self.assertCountEqual(res, batch_result)
 
-    @patch("libchickadee.backends.ipapi.Resolver.batch")
+    @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_ipapi_resolve_query_gz_file(self, mock_query):
         """Batch Query Method Test"""
         chickadee = Chickadee()
@@ -339,7 +344,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
             batch_result.append(item)
         self.assertCountEqual(res, batch_result)
 
-    @patch("libchickadee.backends.ipapi.Resolver.batch")
+    @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_ipapi_resolve_query_xlsx_file(self, mock_query):
         """Batch Query Method Test"""
         chickadee = Chickadee()
@@ -353,7 +358,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
             batch_result.append(item)
         self.assertCountEqual(res, batch_result)
 
-    @patch("libchickadee.backends.ipapi.Resolver.batch")
+    @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_ipapi_resolve_query_folder(self, mock_query):
         """Batch Query Method Test"""
         expected = [
@@ -407,14 +412,6 @@ class ChickadeeFileTestCase(unittest.TestCase):
             ips,
             {"1.1.1.1": 1}
         )
-
-
-class ChickadeeUtilityTestCase(unittest.TestCase):
-    def test_get_apikey(self):
-        os.environ["CHICKADEE_API_KEY"] = "test123"
-        api_key = Chickadee.get_api_key()
-        os.environ.pop("CHICKADEE_API_KEY")
-        self.assertEqual(api_key, "test123")
 
 
 if __name__ == '__main__':

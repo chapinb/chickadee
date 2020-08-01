@@ -1,10 +1,11 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
-    <title>Parsers &#8212; chickadee 20200202 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parsers &#8212; chickadee 20200801-rc1 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -16,7 +17,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Backends" href="backends.html" />
+    <link rel="next" title="Resolvers" href="resolvers.html" />
     <link rel="prev" title="Utilities" href="utilities.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -29,12 +30,13 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="backends.html" title="Backends"
+          <a href="resolvers.html" title="Resolvers"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="utilities.html" title="Utilities"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200202 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200801-rc1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Parsers</a></li> 
       </ul>
     </div>  
 
@@ -50,13 +52,13 @@
 <p>Collection of input parser utilities to extract IP addresses.</p>
 <p>This includes common regex patterns and utilities for extracting IP addresses
 for resolution.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="libchickadee.parsers.ParserBase">
-<em class="property">class </em><code class="sig-prename descclassname">libchickadee.parsers.</code><code class="sig-name descname">ParserBase</code><span class="sig-paren">(</span><em class="sig-param">ignore_bogon=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.ParserBase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">libchickadee.parsers.</code><code class="sig-name descname">ParserBase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ignore_bogon</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.ParserBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for parsers, containing common utilities.</p>
-<dl class="method">
+<dl class="py method">
 <dt id="libchickadee.parsers.ParserBase.check_ips">
-<code class="sig-name descname">check_ips</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.ParserBase.check_ips" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">check_ips</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.ParserBase.check_ips" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check data for IP addresses. Results stored in <code class="docutils literal notranslate"><span class="pre">self.ips</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -68,9 +70,9 @@ for resolution.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="libchickadee.parsers.ParserBase.is_bogon">
-<em class="property">static </em><code class="sig-name descname">is_bogon</code><span class="sig-paren">(</span><em class="sig-param">ip_addr</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.ParserBase.is_bogon" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">is_bogon</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ip_addr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.ParserBase.is_bogon" title="Permalink to this definition">¶</a></dt>
 <dd><p>Identifies whether an IP address is a known BOGON.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -85,9 +87,9 @@ for resolution.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="libchickadee.parsers.ParserBase.strip_ipv6">
-<em class="property">static </em><code class="sig-name descname">strip_ipv6</code><span class="sig-paren">(</span><em class="sig-param">ipv6_addr</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.ParserBase.strip_ipv6" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">strip_ipv6</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ipv6_addr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.ParserBase.strip_ipv6" title="Permalink to this definition">¶</a></dt>
 <dd><p>Isolate IPv6 Value containing a <code class="docutils literal notranslate"><span class="pre">%</span></code> symbol.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -112,14 +114,14 @@ CSVs, JSON, and other formats where ascii strings contain IPv4 or IPv6
 addresses.</p>
 <p>Also supported reading from gzipped compressed plain text data without needing
 to first decompress it.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="libchickadee.parsers.plain_text.PlainTextParser">
-<em class="property">class </em><code class="sig-prename descclassname">libchickadee.parsers.plain_text.</code><code class="sig-name descname">PlainTextParser</code><span class="sig-paren">(</span><em class="sig-param">ignore_bogon=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.plain_text.PlainTextParser" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">libchickadee.parsers.plain_text.</code><code class="sig-name descname">PlainTextParser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ignore_bogon</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.plain_text.PlainTextParser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class to extract IP addresses from plain text
 and gzipped plain text files.</p>
-<dl class="method">
+<dl class="py method">
 <dt id="libchickadee.parsers.plain_text.PlainTextParser.is_gz_file">
-<em class="property">static </em><code class="sig-name descname">is_gz_file</code><span class="sig-paren">(</span><em class="sig-param">filepath</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.plain_text.PlainTextParser.is_gz_file" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">is_gz_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.plain_text.PlainTextParser.is_gz_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Validate whether the input is GZipped.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -134,9 +136,9 @@ and gzipped plain text files.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="libchickadee.parsers.plain_text.PlainTextParser.parse_file">
-<code class="sig-name descname">parse_file</code><span class="sig-paren">(</span><em class="sig-param">file_entry</em>, <em class="sig-param">is_stream=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.plain_text.PlainTextParser.parse_file" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">parse_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_entry</span></em>, <em class="sig-param"><span class="n">is_stream</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.plain_text.PlainTextParser.parse_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse contents of the file and extract IP addresses.</p>
 <p>Will read from STDIN or path to a file. Stores results in <code class="docutils literal notranslate"><span class="pre">self.ips</span></code>.</p>
 <dl class="field-list simple">
@@ -160,13 +162,13 @@ file-like object.</p></li>
 <h2>XLSX File Parser<a class="headerlink" href="#xlsx-file-parser" title="Permalink to this headline">¶</a></h2>
 <p>Parse IP addresses from XLSX files. This will extract IP addresses stored as
 values (not formulas) across all tabs within a spreadsheet.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="libchickadee.parsers.xlsx.XLSXParser">
-<em class="property">class </em><code class="sig-prename descclassname">libchickadee.parsers.xlsx.</code><code class="sig-name descname">XLSXParser</code><span class="sig-paren">(</span><em class="sig-param">ignore_bogon=True</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.xlsx.XLSXParser" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">libchickadee.parsers.xlsx.</code><code class="sig-name descname">XLSXParser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ignore_bogon</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.xlsx.XLSXParser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class to extract IP addresses from XLSX workbooks.</p>
-<dl class="method">
+<dl class="py method">
 <dt id="libchickadee.parsers.xlsx.XLSXParser.parse_file">
-<code class="sig-name descname">parse_file</code><span class="sig-paren">(</span><em class="sig-param">file_entry</em>, <em class="sig-param">is_stream=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.xlsx.XLSXParser.parse_file" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">parse_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_entry</span></em>, <em class="sig-param"><span class="n">is_stream</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.xlsx.XLSXParser.parse_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse xlsx contents. Must be a path to an existing XLSX workbook.
 Cannot parse from STDIN.</p>
 <dl class="field-list simple">
@@ -183,6 +185,28 @@ Does not change functionality.</p></li>
 </dd></dl>
 
 </div>
+<span class="target" id="module-libchickadee.parsers.evtx"></span><p>Extract IP addresses from EVTX files.</p>
+<dl class="py class">
+<dt id="libchickadee.parsers.evtx.EVTXParser">
+<em class="property">class </em><code class="sig-prename descclassname">libchickadee.parsers.evtx.</code><code class="sig-name descname">EVTXParser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ignore_bogon</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.evtx.EVTXParser" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="libchickadee.parsers.evtx.EVTXParser.parse_file">
+<code class="sig-name descname">parse_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_entry</span></em>, <em class="sig-param"><span class="n">is_stream</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.evtx.EVTXParser.parse_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse EVTX contents. Must be a path to an existing EVTX file.
+Cannot parse from STDIN.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_entry</strong> (<em>str</em>) – Path to EVTX file to load.</p></li>
+<li><p><strong>is_stream</strong> (<em>bool</em>) – Unused argument, required for implementation.
+Does not change functionality.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <div class="section" id="indices-and-tables">
 <h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -194,6 +218,7 @@ Does not change functionality.</p></li>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -214,8 +239,8 @@ Does not change functionality.</p></li>
   <p class="topless"><a href="utilities.html"
                         title="previous chapter">Utilities</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="backends.html"
-                        title="next chapter">Backends</a></p>
+  <p class="topless"><a href="resolvers.html"
+                        title="next chapter">Resolvers</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -247,17 +272,18 @@ Does not change functionality.</p></li>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="backends.html" title="Backends"
+          <a href="resolvers.html" title="Resolvers"
              >next</a> |</li>
         <li class="right" >
           <a href="utilities.html" title="Utilities"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200202 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200801-rc1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Parsers</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright MIT 2020, Chapin Bryce.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
   </body>
 </html>

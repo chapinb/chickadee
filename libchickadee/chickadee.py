@@ -15,55 +15,58 @@ Usage
 
 .. code-block:: text
 
-    usage: chickadee [-h] [-f FIELDS] [-t {json,jsonl,csv}] [-w FILENAME.JSON]
-                    [-n] [-s] [--lang {en,de,es,pt-BR,fr,ja,zh-CN,ru}]
-                    [-c CONFIG] [-p] [-v] [-V] [-l LOG]
-                    [data [data ...]]
+    usage: chickadee [-h] [-r {ip_api,virustotal}] [-f FIELDS]
+                     [-t {json,jsonl,csv}] [-w FILENAME.JSON] [-n] [--no-count]
+                     [-s] [--lang {en,de,es,pt-BR,fr,ja,zh-CN,ru}] [-b]
+                     [-c CONFIG] [-p] [-v] [-V] [-l LOG]
+                     [data [data ...]]
 
     Yet another GeoIP resolution tool.
 
-    Will use the free rate limited ip-api.com service for resolution.
-    Please set an environment variable named CHICKADEE_API_KEY with the
-    value of your API key to enabled unlimited requests with the
-    commercial API
+    Will default to the free rate limited ip-api.com service for resolution.
+    You can specify the paid API key for ip-api.com or for VirusTotal in
+    the Chickadee configuration file. Please see template_chickadee.ini
+    for more information.
 
     positional arguments:
-    data         Either an IP address, comma delimited list of IP addresses, or
-                 path to a file or folder containing files to check for IP
-                 address values. Currently supported file types: plain text
-                 (ie logs, csv, json), gzipped plain text, xlsx (must be xlsx
-                 extension). Can accept plain text data as stdin.
-                 (default: <_io.TextIOWrapper name='<stdin>' mode='r'
-                            encoding='UTF-8'>)
+      data                  Either an IP address, comma delimited list of IP addresses,
+                            or path to a file or folder containing files to check for IP
+                            address values. Currently supported file types: plain text
+                            (ie logs, csv, json), gzipped plain text, xlsx
+                            (must be xlsx extension). Can accept plain text data as
+                            standard input.
+                            (default: stdin)
 
     optional arguments:
-    -h, --help            show this help message and exit
-    -f FIELDS, --fields FIELDS
-                            Comma separated fields to query
-                            (default: query,count,as,org,isp,continent,country,
-                                      regionName,city,district,zip,mobile,
-                                      proxy,hosting,reverse,lat,lon,timezone,
-                                      status,message)
-    -t {json,jsonl,csv}, --output-format {json,jsonl,csv}
+      -h, --help            show this help message and exit
+      -r {ip_api,virustotal}, --resolver {ip_api,virustotal}
+                            Resolving service to use. Must specify api key in config file.
+                            Please see template_chickadee.ini for instructions.
+                            (default: ip_api)
+      -f FIELDS, --fields FIELDS
+                            Comma separated fields to query (default: None)
+      -t {json,jsonl,csv}, --output-format {json,jsonl,csv}
                             Output format (default: jsonl)
-    -w FILENAME.JSON, --output-file FILENAME.JSON
+      -w FILENAME.JSON, --output-file FILENAME.JSON
                             Path to file to write output
-                            (default: <_io.TextIOWrapper name='<stdout>'
-                                       mode='w' encoding='UTF-8'>)
-    -n, --no-resolve      Only extract IP addresses, don't resolve.
-                          (default: False)
-    -s, --single          Use the significantly slower single item API.
-                          Adds reverse DNS. (default: False)
-    --lang {en,de,es,pt-BR,fr,ja,zh-CN,ru}
+                            (default: stdout)
+      -n, --no-resolve      Only extract IP addresses, don't resolve. (default: False)
+      --no-count            Disable counting the occurrences of IP addresses extracted
+                            from source files (default: False)
+      -s, --single          Use the significantly slower single item API. Adds reverse
+                            DNS. (default: False)
+      --lang {en,de,es,pt-BR,fr,ja,zh-CN,ru}
                             Language (default: en)
-    -c CONFIG, --config CONFIG
+      -b, --include-bogon   Include BOGON addresses in results. (default: False)
+      -c CONFIG, --config CONFIG
                             Path to config file to load (default: None)
-    -p, --progress        Enable progress bar (default: False)
-    -v, --verbose         Include debug log messages (default: False)
-    -V, --version         Displays version
-    -l LOG, --log LOG     Path to log file (default: ./chickadee.log)
+      -p, --progress        Enable progress bar (default: False)
+      -v, --verbose         Include debug log messages (default: False)
+      -V, --version         Displays version
+      -l LOG, --log LOG     Path to log file (default: chickadee.log)
 
-    Built by Chapin Bryce, v.20200202
+    Built by Chapin Bryce, v.20200801.0
+
 
 .. _chickadee-examples:
 
@@ -93,6 +96,17 @@ Parsing IPs from a folder, recursively:
 
 ``chickadee folder/``
 
+Resolver options
+^^^^^^^^^^^^^^^^
+
+Resolve using VirusTotal (set API key in config file):
+
+``chickadee -r virustotal 1.1.1.1``
+
+Resolve using ip-api (set API key in config file):
+
+``chickadee -r ip_api 1.1.1.1``
+
 Output options
 ^^^^^^^^^^^^^^
 
@@ -111,9 +125,13 @@ Reporting to CSV format:
 Other Arguments
 ^^^^^^^^^^^^^^^
 
-Changing the fields to resolve and report on:
+Changing the fields to resolve and report on (ip_api):
 
-``chickadee -f query,count,asn,isp,org 1.1.1.1``
+``chickadee -r ip_api -f query,count,asn,isp,org 1.1.1.1``
+
+Changing the fields to resolve and report on (virustotal):
+
+``chickadee -r virustotal -f query,detected_samples 1.1.1.1``
 
 Changing the output location (STDOUT by default)
 
@@ -143,8 +161,8 @@ from tqdm import tqdm
 from libchickadee import __version__
 from libchickadee.update import update_available
 
-# Import Backends
-from libchickadee.backends.ipapi import Resolver, ProResolver
+# Import resolvers
+from libchickadee.resolvers import ipapi, virustotal, ResolverBase
 
 # Import Parsers
 from libchickadee.parsers.plain_text import PlainTextParser
@@ -157,21 +175,18 @@ __date__ = 20200407.2
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.
 
-Will use the free rate limited ip-api.com service for resolution.
-Please set an environment variable named CHICKADEE_API_KEY with the
-value of your API key to enabled unlimited requests with the
-commercial API
+Will default to the free rate limited ip-api.com service for resolution.
+You can specify the paid API key for ip-api.com or for VirusTotal in
+the Chickadee configuration file. Please see template_chickadee.ini
+for more information.
 '''
 
 logger = logging.getLogger(__name__)
-_FIELDS = ','.join([  # Ordered list of fields to gather
-    'query',
-    'count', 'as', 'org', 'isp',
-    'continent', 'country', 'regionName', 'city', 'district', 'zip',
-    'mobile', 'proxy', 'hosting', 'reverse',
-    'lat', 'lon', 'timezone',
-    'status', 'message'
-])
+
+
+class CustomArgFormatter(argparse.RawTextHelpFormatter,
+                         argparse.ArgumentDefaultsHelpFormatter):
+    """Custom argparse formatter class"""
 
 
 class Chickadee(object):
@@ -191,13 +206,15 @@ class Chickadee(object):
         >>> print(resolution)
 
     """
-    def __init__(self, outformat='json', outfile=sys.stdout, fields=_FIELDS):
+    def __init__(self, outformat='json', outfile=sys.stdout, fields=None):
+        self.resolver = 'ip_api'
         self.input_data = None
         self.outformat = outformat
         self.outfile = outfile
-        self.fields = fields if isinstance(fields, list) else fields.split(',')
+        self.fields = fields
         self.force_single = False
         self.ignore_bogon = True
+        self.no_count = False
         self.lang = 'en'
         self.pbar = False
         self.resolve_ips = True
@@ -215,7 +232,7 @@ class Chickadee(object):
         Args:
             input_data (str or file_obj): User provided data containing IPs to
                 resolve
-            api_key (str): API Key for backend GeoIP resolver.
+            api_key (str): API Key for IP resolver.
 
         Returns:
             (list): List of dictionaries containing resolved hits.
@@ -250,16 +267,15 @@ class Chickadee(object):
 
     @staticmethod
     def get_api_key():
-        """Retrieve an API key set as an envar. Looks for value in
+        """DEPRECIATED
+
+        Retrieve an API key set as an envar. Looks for value in
         ``CHICKADEE_API_KEY``. May be depreciated in the near future.
 
         Returns:
             (str): API key, if found
         """
-        api_key = os.environ.get('CHICKADEE_API_KEY', None)
-        if api_key:
-            return api_key
-        return None
+        raise NotImplementedError("Please use a configuration file to specify the API key")
 
     @staticmethod
     def str_handler(data):
@@ -357,18 +373,14 @@ class Chickadee(object):
 
         Args:
             data_dict (dict): Structured as ``{IP: COUNT}``
-            api_key (str): API Key for GeoIP backend.
+            api_key (str): API Key for IP resolver.
 
         Returns:
             data_dict (dict): dictionary of distinct IP addresses to resolve.
         """
         distinct_ips = list(data_dict.keys())
 
-        if api_key:
-            logger.debug("Using authenticated resolution service")
-            resolver = ProResolver(api_key, fields=self.fields, lang=self.lang)
-        else:
-            resolver = Resolver(fields=self.fields, lang=self.lang)
+        resolver = self.get_resolver(api_key)
 
         if self.pbar:
             resolver.pbar = self.pbar
@@ -390,7 +402,7 @@ class Chickadee(object):
         logger.debug("Resolved IPs")
 
         # Add frequency information to results
-        if 'count' in self.fields:
+        if not self.no_count:
             updated_results = []
             for result in results:
                 query = str(result.get('query', ''))
@@ -401,10 +413,41 @@ class Chickadee(object):
             return updated_results
         return results
 
+    def get_resolver(self, api_key):
+        resolvers = {
+            "ip_api": {
+                "pro_resolver": ipapi.ProResolver,
+                "free_resolver": ipapi.Resolver
+            },
+            "virustotal": {
+                "pro_resolver": virustotal.ProResolver,
+                "free_resolver": None
+            }
+        }
+
+        if api_key:
+            logger.debug("Using authenticated resolution service")
+            resolver_class = resolvers[self.resolver]['pro_resolver']
+            if not resolver_class:
+                raise ValueError("Unable to configure resolver. Please report to github.com/chapinb/chickadee/issues")
+            resolver = resolver_class(api_key, fields=self.fields, lang=self.lang)
+        else:
+            resolver_class = resolvers[self.resolver]['free_resolver']
+            if not resolver_class:
+                raise ValueError(
+                    "Unable to configure resolver. An API key may be required for {}".format(self.resolver))
+            resolver = resolver_class(fields=self.fields, lang=self.lang)
+
+        if not self.fields:
+            # Inherit the fields used by the resolver if none are used.
+            self.fields = resolver.fields
+
+        return resolver
+
     def write_output(self, results):
         """Write results to output format and/or files.
 
-        Leverages the writers found in libchickadee.backends. Currently
+        Leverages the writers found in libchickadee.resolvers. Currently
         supports csv, json, and json lines formats, specified in
         ``self.outformat``.
 
@@ -417,13 +460,13 @@ class Chickadee(object):
 
         if self.outformat == 'csv':
             logger.debug("Writing CSV report")
-            Resolver.write_csv(self.outfile, results, self.fields)
+            ResolverBase.write_csv(self.outfile, results, self.fields)
         elif self.outformat == 'json':
             logger.debug("Writing json report")
-            Resolver.write_json(self.outfile, results, self.fields)
+            ResolverBase.write_json(self.outfile, results, self.fields)
         elif self.outformat == 'jsonl':
             logger.debug("Writing json lines report")
-            Resolver.write_json(self.outfile, results, self.fields, lines=True)
+            ResolverBase.write_json(self.outfile, results, self.fields, lines=True)
 
 
 def setup_logging(path, verbose=False):  # pragma: no cover
@@ -469,11 +512,6 @@ def setup_logging(path, verbose=False):  # pragma: no cover
     logger.addHandler(file_handle)
 
 
-class CustomArgFormatter(argparse.RawTextHelpFormatter,
-                         argparse.ArgumentDefaultsHelpFormatter):
-    """Custom argparse formatter class"""
-
-
 def config_handing(config_file=None, search_conf_path=None):
     """Parse config file and return argument values.
 
@@ -497,12 +535,10 @@ def config_handing(config_file=None, search_conf_path=None):
             'log': '',
             'verbose': False
         },
-        'backends': {
-            'backend': {
-                # Map backend to additional variables to pull.
-                # For now, limited to api_key only.
-                'ip_api': {'api-key': 'ip_api'}
-            }
+        'resolvers': {
+            'resolver': '',
+            'ip_api': '',  # Hold respective API key
+            'virustotal': ''  # Hold respective API key
         }
     }
 
@@ -540,10 +576,7 @@ def parse_config_sections(conf, section_defs):
             elif isinstance(v, bool):
                 conf_value = conf_section.getboolean(k)
             elif isinstance(v, dict):
-                conf_value = conf_section.get(k)
-                # Set backend args through nested option
-                for sk, sv, in v.get(conf_value, {}).items():
-                    config[sk] = conf_section[sv]
+                raise NotImplementedError("Unable to parse dictionary objects from config file mapping")
             config[k] = conf_value
     return config
 
@@ -605,9 +638,13 @@ def arg_handling(args):
         nargs='*',
         default=sys.stdin
     )
+    parser.add_argument('-r', '--resolver',
+                        help='Resolving service to use. Must specify api key in config file. '
+                             'Please see template_chickadee.ini for instructions.',
+                        choices=['ip_api', 'virustotal'],
+                        default='ip_api')
     parser.add_argument('-f', '--fields',
-                        help='Comma separated fields to query',
-                        default=_FIELDS)
+                        help='Comma separated fields to query')
     parser.add_argument('-t', '--output-format',
                         help='Output format',
                         choices=['json', 'jsonl', 'csv'],
@@ -617,6 +654,8 @@ def arg_handling(args):
                         default=sys.stdout, metavar='FILENAME.JSON')
     parser.add_argument('-n', '--no-resolve', action='store_true',
                         help="Only extract IP addresses, don't resolve.")
+    parser.add_argument('--no-count', action='store_true',
+                        help="Disable counting the occurrences of IP addresses extracted from source files")
     parser.add_argument('-s', '--single',
                         help="Use the significantly slower single item API. "
                              "Adds reverse DNS.",
@@ -663,11 +702,12 @@ def join_config_args(config, args, definitions=None):
         # This must match the defaults for argparse in order for the logic to
         # operate properly.
         definitions = {
-            'fields': _FIELDS,
+            'fields': '',
             'output-format': 'jsonl',
             'output-file': sys.stdout,
             'progress': False,
             'no-resolve': False,
+            'no-count': False,
             'include-bogon': False,
             'single': False,
             'lang': 'en',
@@ -675,25 +715,19 @@ def join_config_args(config, args, definitions=None):
                 os.getcwd(),
                 PurePath(__file__).name.rsplit('.', 1)[0] + '.log')),
             'verbose': False,
-            'backend': 'ip_api',
-            'api-key': '',
+            'resolver': 'ip_api',
+            'ip_api': '',  # Hold the related API key
+            'virustotal': '',  # Hold the related API key
             'data': ''
         }
 
     for k, v in definitions.items():
         args_val = getattr(args, k.replace('-', '_'), None)
-        if config:
-            config_val = config.get(k)
-        else:
-            config_val = None
+        config_val = config.get(k) if config else None
 
         # Get from args if non-default
         if args_val != v and args_val is not None:
             final_config[k] = args_val
-
-        # Special handling for API key
-        elif k == 'api-key' and not config_val:
-            final_config[k] = Chickadee.get_api_key()
 
         # Next get from config
         elif config_val:
@@ -739,9 +773,12 @@ def entry(args=None):  # pragma: no cover
         ))
 
     logger.debug("Configuring Chickadee")
-    chickadee = Chickadee(fields=params.get('fields').split(','))
+    fields = params.get('fields').split(',') if len(params.get('fields', [])) else None
+    chickadee = Chickadee(fields=fields)
+    chickadee.resolver = params.get('resolver', 'ip_api')
     chickadee.resolve_ips = not params.get('no-resolve')
     chickadee.ignore_bogon = not params.get('include-bogon')
+    chickadee.no_count = params.get('no-count')
     chickadee.force_single = params.get('single')
     chickadee.lang = params.get('lang')
     chickadee.pbar = params.get('progress')
@@ -750,10 +787,10 @@ def entry(args=None):  # pragma: no cover
     if isinstance(params.get('data'), list):
         data = []
         for x in params.get('data'):
-            res = chickadee.run(x, params.get('api-key', None))
+            res = chickadee.run(x, params.get(chickadee.resolver, None))
             data += res
     else:
-        data = chickadee.run(params.get('data'), params.get('api-key', None))
+        data = chickadee.run(params.get('data'), params.get(chickadee.resolver, None))
 
     logger.debug("Writing output")
     chickadee.outfile = params.get('output-file')

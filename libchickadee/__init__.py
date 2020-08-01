@@ -125,14 +125,14 @@ file content. The ``chickadee`` utility does iterate over directories to
 expose files within folders recursively. With this, each parser needs to
 accept a path to a file to read.
 
-Backends
-^^^^^^^^
+Resolvers
+^^^^^^^^^
 
 This is where the IP address is resolved by a third-party data source. Each
 component is responsible for accepting one or more IP address and returning
 resolution data. The third-party sources will not be distributed with this
-library, each new backend will have documentation to highlight the steps
-required to prepare the data source for use by the backend module.
+library, each new resolver will have documentation to highlight the steps
+required to prepare the data source for use by the resolver module.
 
 The writers for libchickadee are also stored in this module.
 
@@ -145,7 +145,7 @@ library from the command line.
 """
 
 __author__ = 'Chapin Bryce'
-__date__ = 20200407
-__version__ = 20200407.2
+__date__ = 20200801
+__version__ = 20200801.0
 __license__ = 'MIT Copyright 2020 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''

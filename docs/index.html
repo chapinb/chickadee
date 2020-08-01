@@ -1,10 +1,11 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
-    <title>Chickadee Documentation &#8212; chickadee 20200202 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chickadee Documentation &#8212; chickadee 20200801-rc1 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -30,7 +31,8 @@
         <li class="right" >
           <a href="utilities.html" title="Utilities"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">chickadee 20200202 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">chickadee 20200801-rc1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Chickadee Documentation</a></li> 
       </ul>
     </div>  
 
@@ -46,7 +48,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="utilities.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="parsers.html">Parsers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="backends.html">Backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resolvers.html">Resolvers</a></li>
 </ul>
 </div>
 <span class="target" id="module-libchickadee"></span><div class="section" id="libchickadee-overview">
@@ -94,6 +96,15 @@ it (<code class="docutils literal notranslate"><span class="pre">.\venv3\Scripts
 <li><p>Install dependencies: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">.</span></code></p></li>
 <li><p>Run <code class="docutils literal notranslate"><span class="pre">chickadee</span> <span class="pre">--help</span></code> to get started.</p></li>
 </ol>
+</div>
+<div class="section" id="install-the-latest-features-without-git">
+<h4>Install the latest features without Git<a class="headerlink" href="#install-the-latest-features-without-git" title="Permalink to this headline">¶</a></h4>
+<p>If you would like to install the latest pre-release version, feel free to use
+the above steps to clone the repository and install. You can also use pip
+to directly install the latest master branch from GitHub by running:</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+https://github.com/chapinb/chickadee.git</span>
+<span class="pre">`</span></code></p>
 </div>
 </div>
 <div class="section" id="contribution">
@@ -151,13 +162,13 @@ file content. The <code class="docutils literal notranslate"><span class="pre">c
 expose files within folders recursively. With this, each parser needs to
 accept a path to a file to read.</p>
 </div>
-<div class="section" id="backends">
-<h4>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="resolvers">
+<h4>Resolvers<a class="headerlink" href="#resolvers" title="Permalink to this headline">¶</a></h4>
 <p>This is where the IP address is resolved by a third-party data source. Each
 component is responsible for accepting one or more IP address and returning
 resolution data. The third-party sources will not be distributed with this
-library, each new backend will have documentation to highlight the steps
-required to prepare the data source for use by the backend module.</p>
+library, each new resolver will have documentation to highlight the steps
+required to prepare the data source for use by the resolver module.</p>
 <p>The writers for libchickadee are also stored in this module.</p>
 </div>
 <div class="section" id="utilities">
@@ -178,6 +189,7 @@ library from the command line.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -190,13 +202,14 @@ library from the command line.</p>
 <li><a class="reference internal" href="#installation">Installation</a><ul>
 <li><a class="reference internal" href="#macos-and-linux">macOS and Linux</a></li>
 <li><a class="reference internal" href="#windows">Windows</a></li>
+<li><a class="reference internal" href="#install-the-latest-features-without-git">Install the latest features without Git</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#contribution">Contribution</a></li>
 <li><a class="reference internal" href="#usage-examples">Usage &amp; Examples</a></li>
 <li><a class="reference internal" href="#components">Components</a><ul>
 <li><a class="reference internal" href="#parsers">Parsers</a></li>
-<li><a class="reference internal" href="#backends">Backends</a></li>
+<li><a class="reference internal" href="#resolvers">Resolvers</a></li>
 <li><a class="reference internal" href="#utilities">Utilities</a></li>
 </ul>
 </li>
@@ -243,12 +256,13 @@ library from the command line.</p>
         <li class="right" >
           <a href="utilities.html" title="Utilities"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">chickadee 20200202 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">chickadee 20200801-rc1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Chickadee Documentation</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright MIT 2020, Chapin Bryce.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
   </body>
 </html>

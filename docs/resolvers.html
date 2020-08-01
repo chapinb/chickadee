@@ -1,10 +1,11 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
-    <title>Backends &#8212; chickadee 20200202 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resolvers &#8212; chickadee 20200801-rc1 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -30,7 +31,8 @@
         <li class="right" >
           <a href="parsers.html" title="Parsers"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200202 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200801-rc1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Resolvers</a></li> 
       </ul>
     </div>  
 
@@ -39,21 +41,21 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-libchickadee.backends">
-<span id="backends"></span><h1>Backends<a class="headerlink" href="#module-libchickadee.backends" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-libchickadee.resolvers">
+<span id="resolvers"></span><h1>Resolvers<a class="headerlink" href="#module-libchickadee.resolvers" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="resolverbase">
 <h2>ResolverBase<a class="headerlink" href="#resolverbase" title="Permalink to this headline">¶</a></h2>
 <p>A base class for handling resolution of IP addresses.</p>
-<p>This class includes elemends common across backend resolution data sources.
+<p>This class includes elements common across resolver resolution data sources.
 This includes common parameters, such as field names, and functions to handle
 querying the data sources. Additionally, this includes writers for CSV and JSON
 formats.</p>
 <div class="section" id="module-documentation">
 <h3>Module Documentation<a class="headerlink" href="#module-documentation" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="libchickadee.backends.ResolverBase">
-<em class="property">class </em><code class="sig-prename descclassname">libchickadee.backends.</code><code class="sig-name descname">ResolverBase</code><span class="sig-paren">(</span><em class="sig-param">fields=[]</em>, <em class="sig-param">lang='en'</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.backends.ResolverBase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generic base class for use by other backends.</p>
+<dl class="py class">
+<dt id="libchickadee.resolvers.ResolverBase">
+<em class="property">class </em><code class="sig-prename descclassname">libchickadee.resolvers.</code><code class="sig-name descname">ResolverBase</code><a class="headerlink" href="#libchickadee.resolvers.ResolverBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic base class for use by other resolvers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -65,16 +67,16 @@ formats.</p>
 <dd class="field-even"><p>(ResolverBase)</p>
 </dd>
 </dl>
-<dl class="method">
-<dt id="libchickadee.backends.ResolverBase.batch">
-<code class="sig-name descname">batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.backends.ResolverBase.batch" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="libchickadee.resolvers.ResolverBase.batch">
+<code class="sig-name descname">batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ResolverBase.batch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base method to handle batch queries.</p>
 <p>Not implemented in base class.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libchickadee.backends.ResolverBase.query">
-<code class="sig-name descname">query</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.backends.ResolverBase.query" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="libchickadee.resolvers.ResolverBase.query">
+<code class="sig-name descname">query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ResolverBase.query" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Generic query handler to decide to use single or batch</dt><dd><p>method for querying.</p>
 </dd>
@@ -84,27 +86,32 @@ formats.</p>
 <dd class="field-odd"><p><strong>data</strong> (<em>list</em><em>, </em><em>tuple</em><em>, </em><em>set</em><em>, </em><em>str</em>) – One or more IPs to resolve</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>(yield) request data iterator</p>
+<dd class="field-even"><p>(list) List of collected records.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">records</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1.1.1.1&#39;</span><span class="p">,</span> <span class="s1">&#39;2.2.2.2&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">resolver</span> <span class="o">=</span> <span class="n">ResolverBase</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">resolved_data</span> <span class="o">=</span> <span class="n">resolver</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">resolved_data</span><span class="p">)</span>
+<span class="go">[</span>
+<span class="go"> {&quot;query&quot;: &quot;1.1.1.1&quot;, &quot;country&quot;: &quot;Australia&quot;, ...},</span>
+<span class="go"> {&quot;query&quot;: &quot;2.2.2.2&quot;, &quot;country&quot;: &quot;France&quot;, ...}</span>
+<span class="go">]</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="libchickadee.backends.ResolverBase.single">
-<code class="sig-name descname">single</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.backends.ResolverBase.single" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="libchickadee.resolvers.ResolverBase.single">
+<code class="sig-name descname">single</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ResolverBase.single" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base method to handle single queries.</p>
 <p>Not implemented in base class.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="libchickadee.backends.ResolverBase.write_csv">
-<em class="property">static </em><code class="sig-name descname">write_csv</code><span class="sig-paren">(</span><em class="sig-param">outfile</em>, <em class="sig-param">data</em>, <em class="sig-param">headers=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.backends.ResolverBase.write_csv" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="libchickadee.resolvers.ResolverBase.write_csv">
+<em class="property">static </em><code class="sig-name descname">write_csv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">outfile</span></em>, <em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">headers</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ResolverBase.write_csv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes a list of dictionaries to a CSV file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -127,15 +134,16 @@ first dictionary in the <cite>data</cite> list.</p></li>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="libchickadee.backends.ResolverBase.write_json">
-<em class="property">static </em><code class="sig-name descname">write_json</code><span class="sig-paren">(</span><em class="sig-param">outfile</em>, <em class="sig-param">data</em>, <em class="sig-param">headers=None</em>, <em class="sig-param">lines=False</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.backends.ResolverBase.write_json" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="libchickadee.resolvers.ResolverBase.write_json">
+<em class="property">static </em><code class="sig-name descname">write_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">outfile</span></em>, <em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">headers</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lines</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ResolverBase.write_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes output in JSON format</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>outfile</strong> (<em>str</em><em> or </em><em>file_obj</em>) – Path to or already open file</p></li>
 <li><p><strong>data</strong> (<em>list</em>) – List of dictionaries containing resolved data</p></li>
+<li><p><strong>headers</strong> (<em>list</em>) – List of column headers. Will use the first element of data if not present.</p></li>
 <li><p><strong>lines</strong> (<em>bool</em>) – Whether to export 1 dictionary object per line or
 a whole json object.</p></li>
 </ul>
@@ -163,9 +171,9 @@ a whole json object.</p></li>
 
 </div>
 </div>
-<span class="target" id="module-libchickadee.backends.ipapi"></span><div class="section" id="ip-api-resolver">
+<span class="target" id="module-libchickadee.resolvers.ipapi"></span><div class="section" id="ip-api-resolver">
 <h2>IP-API Resolver<a class="headerlink" href="#ip-api-resolver" title="Permalink to this headline">¶</a></h2>
-<p>Backend leveraging the ip-api.com JSON API.</p>
+<p>Resolver leveraging the ip-api.com JSON API.</p>
 <p>This is a third-party data source that provides GeoIP, ASN, Organization,
 ISP, and other resolution information for IPv4 and IPv6 addresses.</p>
 <div class="section" id="data-source-information">
@@ -230,9 +238,9 @@ available on the data source website.</p>
 </div>
 <div class="section" id="id1">
 <h3>Module Documentation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="libchickadee.backends.ipapi.ProResolver">
-<em class="property">class </em><code class="sig-prename descclassname">libchickadee.backends.ipapi.</code><code class="sig-name descname">ProResolver</code><span class="sig-paren">(</span><em class="sig-param">api_key, fields=['query', 'as', 'org', 'isp', 'continent', 'country', 'regionName', 'city', 'district', 'zip', 'mobile', 'proxy', 'reverse', 'lat', 'lon', 'timezone', 'status', 'message'], lang='en'</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.backends.ipapi.ProResolver" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="libchickadee.resolvers.ipapi.ProResolver">
+<em class="property">class </em><code class="sig-prename descclassname">libchickadee.resolvers.ipapi.</code><code class="sig-name descname">ProResolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">api_key</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lang</span><span class="o">=</span><span class="default_value">'en'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ipapi.ProResolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>GeoIP resolver using the ip-api.com paid subscription.</p>
 <p>Sets endpoint to paid API, confirms support for requested language,
 and disables sleep functionality.</p>
@@ -247,9 +255,9 @@ and disables sleep functionality.</p>
 </dl>
 </dd></dl>
 
-<dl class="class">
-<dt id="libchickadee.backends.ipapi.Resolver">
-<em class="property">class </em><code class="sig-prename descclassname">libchickadee.backends.ipapi.</code><code class="sig-name descname">Resolver</code><span class="sig-paren">(</span><em class="sig-param">fields=['query', 'as', 'org', 'isp', 'continent', 'country', 'regionName', 'city', 'district', 'zip', 'mobile', 'proxy', 'reverse', 'lat', 'lon', 'timezone', 'status', 'message'], lang='en'</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.backends.ipapi.Resolver" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="libchickadee.resolvers.ipapi.Resolver">
+<em class="property">class </em><code class="sig-prename descclassname">libchickadee.resolvers.ipapi.</code><code class="sig-name descname">Resolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lang</span><span class="o">=</span><span class="default_value">'en'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ipapi.Resolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class to handle ip-api.com API queries for IP addresses.</p>
 <p>Sets endpoint to free API, confirms support for requested language,
 configures rate limit sleep timers.</p>
@@ -261,9 +269,9 @@ configures rate limit sleep timers.</p>
 </ul>
 </dd>
 </dl>
-<dl class="method">
-<dt id="libchickadee.backends.ipapi.Resolver.batch">
-<code class="sig-name descname">batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.backends.ipapi.Resolver.batch" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="libchickadee.resolvers.ipapi.Resolver.batch">
+<code class="sig-name descname">batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ipapi.Resolver.batch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle batch query operations.</p>
 <p>Generally not called directly, should be called by <code class="docutils literal notranslate"><span class="pre">self.query()</span></code> to
 allow for the logic to handle which endpoint is preferred.</p>
@@ -277,15 +285,15 @@ allow for the logic to handle which endpoint is preferred.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libchickadee.backends.ipapi.Resolver.rate_limit">
-<code class="sig-name descname">rate_limit</code><span class="sig-paren">(</span><em class="sig-param">headers</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.backends.ipapi.Resolver.rate_limit" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="libchickadee.resolvers.ipapi.Resolver.rate_limit">
+<code class="sig-name descname">rate_limit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">headers</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ipapi.Resolver.rate_limit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to check rate limiting. Checks <code class="docutils literal notranslate"><span class="pre">X-Rl</span></code> and <code class="docutils literal notranslate"><span class="pre">X-Ttl</span></code> headers.</p>
 <p>Will set timer for rate limiting if <code class="docutils literal notranslate"><span class="pre">X-Rl</span></code> is less than 1 for
 duration of <code class="docutils literal notranslate"><span class="pre">X-Ttl</span></code> + 1 second.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>headers</strong> (<em>dict</em>) – Request header information.</p>
+<dd class="field-odd"><p><strong>headers</strong> (<em>dict</em><em>, </em><em>CaseInsensitiveDict</em>) – Request header information.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>None</p>
@@ -293,9 +301,9 @@ duration of <code class="docutils literal notranslate"><span class="pre">X-Ttl</
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libchickadee.backends.ipapi.Resolver.single">
-<code class="sig-name descname">single</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.backends.ipapi.Resolver.single" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="libchickadee.resolvers.ipapi.Resolver.single">
+<code class="sig-name descname">single</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ipapi.Resolver.single" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle single item query operations.</p>
 <p>Generally not called directly, should be called by <code class="docutils literal notranslate"><span class="pre">self.query()</span></code> to
 allow for the logic to handle which endpoint is preferred.</p>
@@ -309,10 +317,119 @@ allow for the logic to handle which endpoint is preferred.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="libchickadee.backends.ipapi.Resolver.sleeper">
-<code class="sig-name descname">sleeper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.backends.ipapi.Resolver.sleeper" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="libchickadee.resolvers.ipapi.Resolver.sleeper">
+<code class="sig-name descname">sleeper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ipapi.Resolver.sleeper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to sleep operations for rate limiting. Executes sleep.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<span class="target" id="module-libchickadee.resolvers.virustotal"></span><div class="section" id="virustotal-resolver">
+<h2>VirusTotal Resolver<a class="headerlink" href="#virustotal-resolver" title="Permalink to this headline">¶</a></h2>
+<p>Resolver leveraging the VirusTotal JSON API.</p>
+<p>This is a third-party data source that provides GeoIP, ASN, associated detected file samples,
+detections on web hosted content, known resolutions, and other resolution information for IPv4 and IPv6 addresses.</p>
+<div class="section" id="id2">
+<h3>Data Source Information<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>This data source is hosted at virustotal.com and requires an internet connection
+to use. It offers a free API with registration and approval, with terms described
+on their site. Please refer to the service’s website for an authoritative source
+on API specifications.</p>
+<p>This documentation summarizes a point in time understanding of the data source
+though since it is a third party service, it may change in a manner that breaks
+this tool or causes this documentation to become inaccurate. In no way is
+inclusion of a data source in libchickadee an endorsement of the data source.</p>
+<p><strong>Data source documentation:</strong> <a class="reference external" href="https://developers.virustotal.com/reference">https://developers.virustotal.com/reference</a></p>
+<div class="section" id="id3">
+<h4>Endpoints<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<p>The API supports a number of reports, though for IP addresses only allows
+the submission of a single IP address per request. This means bulk lookups
+will take at most 1 minute per 4 IP addresses, due to rate limiting.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">https://www.virustotal.com/vtapi/v2/ip-address/report?apikey=&lt;apikey&gt;&amp;ip=&lt;ip&gt;</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h4>Fields<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<p>These fields are in no particular order.</p>
+<ul class="simple">
+<li><p>query</p></li>
+<li><p>count</p></li>
+<li><p>asn</p></li>
+<li><p>country</p></li>
+<li><p>subnet</p></li>
+<li><p>resolution_count</p></li>
+<li><p>detected_sample_count</p></li>
+<li><p>detected_samples</p></li>
+<li><p>undetected_sample_count</p></li>
+<li><p>undetected_samples</p></li>
+<li><p>detected_url_count</p></li>
+<li><p>detected_urls</p></li>
+<li><p>undetected_url_count</p></li>
+<li><p>undetected_urls</p></li>
+<li><p>status</p></li>
+<li><p>message</p></li>
+</ul>
+</div>
+<div class="section" id="id5">
+<h4>Limitations<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<p>This service has a free tier for non-commercial use, and is rate limited to:</p>
+<ul class="simple">
+<li><p>4 requests per minute</p></li>
+<li><p>5760 requests per day</p></li>
+<li><p>172800 requests per month</p></li>
+</ul>
+<p>A 204 response code indicates that you have exceeded your rate limit. The script will
+sleep for 15 seconds if a 204 is returned.</p>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>Module Documentation<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="libchickadee.resolvers.virustotal.ProResolver">
+<em class="property">class </em><code class="sig-prename descclassname">libchickadee.resolvers.virustotal.</code><code class="sig-name descname">ProResolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">api_key</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lang</span><span class="o">=</span><span class="default_value">'en'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.virustotal.ProResolver" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="libchickadee.resolvers.virustotal.ProResolver.batch">
+<code class="sig-name descname">batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.virustotal.ProResolver.batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resolve multiple IP addresses.</p>
+<p>Due to API limitations, each IP address must be resolved individually.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of resolved results</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="libchickadee.resolvers.virustotal.ProResolver.single">
+<code class="sig-name descname">single</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.virustotal.ProResolver.single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gathers VirusTotal report data for a single IP address.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Report information</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="libchickadee.resolvers.virustotal.ProResolver.sleeper">
+<code class="sig-name descname">sleeper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.virustotal.ProResolver.sleeper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to sleep operations for rate limiting.</p>
+<p>Will ensure that 4 requests per minute limit is not exceeded if a 204 encountered.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>None</p>
@@ -335,6 +452,7 @@ allow for the logic to handle which endpoint is preferred.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -342,7 +460,7 @@ allow for the logic to handle which endpoint is preferred.</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Backends</a><ul>
+<li><a class="reference internal" href="#">Resolvers</a><ul>
 <li><a class="reference internal" href="#resolverbase">ResolverBase</a><ul>
 <li><a class="reference internal" href="#module-documentation">Module Documentation</a></li>
 </ul>
@@ -357,6 +475,16 @@ allow for the logic to handle which endpoint is preferred.</p>
 <li><a class="reference internal" href="#id1">Module Documentation</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#virustotal-resolver">VirusTotal Resolver</a><ul>
+<li><a class="reference internal" href="#id2">Data Source Information</a><ul>
+<li><a class="reference internal" href="#id3">Endpoints</a></li>
+<li><a class="reference internal" href="#id4">Fields</a></li>
+<li><a class="reference internal" href="#id5">Limitations</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id6">Module Documentation</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 </li>
@@ -368,7 +496,7 @@ allow for the logic to handle which endpoint is preferred.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/backends.rst.txt"
+      <li><a href="_sources/resolvers.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -398,12 +526,13 @@ allow for the logic to handle which endpoint is preferred.</p>
         <li class="right" >
           <a href="parsers.html" title="Parsers"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200202 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200801-rc1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Resolvers</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright MIT 2020, Chapin Bryce.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
   </body>
 </html>
