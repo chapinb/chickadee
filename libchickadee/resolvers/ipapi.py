@@ -139,7 +139,7 @@ class Resolver(ResolverBase):
         """
         if int(headers.get('X-Rl', '0')) < 1:
             self.wait_time = datetime.now() + \
-                timedelta(seconds=int(headers.get('X-Ttl', '0'))+1)
+                timedelta(seconds=int(headers.get('X-Ttl', '0'))+0.25)
 
     def sleeper(self):
         """Method to sleep operations for rate limiting. Executes sleep.

@@ -36,27 +36,28 @@ Fields
 
 These fields are in no particular order.
 
-query
-count
-asn
-country
-subnet
-resolution_count
-detected_sample_count
-detected_samples
-undetected_sample_count
-undetected_samples
-detected_url_count
-detected_urls
-undetected_url_count
-undetected_urls
-status
-message
+* query
+* count
+* asn
+* country
+* subnet
+* resolution_count
+* detected_sample_count
+* detected_samples
+* undetected_sample_count
+* undetected_samples
+* detected_url_count
+* detected_urls
+* undetected_url_count
+* undetected_urls
+* status
+* message
 
 Limitations
 ^^^^^^^^^^^
 
 This service has a free tier for non-commercial use, and is rate limited to:
+
 * 4 requests per minute
 * 5760 requests per day
 * 172800 requests per month
@@ -118,7 +119,9 @@ class ProResolver(ResolverBase):
         logger.info("API key found")
 
     def sleeper(self):
-        """Method to sleep operations for rate limiting. Executes sleep.
+        """Method to sleep operations for rate limiting.
+
+        Will ensure that 4 requests per minute limit is not exceeded if a 204 encountered.
 
         Return:
             None
@@ -127,11 +130,18 @@ class ProResolver(ResolverBase):
         time_since_last_request = current_request - self.last_request
         if time_since_last_request.total_seconds() > 15:
             return
-        time_to_sleep = (15-time_since_last_request.total_seconds()) + 1  # Add padding
+        time_to_sleep = (15-time_since_last_request.total_seconds()) + .25  # Add padding
         logger.info('Sleeping for {} seconds due to rate limiting.'.format(time_to_sleep))
         time.sleep(time_to_sleep)
 
     def batch(self):
+        """Resolve multiple IP addresses.
+
+        Due to API limitations, each IP address must be resolved individually.
+
+        Returns:
+            (list): List of resolved results
+        """
         # Not supported
         all_ips = self.data
         records = []
@@ -145,6 +155,11 @@ class ProResolver(ResolverBase):
         return records
 
     def single(self):
+        """Gathers VirusTotal report data for a single IP address.
+
+        Returns:
+            (list): Report information
+        """
         params = {
             'apikey': self.api_key,
             'ip': self.data
