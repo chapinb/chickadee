@@ -2,6 +2,71 @@
 VirusTotal Resolver
 ===================
 
+Resolver leveraging the VirusTotal JSON API.
+
+This is a third-party data source that provides GeoIP, ASN, associated detected file samples,
+detections on web hosted content, known resolutions, and other resolution information for IPv4 and IPv6 addresses.
+
+Data Source Information
+-----------------------
+
+This data source is hosted at virustotal.com and requires an internet connection
+to use. It offers a free API with registration and approval, with terms described
+on their site. Please refer to the service's website for an authoritative source
+on API specifications.
+
+This documentation summarizes a point in time understanding of the data source
+though since it is a third party service, it may change in a manner that breaks
+this tool or causes this documentation to become inaccurate. In no way is
+inclusion of a data source in libchickadee an endorsement of the data source.
+
+**Data source documentation:** https://developers.virustotal.com/reference
+
+Endpoints
+^^^^^^^^^
+
+The API supports a number of reports, though for IP addresses only allows
+the submission of a single IP address per request. This means bulk lookups
+will take at most 1 minute per 4 IP addresses, due to rate limiting.
+
+* ``https://www.virustotal.com/vtapi/v2/ip-address/report?apikey=<apikey>&ip=<ip>``
+
+Fields
+^^^^^^
+
+These fields are in no particular order.
+
+query
+count
+asn
+country
+subnet
+resolution_count
+detected_sample_count
+detected_samples
+undetected_sample_count
+undetected_samples
+detected_url_count
+detected_urls
+undetected_url_count
+undetected_urls
+status
+message
+
+Limitations
+^^^^^^^^^^^
+
+This service has a free tier for non-commercial use, and is rate limited to:
+* 4 requests per minute
+* 5760 requests per day
+* 172800 requests per month
+
+A 204 response code indicates that you have exceeded your rate limit. The script will
+sleep for 15 seconds if a 204 is returned.
+
+Module Documentation
+--------------------
+
 """
 import collections
 import functools
@@ -49,7 +114,7 @@ class ProResolver(ResolverBase):
         self.uri = "https://www.virustotal.com/vtapi/v2/ip-address/report"
         self.api_key = api_key
         self.enable_sleep = True
-        self.wait_time = datetime.now()
+        self.last_request = datetime.now()
         logger.info("API key found")
 
     def sleeper(self):
@@ -58,27 +123,13 @@ class ProResolver(ResolverBase):
         Return:
             None
         """
-        while True:
-            now = datetime.now()
-            wait_time = self.wait_time - now
-            if wait_time.total_seconds() < 0:
-                self.wait_time = datetime.now()
-                return
-            wt_sec = wait_time.total_seconds()+1  # add a buffer
-            logger.info(
-                'Sleeping for {} seconds due to rate limiting.'.format(wt_sec))
-            time.sleep(wt_sec)
-
-        # TODO return code 204 = rate limiting.
-        #   You may have exceeded one of:
-        #       * minute limit (wait till next minute)
-        #       * daily limit (exit and warn)
-        #       * monthly limit (exit and warn)
-        #
-        # x-api-message: You have reached your API quota
-        # limits, please do not hesitate to contact us at
-        # contact@virustotal.com in order to license more
-        # quota or get access to advanced API calls.
+        current_request = datetime.now()
+        time_since_last_request = current_request - self.last_request
+        if time_since_last_request.total_seconds() > 15:
+            return
+        time_to_sleep = (15-time_since_last_request.total_seconds()) + 1  # Add padding
+        logger.info('Sleeping for {} seconds due to rate limiting.'.format(time_to_sleep))
+        time.sleep(time_to_sleep)
 
     def batch(self):
         # Not supported
@@ -88,8 +139,10 @@ class ProResolver(ResolverBase):
             all_ips = tqdm(self.data)
         for x in all_ips:
             self.data = x
-            records.append(self.single())
-        return self.single()
+            resp = self.single()
+            if resp:
+                records.append(resp[0])
+        return records
 
     def single(self):
         params = {
@@ -113,7 +166,6 @@ class ProResolver(ResolverBase):
         elif rdata.status_code == 403:
             logger.error("Authorization error. Please check API key")
         else:
-            # TODO error handling
             logger.error("Unknown error occurred, please report")
 
     def parse_vt_resp(self, query, vt_resp):
