@@ -105,7 +105,7 @@ class ProResolver(ResolverBase):
 
         if rdata.status_code == 200:
             return [self.parse_vt_resp(self.data, rdata.json())]
-        elif rdata.status_code == 204:
+        if rdata.status_code == 204:
             # Rate limit
             self.sleeper()
         elif rdata.status_code == 400:

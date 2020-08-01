@@ -21,7 +21,7 @@ __license__ = 'MIT Copyright 2020 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
 
-class ResolverBase(object):
+class ResolverBase:
     """Generic base class for use by other resolvers.
 
     Args:

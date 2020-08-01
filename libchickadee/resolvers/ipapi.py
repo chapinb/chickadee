@@ -236,7 +236,7 @@ class Resolver(ResolverBase):
         if rdata.status_code == 200:
             self.rate_limit(rdata.headers)
             return [rdata.json()]
-        elif rdata.status_code == 429:
+        if rdata.status_code == 429:
             self.rate_limit(rdata.headers)
             self.sleeper()
             return self.single()

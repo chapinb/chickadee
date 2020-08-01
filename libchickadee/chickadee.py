@@ -257,7 +257,7 @@ class Chickadee(object):
         Returns:
             (str): API key, if found
         """
-        raise NotImplemented("Please use a configuration file to specify the API key")
+        raise NotImplementedError("Please use a configuration file to specify the API key")
 
     @staticmethod
     def str_handler(data):
@@ -558,7 +558,7 @@ def parse_config_sections(conf, section_defs):
             elif isinstance(v, bool):
                 conf_value = conf_section.getboolean(k)
             elif isinstance(v, dict):
-                raise NotImplemented("Unable to parse dictionary objects from config file mapping")
+                raise NotImplementedError("Unable to parse dictionary objects from config file mapping")
             config[k] = conf_value
     return config
 
@@ -755,7 +755,7 @@ def entry(args=None):  # pragma: no cover
         ))
 
     logger.debug("Configuring Chickadee")
-    fields = params.get('fields').split(',') if len(params.get('fields')) else None
+    fields = params.get('fields').split(',') if len(params.get('fields', [])) else None
     chickadee = Chickadee(fields=fields)
     chickadee.resolver = params.get('resolver', 'ip_api')
     chickadee.resolve_ips = not params.get('no-resolve')
