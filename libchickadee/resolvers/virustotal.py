@@ -149,8 +149,6 @@ class ProResolver(ResolverBase):
             'apikey': self.api_key,
             'ip': self.data
         }
-        if self.enable_sleep:
-            self.sleeper()
 
         rdata = requests.get(
             self.uri, params=params
@@ -161,12 +159,14 @@ class ProResolver(ResolverBase):
         if rdata.status_code == 204:
             # Rate limit
             self.sleeper()
+            # Try again
+            return self.single()
         elif rdata.status_code == 400:
             logger.error("Incorrect request. Please check input data")
         elif rdata.status_code == 403:
             logger.error("Authorization error. Please check API key")
         else:
-            logger.error("Unknown error occurred, please report")
+            logger.error("Unknown error occurred, status code {}, please report".format(rdata.status_code))
 
     def parse_vt_resp(self, query, vt_resp):
         attributes = dict.fromkeys(self.fields.copy())
