@@ -15,55 +15,58 @@ Usage
 
 .. code-block:: text
 
-    usage: chickadee [-h] [-f FIELDS] [-t {json,jsonl,csv}] [-w FILENAME.JSON]
-                    [-n] [-s] [--lang {en,de,es,pt-BR,fr,ja,zh-CN,ru}]
-                    [-c CONFIG] [-p] [-v] [-V] [-l LOG]
-                    [data [data ...]]
+    usage: chickadee [-h] [-r {ip_api,virustotal}] [-f FIELDS]
+                     [-t {json,jsonl,csv}] [-w FILENAME.JSON] [-n] [--no-count]
+                     [-s] [--lang {en,de,es,pt-BR,fr,ja,zh-CN,ru}] [-b]
+                     [-c CONFIG] [-p] [-v] [-V] [-l LOG]
+                     [data [data ...]]
 
     Yet another GeoIP resolution tool.
 
-    Will use the free rate limited ip-api.com service for resolution.
-    Please set an environment variable named CHICKADEE_API_KEY with the
-    value of your API key to enabled unlimited requests with the
-    commercial API
+    Will default to the free rate limited ip-api.com service for resolution.
+    You can specify the paid API key for ip-api.com or for VirusTotal in
+    the Chickadee configuration file. Please see template_chickadee.ini
+    for more information.
 
     positional arguments:
-    data         Either an IP address, comma delimited list of IP addresses, or
-                 path to a file or folder containing files to check for IP
-                 address values. Currently supported file types: plain text
-                 (ie logs, csv, json), gzipped plain text, xlsx (must be xlsx
-                 extension). Can accept plain text data as stdin.
-                 (default: <_io.TextIOWrapper name='<stdin>' mode='r'
-                            encoding='UTF-8'>)
+      data                  Either an IP address, comma delimited list of IP addresses,
+                            or path to a file or folder containing files to check for IP
+                            address values. Currently supported file types: plain text
+                            (ie logs, csv, json), gzipped plain text, xlsx
+                            (must be xlsx extension). Can accept plain text data as
+                            standard input.
+                            (default: stdin)
 
     optional arguments:
-    -h, --help            show this help message and exit
-    -f FIELDS, --fields FIELDS
-                            Comma separated fields to query
-                            (default: query,count,as,org,isp,continent,country,
-                                      regionName,city,district,zip,mobile,
-                                      proxy,hosting,reverse,lat,lon,timezone,
-                                      status,message)
-    -t {json,jsonl,csv}, --output-format {json,jsonl,csv}
+      -h, --help            show this help message and exit
+      -r {ip_api,virustotal}, --resolver {ip_api,virustotal}
+                            Resolving service to use. Must specify api key in config file.
+                            Please see template_chickadee.ini for instructions.
+                            (default: ip_api)
+      -f FIELDS, --fields FIELDS
+                            Comma separated fields to query (default: None)
+      -t {json,jsonl,csv}, --output-format {json,jsonl,csv}
                             Output format (default: jsonl)
-    -w FILENAME.JSON, --output-file FILENAME.JSON
+      -w FILENAME.JSON, --output-file FILENAME.JSON
                             Path to file to write output
-                            (default: <_io.TextIOWrapper name='<stdout>'
-                                       mode='w' encoding='UTF-8'>)
-    -n, --no-resolve      Only extract IP addresses, don't resolve.
-                          (default: False)
-    -s, --single          Use the significantly slower single item API.
-                          Adds reverse DNS. (default: False)
-    --lang {en,de,es,pt-BR,fr,ja,zh-CN,ru}
+                            (default: stdout)
+      -n, --no-resolve      Only extract IP addresses, don't resolve. (default: False)
+      --no-count            Disable counting the occurrences of IP addresses extracted
+                            from source files (default: False)
+      -s, --single          Use the significantly slower single item API. Adds reverse
+                            DNS. (default: False)
+      --lang {en,de,es,pt-BR,fr,ja,zh-CN,ru}
                             Language (default: en)
-    -c CONFIG, --config CONFIG
+      -b, --include-bogon   Include BOGON addresses in results. (default: False)
+      -c CONFIG, --config CONFIG
                             Path to config file to load (default: None)
-    -p, --progress        Enable progress bar (default: False)
-    -v, --verbose         Include debug log messages (default: False)
-    -V, --version         Displays version
-    -l LOG, --log LOG     Path to log file (default: ./chickadee.log)
+      -p, --progress        Enable progress bar (default: False)
+      -v, --verbose         Include debug log messages (default: False)
+      -V, --version         Displays version
+      -l LOG, --log LOG     Path to log file (default: chickadee.log)
 
-    Built by Chapin Bryce, v.20200202
+    Built by Chapin Bryce, v.20200801.0
+
 
 .. _chickadee-examples:
 
@@ -93,6 +96,17 @@ Parsing IPs from a folder, recursively:
 
 ``chickadee folder/``
 
+Resolver options
+^^^^^^^^^^^^^^^^
+
+Resolve using VirusTotal (set API key in config file):
+
+``chickadee -r virustotal 1.1.1.1``
+
+Resolve using ip-api (set API key in config file):
+
+``chickadee -r ip_api 1.1.1.1``
+
 Output options
 ^^^^^^^^^^^^^^
 
@@ -111,9 +125,13 @@ Reporting to CSV format:
 Other Arguments
 ^^^^^^^^^^^^^^^
 
-Changing the fields to resolve and report on:
+Changing the fields to resolve and report on (ip_api):
 
-``chickadee -f query,count,asn,isp,org 1.1.1.1``
+``chickadee -r ip_api -f query,count,asn,isp,org 1.1.1.1``
+
+Changing the fields to resolve and report on (virustotal):
+
+``chickadee -r virustotal -f query,detected_samples 1.1.1.1``
 
 Changing the output location (STDOUT by default)
 
@@ -157,10 +175,10 @@ __date__ = 20200407.2
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.
 
-Will use the free rate limited ip-api.com service for resolution.
-Please set an environment variable named CHICKADEE_API_KEY with the
-value of your API key to enabled unlimited requests with the
-commercial API
+Will default to the free rate limited ip-api.com service for resolution.
+You can specify the paid API key for ip-api.com or for VirusTotal in
+the Chickadee configuration file. Please see template_chickadee.ini
+for more information.
 '''
 
 logger = logging.getLogger(__name__)

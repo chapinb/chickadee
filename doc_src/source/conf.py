@@ -22,7 +22,7 @@ copyright = 'MIT 2020, Chapin Bryce'
 author = 'Chapin Bryce'
 
 # The full version, including alpha/beta/rc tags
-release = '20200202'
+release = '20200801-rc1'
 
 
 # -- General configuration ---------------------------------------------------
