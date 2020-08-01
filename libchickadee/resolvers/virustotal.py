@@ -3,8 +3,10 @@ VirusTotal Resolver
 ===================
 
 """
-
+import collections
+import functools
 import logging
+import operator
 import time
 from datetime import datetime
 
@@ -13,7 +15,7 @@ from tqdm import tqdm
 
 from . import ResolverBase
 
-logger = logging.getLogger("libchickadee.chickadee")
+logger = logging.getLogger(__name__)
 
 __author__ = 'Chapin Bryce'
 __date__ = 20200302
@@ -21,24 +23,34 @@ __license__ = 'MIT Copyright 2020 Chapin Bryce'
 __desc__ = 'Resolver for VirusTotal'
 
 FIELDS = [
-    'query',
+    'query', 'count',
+    'asn', 'country',
+    'subnet',
+    'resolution_count', 'detected_sample_count', 'undetected_sample_count',
+    'detected_url_count', 'undetected_url_count',
     'status', 'message'
 ]
 
+NON_DEFAULT_FIELDS = [
+    "resolutions", "detected_samples", "undetected_samples", "detected_urls", "undetected_urls"
+]
 
-class Resolver(ResolverBase):
-    def __init__(self, fields=FIELDS, lang="en"):
+
+class ProResolver(ResolverBase):
+    def __init__(self, api_key, fields=None, lang="en"):
+
+        super().__init__()
+
         self.supported_langs = [
             "en"
         ]
-        if lang not in self.supported_langs:
-            lang = "en"
-        super().__init__(fields=fields, lang=lang)
-
+        self.lang = 'en' if lang not in self.supported_langs else lang
+        self.fields = FIELDS if not fields else fields
         self.uri = "https://www.virustotal.com/vtapi/v2/ip-address/report"
-        self.api_key = None
+        self.api_key = api_key
         self.enable_sleep = True
         self.wait_time = datetime.now()
+        logger.info("API key found")
 
     def sleeper(self):
         """Method to sleep operations for rate limiting. Executes sleep.
@@ -105,7 +117,8 @@ class Resolver(ResolverBase):
             logger.error("Unknown error occurred, please report")
 
     def parse_vt_resp(self, query, vt_resp):
-        attributes = {
+        attributes = dict.fromkeys(self.fields.copy())
+        attributes.update({
             "query": query,
             "asn": "",
             "continent": vt_resp.get("continent"),
@@ -114,7 +127,7 @@ class Resolver(ResolverBase):
             "status": vt_resp.get("response_code"),
             "message": vt_resp.get("IP address in dataset"),
             "whois": "",
-        }
+        })
 
         # ASNs
         if vt_resp.get("asn"):
@@ -141,24 +154,43 @@ class Resolver(ResolverBase):
                         vt_resp.get("resolutions", [])}
         attributes["resolutions"] = sorted(list(hostname_set))
 
-        # Parse Detected Communicating Samples
+        # Parse Detected Communicating, Download, and Referrer Samples
         # * Get count
         # * Get all hashes
-        attributes["detected_sample_count"] = len(
-            vt_resp.get("detected_communicating_samples", []))
-        detected_samples = {
+        attributes["detected_sample_count"] = len(vt_resp.get("detected_communicating_samples", [])) + \
+            len(vt_resp.get("detected_downloaded_samples", [])) + len(vt_resp.get("detected_referrer_samples", []))
+        detected_communicating_samples = {
             x.get('sha256'): x.get('positives')
             for x in vt_resp.get('detected_communicating_samples', [])}
-        attributes["detected_samples"] = detected_samples
+        detected_downloaded_samples = {
+            x.get('sha256'): x.get('positives')
+            for x in vt_resp.get('detected_downloaded_samples', [])}
+        detected_referrer_samples = {
+            x.get('sha256'): x.get('positives')
+            for x in vt_resp.get('detected_referrer_samples', [])}
+
+        # Sum up the counts across categories for the same samples
+        attributes["detected_samples"] = dict(
+            functools.reduce(
+                operator.add, map(
+                    collections.Counter, [detected_communicating_samples,
+                                          detected_downloaded_samples,
+                                          detected_referrer_samples])))
 
         # Parse Undetected Communicating Samples
         # * Get count
         # * Get all hashes
-        attributes["undetected_sample_count"] = len(
-            vt_resp.get("undetected_communicating_samples", []))
+        attributes["undetected_sample_count"] = len(vt_resp.get("undetected_communicating_samples", [])) + \
+            len(vt_resp.get("undetected_downloaded_samples", [])) + len(vt_resp.get("undetected_referrer_samples", []))
         undetected_samples = {
             x.get('sha256') for x in
             vt_resp.get('undetected_communicating_samples', [])}
+        undetected_samples = undetected_samples.union({
+            x.get('sha256') for x in
+            vt_resp.get('undetected_downloaded_samples', [])})
+        undetected_samples = undetected_samples.union({
+            x.get('sha256') for x in
+            vt_resp.get('undetected_referrer_samples', [])})
         attributes["undetected_samples"] = sorted(list(undetected_samples))
 
         # Parse Detected URLs
@@ -168,10 +200,10 @@ class Resolver(ResolverBase):
             vt_resp.get("detected_urls", []))
         detected_urls = {
             self.defang_ioc(x.get('url')): x.get('positives')
-            for x in vt_resp.get('detected_urls')}
+            for x in vt_resp.get('detected_urls', [])}
         attributes["detected_urls"] = detected_urls
 
-        # Parse Undtected URLs
+        # Parse Undetected URLs
         # * Get count
         # * Get all defanged URLs
         # The API does not expose this as a key/value object
@@ -185,7 +217,7 @@ class Resolver(ResolverBase):
             vt_resp.get("undetected_urls", []))
         detected_urls = {
             self.defang_ioc(x[0])
-            for x in vt_resp.get('undetected_urls')}
+            for x in vt_resp.get('undetected_urls', [])}
         attributes["undetected_urls"] = sorted(list(detected_urls))
 
         return attributes

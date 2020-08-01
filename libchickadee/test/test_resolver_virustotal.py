@@ -1,9 +1,9 @@
-"""IP-API Backend Tests."""
+"""VirusTotal Resolver Tests."""
 import unittest
 import json
 import os
 
-from libchickadee.backends.virustotal import Resolver
+from libchickadee.resolvers.virustotal import ProResolver
 
 __author__ = 'Chapin Bryce'
 __date__ = 20200114
@@ -12,7 +12,7 @@ __desc__ = '''Yet another GeoIP resolution tool.'''
 
 
 class IPAPITestCase(unittest.TestCase):
-    """IP-API Backend Tests."""
+    """VirusTotal Resolver Tests."""
     def setUp(self):
         """Test config"""
         self.test_data_ips = [
@@ -28,7 +28,7 @@ class IPAPITestCase(unittest.TestCase):
              'org': 'Google LLC', 'proxy': False,
              'query': '2001:4860:4860::8888'}
         ]
-        self.resolver = Resolver()
+        self.resolver = ProResolver(api_key='')
         local_dir = os.path.abspath(__file__).rsplit(os.sep, 1)[0]
         resource_file = open(os.path.join(local_dir, 'vt_resp_data.json'))
         self.vt_rep_data_list = json.load(resource_file)

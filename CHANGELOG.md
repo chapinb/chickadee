@@ -7,6 +7,7 @@
 List of new features
 
 * Added support to extract IP addresses from Windows Event logs (evtx files.)
+* Support for querying VirusTotal [Issue-38](https://github.com/chapinb/chickadee/issues/38)
 
 ### Fixed
 
@@ -21,10 +22,16 @@ Modifications to existing functionality
 
 * Increased unit test coverage. Leverage mocking for API requests.
 * Improved code per Deepsource, PyCharm, and Sourcery recommendations.
+* Created function to flatten complex objects for ease of review in CSV files.
+* Renamed `backends` to `resolvers` for clarity
+* Allowed the specification of multiple resolver API keys in config file, and to choose a resolver with the CLI
+* Relocated field handling from chickadee.py to resolver files
 
 ### Removed
 
 Features removed
+
+* Depreciated ability to specify CHICKADEE_API_KEY environment variable in favor of config files
 
 ## 20200407.2
 

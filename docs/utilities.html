@@ -49,8 +49,8 @@
 <h2>chickadee.py<a class="headerlink" href="#chickadee-py" title="Permalink to this headline">¶</a></h2>
 <p>A command-line application to provide context for an IP address.</p>
 <p>This utility leveraged libchickadee to extract, resolve, and report IP
-addresses. Please see <a class="reference internal" href="index.html#installation"><span class="std std-ref">Installation</span></a> instructions for details on setting up this
-tool on your system.</p>
+addresses. Please see <a class="reference internal" href="index.html#installation"><span class="std std-ref">Installation</span></a> instructions for details
+on setting up this tool on your system.</p>
 <div class="section" id="usage">
 <span id="chickadee-usage"></span><h3>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: chickadee [-h] [-f FIELDS] [-t {json,jsonl,csv}] [-w FILENAME.JSON]
@@ -143,7 +143,7 @@ Built by Chapin Bryce, v.20200202
 <h3>Module Documentation<a class="headerlink" href="#module-documentation" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="libchickadee.chickadee.Chickadee">
-<em class="property">class </em><code class="sig-prename descclassname">libchickadee.chickadee.</code><code class="sig-name descname">Chickadee</code><span class="sig-paren">(</span><em class="sig-param">outformat='json'</em>, <em class="sig-param">outfile=&lt;colorama.ansitowin32.StreamWrapper object&gt;</em>, <em class="sig-param">fields='query</em>, <em class="sig-param">count</em>, <em class="sig-param">as</em>, <em class="sig-param">org</em>, <em class="sig-param">isp</em>, <em class="sig-param">continent</em>, <em class="sig-param">country</em>, <em class="sig-param">regionName</em>, <em class="sig-param">city</em>, <em class="sig-param">district</em>, <em class="sig-param">zip</em>, <em class="sig-param">mobile</em>, <em class="sig-param">proxy</em>, <em class="sig-param">hosting</em>, <em class="sig-param">reverse</em>, <em class="sig-param">lat</em>, <em class="sig-param">lon</em>, <em class="sig-param">timezone</em>, <em class="sig-param">status</em>, <em class="sig-param">message'</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.Chickadee" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">libchickadee.chickadee.</code><code class="sig-name descname">Chickadee</code><span class="sig-paren">(</span><em class="sig-param">outformat='json'</em>, <em class="sig-param">outfile=&lt;colorama.ansitowin32.StreamWrapper object&gt;</em>, <em class="sig-param">fields=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.Chickadee" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class to handle chickadee script operations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -207,7 +207,8 @@ plain text, gzipped compressed plain text, and xlsx.</p>
 <dl class="method">
 <dt id="libchickadee.chickadee.Chickadee.get_api_key">
 <em class="property">static </em><code class="sig-name descname">get_api_key</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.Chickadee.get_api_key" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve an API key set as an envar. Looks for value in
+<dd><p>DEPRECIATED</p>
+<p>Retrieve an API key set as an envar. Looks for value in
 <code class="docutils literal notranslate"><span class="pre">CHICKADEE_API_KEY</span></code>. May be depreciated in the near future.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -223,13 +224,13 @@ plain text, gzipped compressed plain text, and xlsx.</p>
 <dt id="libchickadee.chickadee.Chickadee.resolve">
 <code class="sig-name descname">resolve</code><span class="sig-paren">(</span><em class="sig-param">data_dict</em>, <em class="sig-param">api_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.Chickadee.resolve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resolve IP addresses stored as keys within <cite>data_dict</cite>. The values
-for each key should represent the number of occurances of an IP within
+for each key should represent the number of occurrences of an IP within
 a data set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_dict</strong> (<em>dict</em>) – Structured as <code class="docutils literal notranslate"><span class="pre">{IP:</span> <span class="pre">COUNT}</span></code></p></li>
-<li><p><strong>api_key</strong> (<em>str</em>) – API Key for GeoIP backend.</p></li>
+<li><p><strong>api_key</strong> (<em>str</em>) – API Key for IP resolver.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -255,7 +256,7 @@ method if the <code class="docutils literal notranslate"><span class="pre">self.
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_data</strong> (<em>str</em><em> or </em><em>file_obj</em>) – User provided data containing IPs to
 resolve</p></li>
-<li><p><strong>api_key</strong> (<em>str</em>) – API Key for backend GeoIP resolver.</p></li>
+<li><p><strong>api_key</strong> (<em>str</em>) – API Key for IP resolver.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -274,7 +275,7 @@ resolve</p></li>
 distinct IPs with their associated frequency count.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<em>str</em>) – raw input data from user</p>
+<dd class="field-odd"><p><strong>data</strong> (<em>list</em><em>, </em><em>str</em>) – raw input data from user</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>dictionary of distinct IP addresses to resolve.</p>
@@ -289,7 +290,7 @@ distinct IPs with their associated frequency count.</p>
 <dt id="libchickadee.chickadee.Chickadee.write_output">
 <code class="sig-name descname">write_output</code><span class="sig-paren">(</span><em class="sig-param">results</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.Chickadee.write_output" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write results to output format and/or files.</p>
-<p>Leverages the writers found in libchickadee.backends. Currently
+<p>Leverages the writers found in libchickadee.resolvers. Currently
 supports csv, json, and json lines formats, specified in
 <code class="docutils literal notranslate"><span class="pre">self.outformat</span></code>.</p>
 <dl class="field-list simple">
@@ -323,7 +324,7 @@ supports csv, json, and json lines formats, specified in
 
 <dl class="function">
 <dt id="libchickadee.chickadee.config_handing">
-<code class="sig-prename descclassname">libchickadee.chickadee.</code><code class="sig-name descname">config_handing</code><span class="sig-paren">(</span><em class="sig-param">config_file=None</em>, <em class="sig-param">search_conf_path=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.config_handing" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">libchickadee.chickadee.</code><code class="sig-name descname">config_handing</code><span class="sig-paren">(</span><em class="sig-param">config_file=None</em>, <em class="sig-param">search_conf_path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.config_handing" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse config file and return argument values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -340,7 +341,7 @@ supports csv, json, and json lines formats, specified in
 
 <dl class="function">
 <dt id="libchickadee.chickadee.entry">
-<code class="sig-prename descclassname">libchickadee.chickadee.</code><code class="sig-name descname">entry</code><span class="sig-paren">(</span><em class="sig-param">args=['Z:\\dev\\chickadee\\venv\\Scripts\\sphinx-build', '-M', 'html', 'source', 'build']</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.entry" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">libchickadee.chickadee.</code><code class="sig-name descname">entry</code><span class="sig-paren">(</span><em class="sig-param">args=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.entry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Entrypoint for package script.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -351,7 +352,7 @@ supports csv, json, and json lines formats, specified in
 
 <dl class="function">
 <dt id="libchickadee.chickadee.join_config_args">
-<code class="sig-prename descclassname">libchickadee.chickadee.</code><code class="sig-name descname">join_config_args</code><span class="sig-paren">(</span><em class="sig-param">config</em>, <em class="sig-param">args</em>, <em class="sig-param">definitions={}</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.join_config_args" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">libchickadee.chickadee.</code><code class="sig-name descname">join_config_args</code><span class="sig-paren">(</span><em class="sig-param">config</em>, <em class="sig-param">args</em>, <em class="sig-param">definitions=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.join_config_args" title="Permalink to this definition">¶</a></dt>
 <dd><p>Join config file and argument parameters, where the args override configs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

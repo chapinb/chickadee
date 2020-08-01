@@ -46,7 +46,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="utilities.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="parsers.html">Parsers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="backends.html">Backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resolvers.html">Resolvers</a></li>
 </ul>
 </div>
 <span class="target" id="module-libchickadee"></span><div class="section" id="libchickadee-overview">
@@ -94,6 +94,15 @@ it (<code class="docutils literal notranslate"><span class="pre">.\venv3\Scripts
 <li><p>Install dependencies: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">.</span></code></p></li>
 <li><p>Run <code class="docutils literal notranslate"><span class="pre">chickadee</span> <span class="pre">--help</span></code> to get started.</p></li>
 </ol>
+</div>
+<div class="section" id="install-the-latest-features-without-git">
+<h4>Install the latest features without Git<a class="headerlink" href="#install-the-latest-features-without-git" title="Permalink to this headline">¶</a></h4>
+<p>If you would like to install the latest pre-release version, feel free to use
+the above steps to clone the repository and install. You can also use pip
+to directly install the latest master branch from GitHub by running:</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+https://github.com/chapinb/chickadee.git</span>
+<span class="pre">`</span></code></p>
 </div>
 </div>
 <div class="section" id="contribution">
@@ -151,13 +160,13 @@ file content. The <code class="docutils literal notranslate"><span class="pre">c
 expose files within folders recursively. With this, each parser needs to
 accept a path to a file to read.</p>
 </div>
-<div class="section" id="backends">
-<h4>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="resolvers">
+<h4>Resolvers<a class="headerlink" href="#resolvers" title="Permalink to this headline">¶</a></h4>
 <p>This is where the IP address is resolved by a third-party data source. Each
 component is responsible for accepting one or more IP address and returning
 resolution data. The third-party sources will not be distributed with this
-library, each new backend will have documentation to highlight the steps
-required to prepare the data source for use by the backend module.</p>
+library, each new resolver will have documentation to highlight the steps
+required to prepare the data source for use by the resolver module.</p>
 <p>The writers for libchickadee are also stored in this module.</p>
 </div>
 <div class="section" id="utilities">
@@ -190,13 +199,14 @@ library from the command line.</p>
 <li><a class="reference internal" href="#installation">Installation</a><ul>
 <li><a class="reference internal" href="#macos-and-linux">macOS and Linux</a></li>
 <li><a class="reference internal" href="#windows">Windows</a></li>
+<li><a class="reference internal" href="#install-the-latest-features-without-git">Install the latest features without Git</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#contribution">Contribution</a></li>
 <li><a class="reference internal" href="#usage-examples">Usage &amp; Examples</a></li>
 <li><a class="reference internal" href="#components">Components</a><ul>
 <li><a class="reference internal" href="#parsers">Parsers</a></li>
-<li><a class="reference internal" href="#backends">Backends</a></li>
+<li><a class="reference internal" href="#resolvers">Resolvers</a></li>
 <li><a class="reference internal" href="#utilities">Utilities</a></li>
 </ul>
 </li>

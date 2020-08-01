@@ -1,4 +1,4 @@
-"""IP-API Backend Tests."""
+"""IP-API Resolver Tests."""
 import unittest
 from datetime import datetime
 from unittest.mock import patch
@@ -7,7 +7,7 @@ import json
 import os
 from collections import OrderedDict
 
-from libchickadee.backends.ipapi import Resolver
+from libchickadee.resolvers.ipapi import Resolver
 
 __author__ = 'Chapin Bryce'
 __date__ = 20200114
@@ -27,7 +27,7 @@ class MockResponse:
 
 
 class IPAPITestCase(unittest.TestCase):
-    """IP-API Backend Tests."""
+    """IP-API Resolver Tests."""
     def setUp(self):
         """Test config"""
         self.test_data_ips = [
@@ -46,7 +46,7 @@ class IPAPITestCase(unittest.TestCase):
         self.resolver = Resolver(fields=['query', 'count', 'as',
                                          'country', 'org', 'proxy'])
 
-    @patch("libchickadee.backends.ipapi.Resolver.single")
+    @patch("libchickadee.resolvers.ipapi.Resolver.single")
     def test_ipapi_resolve_query_single(self, mock_query):
         """Query Method Test"""
         for count, ip in enumerate(self.test_data_ips):
@@ -54,7 +54,7 @@ class IPAPITestCase(unittest.TestCase):
             data = self.resolver.query(ip)
             self.assertEqual(data, self.expected_result[count])
 
-    @patch("libchickadee.backends.ipapi.Resolver.batch")
+    @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_ipapi_resolve_query_batch(self, mock_query):
         """Batch Query Method Test"""
         mock_query.return_value = self.expected_result.copy()
@@ -65,7 +65,7 @@ class IPAPITestCase(unittest.TestCase):
             batch_result.append(item)
         self.assertCountEqual(res, batch_result)
 
-    @patch("libchickadee.backends.ipapi.requests.get")
+    @patch("libchickadee.resolvers.ipapi.requests.get")
     def test_ipapi_resolve_single(self, mock_query):
         """Single Query Method Test"""
         for count, ip in enumerate(self.test_data_ips):
@@ -74,7 +74,7 @@ class IPAPITestCase(unittest.TestCase):
             data = self.resolver.single()
             self.assertEqual(data, [self.expected_result[count]])
 
-    @patch("libchickadee.backends.ipapi.requests.post")
+    @patch("libchickadee.resolvers.ipapi.requests.post")
     def test_ipapi_resolve_batch(self, mock_query):
         """Batch Query Method Test"""
         mock_query.return_value = MockResponse(json_data=self.expected_result, status_code=200)
@@ -83,7 +83,7 @@ class IPAPITestCase(unittest.TestCase):
         res = [x for x in data]
         self.assertEqual(len(res), len(self.expected_result))
 
-    @patch("libchickadee.backends.ipapi.Resolver.single")
+    @patch("libchickadee.resolvers.ipapi.Resolver.single")
     def test_ipapi_resolve_single_field(self, mock_query):
         """Single Query Method Test"""
         for count, ip in enumerate(self.test_data_ips):
@@ -100,8 +100,8 @@ class IPAPITestCase(unittest.TestCase):
 
             self.assertEqual(data, expected)
 
-    @patch("libchickadee.backends.ipapi.requests.get")
-    @patch("libchickadee.backends.ipapi.requests.post")
+    @patch("libchickadee.resolvers.ipapi.requests.get")
+    @patch("libchickadee.resolvers.ipapi.requests.post")
     def test_ipapi_rate_limiting(self, mock_get, mock_post):
         single = {
             "test_data": self.test_data_ips[1],

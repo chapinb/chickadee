@@ -7,7 +7,7 @@ Chickadee Documentation
 
    utilities
    parsers
-   backends
+   resolvers
 
 .. automodule:: libchickadee
    :members:

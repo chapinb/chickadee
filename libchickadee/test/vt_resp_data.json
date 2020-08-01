@@ -71,6 +71,7 @@
         },
         "expected": {
             "query": "164.77.130.222",
+            "count": null,
             "asn": "AS6471 ENTEL CHILE S.A.",
             "continent": "SA",
             "country": "CL",
@@ -149,6 +150,7 @@
             "verbose_msg": "IP address in dataset"
         },
         "expected": {"asn": "",
+            "count": null,
             "continent": null,
             "country": null,
             "detected_sample_count": 0,
