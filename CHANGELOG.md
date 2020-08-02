@@ -1,12 +1,12 @@
 # Changelog
 
-## [Unreleased]
+## 20200802.0
 
 ### Added
 
 List of new features
 
-* Added support to extract IP addresses from Windows Event logs (evtx files.)
+* Added support to extract IP addresses from Windows Event logs (evtx files.)  [Issue-15](https://github.com/chapinb/chickadee/issues/15)
 * Support for querying VirusTotal [Issue-38](https://github.com/chapinb/chickadee/issues/38)
 
 ### Fixed
