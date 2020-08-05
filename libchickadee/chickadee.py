@@ -672,7 +672,7 @@ def arg_handling(args):
                         help='Include debug log messages')
     parser.add_argument('-V', '--version', action='version',
                         help='Displays version',
-                        version=str(__date__))
+                        version=str(__version__))
     parser.add_argument(
         '-l',
         '--log',

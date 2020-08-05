@@ -165,6 +165,7 @@ class ProResolver(ResolverBase):
             'ip': self.data
         }
 
+        self.last_request = datetime.now()
         rdata = requests.get(
             self.uri, params=params
         )

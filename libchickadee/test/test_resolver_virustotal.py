@@ -1,5 +1,6 @@
 """VirusTotal Resolver Tests."""
 import datetime
+import time
 import unittest
 import json
 import os
@@ -100,6 +101,16 @@ class IPAPITestCase(unittest.TestCase):
                     actual = self.resolver.query(self.vt_rep_data_list["Test0"]["query"])
                 self.assertIsNone(actual)
                 self.assertEqual(mock_log.records[0].message, err_msg)
+
+    @patch("libchickadee.resolvers.virustotal.requests.get")
+    def test_sleeper(self, mock_requests):
+        initial_time = datetime.datetime.now()
+        self.resolver.last_request = initial_time
+        time.sleep(2)
+        mock_requests.return_value.status_code = 403
+
+        self.resolver.query(data='1.1.1.1')
+        self.assertGreaterEqual(self.resolver.last_request, initial_time + datetime.timedelta(seconds=2))
 
 
 if __name__ == "__main__":
