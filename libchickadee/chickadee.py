@@ -65,7 +65,7 @@ Usage
       -V, --version         Displays version
       -l LOG, --log LOG     Path to log file (default: chickadee.log)
 
-    Built by Chapin Bryce, v.20200801.0
+    Built by Chapin Bryce, v.20200805.0
 
 
 .. _chickadee-examples:
@@ -171,7 +171,7 @@ from libchickadee.parsers.evtx import EVTXParser
 
 
 __author__ = 'Chapin Bryce'
-__date__ = 20200407.2
+__date__ = 20200805
 __license__ = 'GPLv3 Copyright 2019 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.
 
@@ -672,7 +672,7 @@ def arg_handling(args):
                         help='Include debug log messages')
     parser.add_argument('-V', '--version', action='version',
                         help='Displays version',
-                        version=str(__date__))
+                        version=str(__version__))
     parser.add_argument(
         '-l',
         '--log',

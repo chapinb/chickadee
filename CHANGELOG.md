@@ -1,5 +1,11 @@
 # Changelog
 
+## 20200805.0
+
+### Fixed
+
+* Addressed bug in rate limiting VirusTotal. [Issue-62](https://github.com/chapinb/chickadee/issues/62)
+
 ## 20200802.0
 
 ### Added

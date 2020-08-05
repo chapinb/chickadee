@@ -84,7 +84,7 @@ from . import ResolverBase
 logger = logging.getLogger(__name__)
 
 __author__ = 'Chapin Bryce'
-__date__ = 20200302
+__date__ = 20200805
 __license__ = 'MIT Copyright 2020 Chapin Bryce'
 __desc__ = 'Resolver for VirusTotal'
 
@@ -165,6 +165,7 @@ class ProResolver(ResolverBase):
             'ip': self.data
         }
 
+        self.last_request = datetime.now()
         rdata = requests.get(
             self.uri, params=params
         )
