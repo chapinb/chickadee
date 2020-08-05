@@ -9,7 +9,7 @@ from unittest.mock import patch, MagicMock
 from libchickadee.resolvers.virustotal import ProResolver
 
 __author__ = 'Chapin Bryce'
-__date__ = 20200114
+__date__ = 20200805
 __license__ = 'MIT Copyright 2020 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
 
