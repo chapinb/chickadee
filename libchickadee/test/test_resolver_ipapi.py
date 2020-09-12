@@ -133,7 +133,7 @@ class IPAPITestCase(unittest.TestCase):
 class WritersTestCase(unittest.TestCase):
     def setUp(self):
         self.data = [
-            OrderedDict(**{"a": '1', "b": "2"})
+            OrderedDict(**{"a": '1', "b": "2", "regionName": "Île-de-France"})
         ]
         self.testfile = "testfile"
         self.open_file = None
@@ -153,7 +153,7 @@ class WritersTestCase(unittest.TestCase):
 
     def test_write_json(self):
         data = [
-            {"a": '1', "b": "2"}
+            {"a": '1', "b": "2", "regionName": "Île-de-France"}
         ]
         Resolver.write_json(self.testfile, self.data)
         self.open_file = open("testfile")
@@ -169,6 +169,7 @@ class WritersTestCase(unittest.TestCase):
         read_data = json.load(self.open_file)
         rec = self.data[0]
         rec.pop("b")
+        rec.pop("regionName")
         rec["none"] = None
         self.assertDictEqual(
             rec,
