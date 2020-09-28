@@ -116,7 +116,7 @@ class ProResolver(ResolverBase):
         self.api_key = api_key
         self.enable_sleep = True
         self.last_request = datetime.now()
-        logger.info("API key found")
+        logger.debug("API key found")
 
     def sleeper(self):
         """Method to sleep operations for rate limiting.
