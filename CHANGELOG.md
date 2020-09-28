@@ -1,5 +1,11 @@
 # Changelog
 
+## 20200928.0
+
+### Fixed
+
+* Demoted noisy logging messages [Issue-65](https://github.com/chapinb/chickadee/issues/65)
+
 ## 20200805.0
 
 ### Fixed
