@@ -220,75 +220,52 @@ class ProResolver(ResolverBase):
                 vt_resp.get("asn"), vt_resp.get("as_owner")
             )
 
-        # Parse WhoIS
-        # OtherRemarks holds info not stored in key/value config
-        whois = {"OtherRemarks": ""}
-        for line in vt_resp.get('whois', "").split("\n"):
-            if len(line) == 0:
-                continue
-            if ':' not in line:
-                whois["OtherRemarks"] += line+"\n"
-                continue
-            split_line = line.split(":", 1)
-            whois[split_line[0].strip()] = split_line[1].strip()
-        attributes["whois"] = whois
+        # Parse WhoIs
+        self._extract_whois(attributes, vt_resp)
 
         # Parse Resolutions
+        self._extract_resolutions(attributes, vt_resp)
+
+        # Parse Detected Communicating, Download, and Referrer Samples
+        self._extract_detected_samples(attributes, vt_resp)
+
+        # Parse Undetected Communicating Samples
+        self._extract_undetected_samples(attributes, vt_resp)
+
+        # Parse Detected URLs
+        self._extract_detected_urls(attributes, vt_resp)
+
+        # Parse Undetected URLs
+        self._extract_undetected_urls(attributes, vt_resp)
+
+        return attributes
+
+    @staticmethod
+    def _extract_resolutions(attributes, vt_resp):
+        """Extract information about associated domain resolutions
+
+        Args:
+            attributes (dict): Formatted data to present for analysis
+            vt_resp (dict): Raw information from the VT API
+
+        Returns:
+            None. Updates attributes dictionary
+        """
         attributes["resolution_count"] = len(vt_resp.get("resolutions", []))
         hostname_set = {x.get('hostname') for x in
                         vt_resp.get("resolutions", [])}
         attributes["resolutions"] = sorted(list(hostname_set))
 
-        # Parse Detected Communicating, Download, and Referrer Samples
-        # * Get count
-        # * Get all hashes
-        attributes["detected_sample_count"] = len(vt_resp.get("detected_communicating_samples", [])) + \
-            len(vt_resp.get("detected_downloaded_samples", [])) + len(vt_resp.get("detected_referrer_samples", []))
-        detected_communicating_samples = {
-            x.get('sha256'): x.get('positives')
-            for x in vt_resp.get('detected_communicating_samples', [])}
-        detected_downloaded_samples = {
-            x.get('sha256'): x.get('positives')
-            for x in vt_resp.get('detected_downloaded_samples', [])}
-        detected_referrer_samples = {
-            x.get('sha256'): x.get('positives')
-            for x in vt_resp.get('detected_referrer_samples', [])}
+    def _extract_undetected_urls(self, attributes, vt_resp):
+        """Extract information about undetected URLs
 
-        # Sum up the counts across categories for the same samples
-        attributes["detected_samples"] = dict(
-            functools.reduce(
-                operator.add, map(
-                    collections.Counter, [detected_communicating_samples,
-                                          detected_downloaded_samples,
-                                          detected_referrer_samples])))
+        Args:
+            attributes (dict): Formatted data to present for analysis
+            vt_resp (dict): Raw information from the VT API
 
-        # Parse Undetected Communicating Samples
-        # * Get count
-        # * Get all hashes
-        attributes["undetected_sample_count"] = len(vt_resp.get("undetected_communicating_samples", [])) + \
-            len(vt_resp.get("undetected_downloaded_samples", [])) + len(vt_resp.get("undetected_referrer_samples", []))
-        undetected_samples = {
-            x.get('sha256') for x in
-            vt_resp.get('undetected_communicating_samples', [])}
-        undetected_samples = undetected_samples.union({
-            x.get('sha256') for x in
-            vt_resp.get('undetected_downloaded_samples', [])})
-        undetected_samples = undetected_samples.union({
-            x.get('sha256') for x in
-            vt_resp.get('undetected_referrer_samples', [])})
-        attributes["undetected_samples"] = sorted(list(undetected_samples))
-
-        # Parse Detected URLs
-        # * Get count
-        # * Get all defanged URLs
-        attributes["detected_url_count"] = len(
-            vt_resp.get("detected_urls", []))
-        detected_urls = {
-            self.defang_ioc(x.get('url')): x.get('positives')
-            for x in vt_resp.get('detected_urls', [])}
-        attributes["detected_urls"] = detected_urls
-
-        # Parse Undetected URLs
+        Returns:
+            None. Updates attributes dictionary
+        """
         # * Get count
         # * Get all defanged URLs
         # The API does not expose this as a key/value object
@@ -305,4 +282,104 @@ class ProResolver(ResolverBase):
             for x in vt_resp.get('undetected_urls', [])}
         attributes["undetected_urls"] = sorted(list(detected_urls))
 
-        return attributes
+    def _extract_detected_urls(self, attributes, vt_resp):
+        """Extract information about detected URLs
+
+        Args:
+            attributes (dict): Formatted data to present for analysis
+            vt_resp (dict): Raw information from the VT API
+
+        Returns:
+            None. Updates attributes dictionary
+        """
+        # * Get count
+        # * Get all defanged URLs
+        attributes["detected_url_count"] = len(
+            vt_resp.get("detected_urls", []))
+        detected_urls = {
+            self.defang_ioc(x.get('url')): x.get('positives')
+            for x in vt_resp.get('detected_urls', [])}
+        attributes["detected_urls"] = detected_urls
+
+    @staticmethod
+    def _extract_undetected_samples(attributes, vt_resp):
+        """Extract information about undetected samples
+
+        Args:
+            attributes (dict): Formatted data to present for analysis
+            vt_resp (dict): Raw information from the VT API
+
+        Returns:
+            None. Updates attributes dictionary
+        """
+        # * Get count
+        # * Get all hashes
+        attributes["undetected_sample_count"] = len(vt_resp.get("undetected_communicating_samples", [])) + \
+                                                len(vt_resp.get("undetected_downloaded_samples", [])) + len(
+            vt_resp.get("undetected_referrer_samples", []))
+        undetected_samples = {
+            x.get('sha256') for x in
+            vt_resp.get('undetected_communicating_samples', [])}
+        undetected_samples = undetected_samples.union({
+            x.get('sha256') for x in
+            vt_resp.get('undetected_downloaded_samples', [])})
+        undetected_samples = undetected_samples.union({
+            x.get('sha256') for x in
+            vt_resp.get('undetected_referrer_samples', [])})
+        attributes["undetected_samples"] = sorted(list(undetected_samples))
+
+    @staticmethod
+    def _extract_detected_samples(attributes, vt_resp):
+        """Extract information about detected samples
+
+        Args:
+            attributes (dict): Formatted data to present for analysis
+            vt_resp (dict): Raw information from the VT API
+
+        Returns:
+            None. Updates attributes dictionary
+        """
+        # * Get count
+        # * Get all hashes
+        attributes["detected_sample_count"] = len(vt_resp.get("detected_communicating_samples", [])) + \
+                                              len(vt_resp.get("detected_downloaded_samples", [])) + len(
+            vt_resp.get("detected_referrer_samples", []))
+        detected_communicating_samples = {
+            x.get('sha256'): x.get('positives')
+            for x in vt_resp.get('detected_communicating_samples', [])}
+        detected_downloaded_samples = {
+            x.get('sha256'): x.get('positives')
+            for x in vt_resp.get('detected_downloaded_samples', [])}
+        detected_referrer_samples = {
+            x.get('sha256'): x.get('positives')
+            for x in vt_resp.get('detected_referrer_samples', [])}
+        # Sum up the counts across categories for the same samples
+        attributes["detected_samples"] = dict(
+            functools.reduce(
+                operator.add, map(
+                    collections.Counter, [detected_communicating_samples,
+                                          detected_downloaded_samples,
+                                          detected_referrer_samples])))
+
+    @staticmethod
+    def _extract_whois(attributes, vt_resp):
+        """Extract whois data from the VirusTotal API response
+
+        Args:
+            attributes (dict): Formatted data to present for analysis
+            vt_resp (dict): Raw information from the VT API
+
+        Returns:
+            None. Updates attributes dictionary
+        """
+        # OtherRemarks holds info not stored in key/value config
+        whois = {"OtherRemarks": ""}
+        for line in vt_resp.get('whois', "").split("\n"):
+            if len(line) == 0:
+                continue
+            if ':' not in line:
+                whois["OtherRemarks"] += line + "\n"
+                continue
+            split_line = line.split(":", 1)
+            whois[split_line[0].strip()] = split_line[1].strip()
+        attributes["whois"] = whois
