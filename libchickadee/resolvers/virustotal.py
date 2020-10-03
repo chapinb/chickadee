@@ -103,8 +103,16 @@ NON_DEFAULT_FIELDS = [
 
 
 class ProResolver(ResolverBase):
+    """VirusTotal authenticated API resolver. Requires an API key.
+    Full API documentation here: https://developers.virustotal.com/reference"""
     def __init__(self, api_key, fields=None, lang="en"):
+        """Initialize class object and configure default values.
 
+        Args:
+            api_key (str): API key to authenticate with
+            fields (list): Fields to filter responses
+            lang (str): Language to use in the API request
+        """
         super().__init__()
 
         self.supported_langs = [
@@ -185,6 +193,15 @@ class ProResolver(ResolverBase):
             logger.error("Unknown error occurred, status code {}, please report".format(rdata.status_code))
 
     def parse_vt_resp(self, query, vt_resp):
+        """Transform the raw response from VirusTotal in to a dictionary easier for analysis
+
+        Args:
+            query (str): Queried value
+            vt_resp (dict): Raw API response
+
+        Returns:
+            (dict): Formatted response for analysis
+        """
         attributes = dict.fromkeys(self.fields.copy())
         attributes.update({
             "query": query,

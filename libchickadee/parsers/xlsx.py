@@ -20,8 +20,8 @@ __desc__ = '''Yet another GeoIP resolution tool.'''
 class XLSXParser(ParserBase):
     """Class to extract IP addresses from XLSX workbooks."""
     def __init__(self, ignore_bogon=True):
+        """Initialize the class object and set defaults."""
         super().__init__(ignore_bogon)
-        self.ips = {}
 
     def parse_file(self, file_entry, is_stream=False):
         """Parse xlsx contents. Must be a path to an existing XLSX workbook.

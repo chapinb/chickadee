@@ -113,6 +113,7 @@ class Resolver(ResolverBase):
         lang (str): Language for returned results.
     """
     def __init__(self, fields=None, lang='en'):
+        """Initialize class object and configure default values."""
         self.supported_langs = [
             'en', 'de', 'es', 'pt-BR', 'fr', 'ja', 'zh-CN', 'ru'
         ]
@@ -258,6 +259,7 @@ class ProResolver(Resolver):
         lang (str): Language for returned results.
     """
     def __init__(self, api_key, fields=None, lang='en'):  # pragma: no cover
+        """Initialize class object and configure default values."""
         super().__init__()
         self.lang = 'en' if lang not in self.supported_langs else lang
         self.fields = [] if not fields else fields

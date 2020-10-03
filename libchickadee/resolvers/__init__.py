@@ -32,6 +32,7 @@ class ResolverBase:
         (ResolverBase)
     """
     def __init__(self):
+        """Initialize class object and set defaults."""
         self.uri = None
         self.lang = 'en'
         self.supported_langs = []
@@ -83,6 +84,15 @@ class ResolverBase:
 
     @staticmethod
     def defang_ioc(ioc):
+        """Modify the display of IOCs to limit automated hyperlinking or access of unsafe resources
+
+        Args:
+            ioc (str): Content to scan for values to defang
+
+        Return:
+            (str): Defanged value.
+
+        """
         return ioc.replace(".", "[.]")
 
     @staticmethod
@@ -177,6 +187,15 @@ class ResolverBase:
 
     @staticmethod
     def normalize_data_headers(data, headers):
+        """Filter content from response that is not requested in output
+
+        Args:
+            data (list): Response from API
+            headers (list): List of user-provided headers to return
+
+        Returns:
+            (dict): Updated API response with limited headers
+        """
         # Only include fields in headers
         # Include headers with no value if not present in original
         selected_data = []
@@ -193,20 +212,44 @@ class ResolverBase:
 
     @staticmethod
     def flatten_objects(data, headers):
+        """Flatten complex fields in to simple columns for CSV usage
+
+        Args:
+            data (list): List of dictionaries to write to file
+            headers (list): Header row to use.
+
+        Returns:
+            (tuple, list): Tuple containing a list of rows to write, followed by a list of headers to use.
+        """
         rows_to_write = []
         for raw_row in data:
             row = raw_row.copy()
             # Convert lists in to CSV friendly format
             for header in headers:
-                if isinstance(raw_row.get(header, None), list):
-                    # Converts list of simple values (str, int, float, bool) to pipe delimited string
-                    row[header] = " | ".join(raw_row[header])
-                elif isinstance(raw_row.get(header, None), dict):
-                    # For each object in a dictionary, add a new header and append to
-                    for key, value in raw_row[header].items():
-                        new_header = '{}.{}'.format(header, key)
-                        if new_header not in headers:
-                            headers.append(new_header)
-                        row[new_header] = value
+                ResolverBase._process_header(header, headers, raw_row, row)
             rows_to_write.append(row)
         return rows_to_write, headers
+
+    @staticmethod
+    def _process_header(header, headers, raw_row, row):
+        """Extract list of headers in to a CSV format, flatten any nested dictionaries with dot notation
+
+        Args:
+            header (str): Field name
+            headers (list): List of all fields
+            raw_row (dict): Original row
+            row (dict): Updated row
+
+        Returns:
+            None. Updates the `row` dictionary provided
+        """
+        if isinstance(raw_row.get(header, None), list):
+            # Converts list of simple values (str, int, float, bool) to pipe delimited string
+            row[header] = " | ".join(raw_row[header])
+        elif isinstance(raw_row.get(header, None), dict):
+            # For each object in a dictionary, add a new header and append to
+            for key, value in raw_row[header].items():
+                new_header = '{}.{}'.format(header, key)
+                if new_header not in headers:
+                    headers.append(new_header)
+                row[new_header] = value

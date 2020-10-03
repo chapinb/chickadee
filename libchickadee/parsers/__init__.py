@@ -63,6 +63,7 @@ IPv6Pattern = re.compile(IPV6ADDR)
 
 
 def run_parser_from_cli(args, parser_obj):  # pragma: no cover
+    """Allow a parser to run from the command line, both for testing and increased usability."""
     if os.path.isdir(args.path):
         for root, _, files in os.walk(args.path):
             for fentry in files:
@@ -77,6 +78,7 @@ def run_parser_from_cli(args, parser_obj):  # pragma: no cover
 class ParserBase(object):
     """Base class for parsers, containing common utilities."""
     def __init__(self, ignore_bogon=True):
+        """Configure the parser and set default values."""
         self.ignore_bogon = ignore_bogon
         self.ips = {}
 
