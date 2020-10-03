@@ -6,9 +6,7 @@ import Evtx.Evtx
 
 
 class EVTXParser(ParserBase):
-    def __init__(self, ignore_bogon=True):
-        super().__init__(ignore_bogon)
-        self.ips = {}
+    """Class to expose EVTX record contents for IP address extraction"""
 
     def parse_file(self, file_entry, is_stream=False):
         """Parse EVTX contents. Must be a path to an existing EVTX file.

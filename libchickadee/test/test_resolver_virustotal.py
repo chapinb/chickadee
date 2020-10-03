@@ -38,6 +38,7 @@ class IPAPITestCase(unittest.TestCase):
         resource_file.close()
 
     def test_parse_vt_resp(self):
+        """Confirm the parsing of VT responses."""
         vt_resp_data = self.vt_rep_data_list["Test0"]["test"]
         query = self.vt_rep_data_list["Test0"]["query"]
         expected = self.vt_rep_data_list["Test0"]["expected"]
@@ -45,6 +46,7 @@ class IPAPITestCase(unittest.TestCase):
         self.assertDictEqual(expected, vt_values)
 
     def test_parse_vt_resp_2(self):
+        """Confirm the parsing of VT responses."""
         vt_resp_data = self.vt_rep_data_list["Test1"]["test"]
         query = self.vt_rep_data_list["Test1"]["query"]
         expected = self.vt_rep_data_list["Test1"]["expected"]
@@ -53,7 +55,9 @@ class IPAPITestCase(unittest.TestCase):
 
     @patch("libchickadee.resolvers.virustotal.requests.get")
     def test_resolve_single(self, mock_requests):
+        """Test the resolution processing of a single item."""
         def mock_json():
+            """Return a mocked JSON value from the request"""
             return self.vt_rep_data_list["Test0"]["test"]
 
         mock_requests.return_value.status_code = 200
@@ -65,6 +69,7 @@ class IPAPITestCase(unittest.TestCase):
 
     @patch("libchickadee.resolvers.virustotal.requests.get")
     def test_resolve_batch(self, mock_requests):
+        """Test the resolution processing of a multiple items."""
         # Build 3 requests
         req1 = MagicMock()
         req1.status_code = 200
@@ -89,6 +94,7 @@ class IPAPITestCase(unittest.TestCase):
 
     @patch("libchickadee.resolvers.virustotal.requests.get")
     def test_resolve_errors(self, mock_requests):
+        """Testing error handling of the resolver."""
         subtests = {
             400: "Incorrect request. Please check input data",
             403: "Authorization error. Please check API key",
@@ -104,6 +110,7 @@ class IPAPITestCase(unittest.TestCase):
 
     @patch("libchickadee.resolvers.virustotal.requests.get")
     def test_sleeper(self, mock_requests):
+        """Validate that the sleep timer works appropriately for rate limiting"""
         initial_time = datetime.datetime.now()
         self.resolver.last_request = initial_time
         time.sleep(2)

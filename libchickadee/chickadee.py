@@ -193,7 +193,7 @@ class Chickadee(object):
     """Class to handle chickadee script operations.
 
     Args:
-        outformat (str): One of ``json``, ``jsonl``, ``csv``
+        out_format (str): One of ``json``, ``jsonl``, ``csv``
         outfile (str or file_obj): Destination to write report.
         fields (list): Collection of fields to resolve and report on.
 
@@ -206,17 +206,18 @@ class Chickadee(object):
         >>> print(resolution)
 
     """
-    def __init__(self, outformat='json', outfile=sys.stdout, fields=None):
+    def __init__(self, out_format='json', outfile=sys.stdout, fields=None):
+        """Initialize class values and parameters to provided or default values"""
         self.resolver = 'ip_api'
         self.input_data = None
-        self.outformat = outformat
+        self.out_format = out_format
         self.outfile = outfile
         self.fields = fields
         self.force_single = False
         self.ignore_bogon = True
         self.no_count = False
         self.lang = 'en'
-        self.pbar = False
+        self.progress_bar = False
         self.resolve_ips = True
 
     def run(self, input_data, api_key=None):
@@ -269,7 +270,7 @@ class Chickadee(object):
     def get_api_key():
         """DEPRECIATED
 
-        Retrieve an API key set as an envar. Looks for value in
+        Retrieve an API key set as an environment variable. Looks for value in
         ``CHICKADEE_API_KEY``. May be depreciated in the near future.
 
         Returns:
@@ -355,8 +356,8 @@ class Chickadee(object):
         """
         result_dict = {}
         for root, _, files in os.walk(folder_path):
-            for fentry in files:
-                file_entry = os.path.join(root, fentry)
+            for file_name in files:
+                file_entry = os.path.join(root, file_name)
                 logger.debug("Parsing file {}".format(file_entry))
                 file_results = self.file_handler(file_entry, self.ignore_bogon)
                 logger.debug("Parsed file {}, {} results".format(
@@ -376,22 +377,21 @@ class Chickadee(object):
             api_key (str): API Key for IP resolver.
 
         Returns:
-            data_dict (dict): dictionary of distinct IP addresses to resolve.
+            results (list): List containing resolved IP address information
         """
         distinct_ips = list(data_dict.keys())
 
         resolver = self.get_resolver(api_key)
 
-        if self.pbar:
-            resolver.pbar = self.pbar
+        if self.progress_bar:
+            resolver.pbar = self.progress_bar
 
         logger.debug("Resolving IPs")
         if self.force_single:
             results = []
             data = distinct_ips
-            if self.pbar:
-                data = tqdm(distinct_ips, desc="Resolving IPs",
-                            unit_scale=True)
+            if self.progress_bar:
+                data = tqdm(distinct_ips, desc="Resolving IPs", unit_scale=True)
 
             for element in data:
                 resolver.data = element
@@ -414,6 +414,14 @@ class Chickadee(object):
         return results
 
     def get_resolver(self, api_key):
+        """Determine the proper resolver to use, based on the available API keys.
+
+        Args:
+            api_key (str): API key value to register with the resolver
+
+        Returns:
+            Instance of an initialized resolver
+        """
         resolvers = {
             "ip_api": {
                 "pro_resolver": ipapi.ProResolver,
@@ -449,7 +457,7 @@ class Chickadee(object):
 
         Leverages the writers found in libchickadee.resolvers. Currently
         supports csv, json, and json lines formats, specified in
-        ``self.outformat``.
+        ``self.out_format``.
 
         Args:
             results (list): List of GeoIP results
@@ -458,13 +466,13 @@ class Chickadee(object):
             None
         """
 
-        if self.outformat == 'csv':
+        if self.out_format == 'csv':
             logger.debug("Writing CSV report")
             ResolverBase.write_csv(self.outfile, results, self.fields)
-        elif self.outformat == 'json':
+        elif self.out_format == 'json':
             logger.debug("Writing json report")
             ResolverBase.write_json(self.outfile, results, self.fields)
-        elif self.outformat == 'jsonl':
+        elif self.out_format == 'jsonl':
             logger.debug("Writing json lines report")
             ResolverBase.write_json(self.outfile, results, self.fields, lines=True)
 
@@ -562,6 +570,15 @@ def config_handing(config_file=None, search_conf_path=None):
 
 
 def parse_config_sections(conf, section_defs):
+    """Parse the sections of the configuration file
+
+    Args:
+        conf (dict): Loaded configuration file information
+        section_defs (dict): Mapping of configuration file values and defaults
+
+    Returns:
+        (dict): Final configuration to use with the script execution
+    """
     config = {}
     for section, value in section_defs.items():
         if section not in conf:
@@ -582,6 +599,15 @@ def parse_config_sections(conf, section_defs):
 
 
 def find_config_file(search_conf_path=None, filename_patterns=None):
+    """Handles the search operations for identifying configuration files on the system
+
+    Args:
+        search_conf_path (str): Path to look for a configuration file
+        filename_patterns (list): Patterns to use to find a configuration file
+
+    Returns:
+        (str): The path to the first identified configuration file.
+    """
     if not filename_patterns:
         # Needs to end with chickadee.ini or .chickadee.ini for detection.
         filename_patterns = ['chickadee.ini']
@@ -600,10 +626,16 @@ def find_config_file(search_conf_path=None, filename_patterns=None):
 
 
 def _generate_default_config_search_path():
-    # Config file search path order:
-    # 1. Current directory
-    # 2. User home directory
-    # 3. System wide directory
+    """This function dynamically populates the order in which to locate a configuration file.
+
+    Config file search path order:
+      1. Current directory
+      2. User home directory
+      3. System wide directory
+
+    Returns:
+        (list): Ordered list of paths to look for configuration files in
+    """
     search_conf_path = [os.path.abspath('.'), os.path.expanduser('~')]
     if 'win32' in sys.platform:
         search_conf_path.append(
@@ -781,20 +813,20 @@ def entry(args=None):  # pragma: no cover
     chickadee.no_count = params.get('no-count')
     chickadee.force_single = params.get('single')
     chickadee.lang = params.get('lang')
-    chickadee.pbar = params.get('progress')
+    chickadee.progress_bar = params.get('progress')
 
     logger.debug("Parsing input")
     if isinstance(params.get('data'), list):
         data = []
         for x in params.get('data'):
-            res = chickadee.run(x, params.get(chickadee.resolver, None))
+            res = chickadee.run(x, params.get(chickadee.resolver))
             data += res
     else:
-        data = chickadee.run(params.get('data'), params.get(chickadee.resolver, None))
+        data = chickadee.run(params.get('data'), params.get(chickadee.resolver))
 
     logger.debug("Writing output")
     chickadee.outfile = params.get('output-file')
-    chickadee.outformat = params.get('output-format')
+    chickadee.out_format = params.get('output-format')
     chickadee.write_output(data)
 
     logger.debug("Chickadee complete")

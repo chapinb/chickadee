@@ -15,10 +15,13 @@ __desc__ = '''Yet another GeoIP resolution tool.'''
 
 
 class ChickadeeConfigTestCase(unittest.TestCase):
+    """Test case handling configuration file functionality"""
     def setUp(self):
+        """Configure defaults across tests"""
         self.default_columns = "query,message,mobile,org"
         
     def test_argparse(self):
+        """Validate command line argument parsing."""
         args = [
             "1.1.1.1", "-t", "csv", "-w", "test.out", "-n", "-s",
             "--lang", "es", "-c", "test.config", "-p", "-v",
@@ -61,6 +64,7 @@ class ChickadeeConfigTestCase(unittest.TestCase):
         )
 
     def test_configparse(self):
+        """Test the parsing of configuration file and command line arguments"""
         args = ["1.1.1.1", "-f", self.default_columns]
         parsed = arg_handling(args)
         opts = {
@@ -93,6 +97,7 @@ class ChickadeeConfigTestCase(unittest.TestCase):
         )
 
     def test_parse_config_file_provided(self):
+        """Test the parsing of the configuration file when provided"""
         # Str, list, bool, dict, int
         test_conf = 'chickadee.ini'
         open_file = open(test_conf, 'w')
@@ -126,6 +131,7 @@ ip_api = not-an-api-key
         os.remove(test_conf)
 
     def test_find_config_file(self):
+        """Test the identification of a configuration file"""
         # Str, list, bool, dict, int
         test_conf = 'unittesting.chickadee.ini'
         conf_path_userdir = os.path.join(
@@ -142,7 +148,7 @@ ip_api = not-an-api-key
 class ChickadeeStringTestCase(unittest.TestCase):
     """Chickadee script tests."""
     def setUp(self):
-        """Test config"""
+        """Set default and common values across tests"""
         self.test_data_ips = [
             '10.0.1.2', '8.8.8.8', '2001:4860:4860::8888'
         ]
@@ -160,6 +166,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
         self.fields = ['query', 'count', 'as', 'country', 'org', 'proxy']
 
     def test_no_resolve(self, resolve='No resolve'):
+        """Confirm the handling when no resolution is requested"""
         results = [
             {'query': '10.0.1.2', 'count': 1, 'message': resolve},
             {'query': '8.8.8.8', 'count': 1, 'message': resolve},
@@ -172,8 +179,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
             chickadee.resolve_ips = False
             chickadee.ignore_bogon = False
             data = chickadee.run(ip)
-            res = [x for x in data]
-            self.assertEqual(res, [results[count]])
+            self.assertEqual(data, [results[count]])
 
     @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_chickadee_single(self, mock_batch):
@@ -184,8 +190,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
             chickadee.fields = self.fields
             mock_batch.return_value = [self.expected_result[count]]
             data = chickadee.run(ip)
-            res = [x for x in data]
-            self.assertEqual(res, [self.expected_result[count]])
+            self.assertEqual(data, [self.expected_result[count]])
 
     @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_chickadee_csv_str(self, mock_query):
@@ -195,18 +200,20 @@ class ChickadeeStringTestCase(unittest.TestCase):
         chickadee.fields = self.fields
         mock_query.return_value = self.expected_result
         data = chickadee.run(','.join(self.test_data_ips))
-        res = [x for x in data]
-        self.assertCountEqual(res, self.expected_result)
+        self.assertCountEqual(data, self.expected_result)
 
     def test_chickadee_force_single(self):
         """Batch Query Method Test"""
         expected_results = self.expected_result
 
         class MockResolver:
+            """Fake resolver"""
             def __init__(self, *args, **kwargs):
+                """Set defaults"""
                 self.data = None
 
             def single(self):
+                """Mock the single method, returning a list of data."""
                 return [x for x in expected_results if x['query'] == self.data]
 
         chickadee = Chickadee()
@@ -215,10 +222,10 @@ class ChickadeeStringTestCase(unittest.TestCase):
         chickadee.fields = self.fields
         with patch("libchickadee.chickadee.ipapi.Resolver", MockResolver):
             data = chickadee.run(','.join(self.test_data_ips))
-        res = [x for x in data]
-        self.assertCountEqual(res, self.expected_result)
+        self.assertCountEqual(data, self.expected_result)
 
     def test_improper_type(self):
+        """Test error handling when the wrong data type is provided via API"""
         failed = False
         try:
             # Provide improper data type
@@ -229,6 +236,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
 
     @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_manual_run(self, mock_query):
+        """Test the execution of chickadee via module calls"""
         chick = Chickadee(fields=self.fields)
         mock_query.return_value = [self.expected_result[1]]
         actual = chick.run(self.test_data_ips[1])
@@ -323,11 +331,10 @@ class ChickadeeFileTestCase(unittest.TestCase):
         chickadee.fields = self.fields
         mock_query.return_value = self.txt_data_results
         data = chickadee.run(os.path.join(self.test_data_dir, 'txt_ips.txt'))
-        res = [x for x in data]
         batch_result = []  # No reverse field
         for item in self.txt_data_results:
             batch_result.append(item)
-        self.assertCountEqual(res, batch_result)
+        self.assertCountEqual(data, batch_result)
 
     @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_ipapi_resolve_query_gz_file(self, mock_query):
@@ -338,11 +345,10 @@ class ChickadeeFileTestCase(unittest.TestCase):
         mock_query.return_value = self.txt_data_results
         data = chickadee.run(os.path.join(self.test_data_dir,
                                           'txt_ips.txt.gz'))
-        res = [x for x in data]
         batch_result = []  # No reverse field
         for item in self.txt_data_results:
             batch_result.append(item)
-        self.assertCountEqual(res, batch_result)
+        self.assertCountEqual(data, batch_result)
 
     @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_ipapi_resolve_query_xlsx_file(self, mock_query):
@@ -352,11 +358,10 @@ class ChickadeeFileTestCase(unittest.TestCase):
         chickadee.fields = self.fields
         mock_query.return_value = self.xlsx_data_results
         data = chickadee.run(os.path.join(self.test_data_dir, 'test_ips.xlsx'))
-        res = [x for x in data]
         batch_result = []  # No reverse field
         for item in self.xlsx_data_results:
             batch_result.append(item)
-        self.assertCountEqual(res, batch_result)
+        self.assertCountEqual(data, batch_result)
 
     @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_ipapi_resolve_query_folder(self, mock_query):
@@ -402,10 +407,10 @@ class ChickadeeFileTestCase(unittest.TestCase):
         chickadee.ignore_bogon = False
         chickadee.fields = self.fields
         data = chickadee.run(self.test_data_dir)
-        res = [x for x in data]
-        self.assertCountEqual(res, expected)
+        self.assertCountEqual(data, expected)
 
     def test_file_handler_stream(self):
+        """Validate the extraction of IP addresses when input is provided via stdin"""
         stream = io.TextIOWrapper(io.StringIO("test 1.1.1.1 ip"))
         ips = Chickadee.file_handler(stream, ignore_bogon=True)
         self.assertDictEqual(

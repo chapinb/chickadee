@@ -23,11 +23,7 @@ __desc__ = '''Yet another GeoIP resolution tool.'''
 
 
 class PlainTextParser(ParserBase):
-    """Class to extract IP addresses from plain text
-        and gzipped plain text files."""
-    def __init__(self, ignore_bogon=True):
-        super().__init__(ignore_bogon)
-        self.ips = {}
+    """Class to extract IP addresses from plain text and gzipped plain text files."""
 
     @staticmethod
     def is_gz_file(filepath):

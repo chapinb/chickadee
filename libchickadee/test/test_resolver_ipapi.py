@@ -16,13 +16,16 @@ __desc__ = '''Yet another GeoIP resolution tool.'''
 
 
 class MockResponse:
+    """Generate mocked responses from the ip-api.com source."""
     def __init__(self, json_data, status_code, rl='100', ttl='1'):
+        """Setup accessed objects."""
         self.run_count = 0
         self.json_data = json_data
         self.status_code = status_code
         self.headers = {'X-Rl': rl, 'X-Ttl': ttl}
 
     def json(self):
+        """Return provided sample data."""
         return self.json_data
 
 
@@ -103,6 +106,7 @@ class IPAPITestCase(unittest.TestCase):
     @patch("libchickadee.resolvers.ipapi.requests.get")
     @patch("libchickadee.resolvers.ipapi.requests.post")
     def test_ipapi_rate_limiting(self, mock_get, mock_post):
+        """Validate the handling for rate limiting"""
         single = {
             "test_data": self.test_data_ips[1],
             "expected_data": [self.expected_result[1]],
@@ -131,7 +135,9 @@ class IPAPITestCase(unittest.TestCase):
 
 
 class WritersTestCase(unittest.TestCase):
+    """Test writer functionality"""
     def setUp(self):
+        """Configure test data"""
         self.data = [
             OrderedDict(**{"a": '1', "b": "2", "regionName": "Île-de-France"})
         ]
@@ -139,10 +145,12 @@ class WritersTestCase(unittest.TestCase):
         self.open_file = None
 
     def tearDown(self):
+        """Clean up test data"""
         self.open_file.close()
         os.remove(self.testfile)
 
     def test_write_csv(self):
+        """Test writing information to a CSV file."""
         Resolver.write_csv(self.testfile, self.data)
         self.open_file = open("testfile")
         read_data = next(csv.DictReader(self.open_file))
@@ -152,6 +160,7 @@ class WritersTestCase(unittest.TestCase):
         )
 
     def test_write_json(self):
+        """Test writing information to a JSON file"""
         data = [
             {"a": '1', "b": "2", "regionName": "Île-de-France"}
         ]
@@ -164,6 +173,7 @@ class WritersTestCase(unittest.TestCase):
         )
 
     def test_write_json_headers(self):
+        """Test writing information to a JSON file with filtered headers"""
         Resolver.write_json(self.testfile, self.data, ['a', 'none'])
         self.open_file = open("testfile")
         read_data = json.load(self.open_file)
@@ -177,6 +187,7 @@ class WritersTestCase(unittest.TestCase):
         )
 
     def test_write_json_lines(self):
+        """Test writing information to a JSON file with one object per line"""
         Resolver.write_json(self.testfile, self.data, lines=True)
         self.open_file = open("testfile")
         read_data = json.load(self.open_file)
