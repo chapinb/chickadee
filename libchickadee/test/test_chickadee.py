@@ -179,8 +179,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
             chickadee.resolve_ips = False
             chickadee.ignore_bogon = False
             data = chickadee.run(ip)
-            res = [x for x in data]
-            self.assertEqual(res, [results[count]])
+            self.assertEqual(data, [results[count]])
 
     @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_chickadee_single(self, mock_batch):
@@ -191,8 +190,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
             chickadee.fields = self.fields
             mock_batch.return_value = [self.expected_result[count]]
             data = chickadee.run(ip)
-            res = [x for x in data]
-            self.assertEqual(res, [self.expected_result[count]])
+            self.assertEqual(data, [self.expected_result[count]])
 
     @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_chickadee_csv_str(self, mock_query):
@@ -202,8 +200,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
         chickadee.fields = self.fields
         mock_query.return_value = self.expected_result
         data = chickadee.run(','.join(self.test_data_ips))
-        res = [x for x in data]
-        self.assertCountEqual(res, self.expected_result)
+        self.assertCountEqual(data, self.expected_result)
 
     def test_chickadee_force_single(self):
         """Batch Query Method Test"""
@@ -225,8 +222,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
         chickadee.fields = self.fields
         with patch("libchickadee.chickadee.ipapi.Resolver", MockResolver):
             data = chickadee.run(','.join(self.test_data_ips))
-        res = [x for x in data]
-        self.assertCountEqual(res, self.expected_result)
+        self.assertCountEqual(data, self.expected_result)
 
     def test_improper_type(self):
         """Test error handling when the wrong data type is provided via API"""
@@ -335,11 +331,10 @@ class ChickadeeFileTestCase(unittest.TestCase):
         chickadee.fields = self.fields
         mock_query.return_value = self.txt_data_results
         data = chickadee.run(os.path.join(self.test_data_dir, 'txt_ips.txt'))
-        res = [x for x in data]
         batch_result = []  # No reverse field
         for item in self.txt_data_results:
             batch_result.append(item)
-        self.assertCountEqual(res, batch_result)
+        self.assertCountEqual(data, batch_result)
 
     @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_ipapi_resolve_query_gz_file(self, mock_query):
@@ -350,11 +345,10 @@ class ChickadeeFileTestCase(unittest.TestCase):
         mock_query.return_value = self.txt_data_results
         data = chickadee.run(os.path.join(self.test_data_dir,
                                           'txt_ips.txt.gz'))
-        res = [x for x in data]
         batch_result = []  # No reverse field
         for item in self.txt_data_results:
             batch_result.append(item)
-        self.assertCountEqual(res, batch_result)
+        self.assertCountEqual(data, batch_result)
 
     @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_ipapi_resolve_query_xlsx_file(self, mock_query):
@@ -364,11 +358,10 @@ class ChickadeeFileTestCase(unittest.TestCase):
         chickadee.fields = self.fields
         mock_query.return_value = self.xlsx_data_results
         data = chickadee.run(os.path.join(self.test_data_dir, 'test_ips.xlsx'))
-        res = [x for x in data]
         batch_result = []  # No reverse field
         for item in self.xlsx_data_results:
             batch_result.append(item)
-        self.assertCountEqual(res, batch_result)
+        self.assertCountEqual(data, batch_result)
 
     @patch("libchickadee.resolvers.ipapi.Resolver.batch")
     def test_ipapi_resolve_query_folder(self, mock_query):
@@ -414,8 +407,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
         chickadee.ignore_bogon = False
         chickadee.fields = self.fields
         data = chickadee.run(self.test_data_dir)
-        res = [x for x in data]
-        self.assertCountEqual(res, expected)
+        self.assertCountEqual(data, expected)
 
     def test_file_handler_stream(self):
         """Validate the extraction of IP addresses when input is provided via stdin"""

@@ -377,7 +377,7 @@ class Chickadee(object):
             api_key (str): API Key for IP resolver.
 
         Returns:
-            data_dict (dict): dictionary of distinct IP addresses to resolve.
+            results (list): List containing resolved IP address information
         """
         distinct_ips = list(data_dict.keys())
 
@@ -391,8 +391,7 @@ class Chickadee(object):
             results = []
             data = distinct_ips
             if self.progress_bar:
-                data = tqdm(distinct_ips, desc="Resolving IPs",
-                            unit_scale=True)
+                data = tqdm(distinct_ips, desc="Resolving IPs", unit_scale=True)
 
             for element in data:
                 resolver.data = element
@@ -820,10 +819,10 @@ def entry(args=None):  # pragma: no cover
     if isinstance(params.get('data'), list):
         data = []
         for x in params.get('data'):
-            res = chickadee.run(x, params.get(chickadee.resolver, None))
+            res = chickadee.run(x, params.get(chickadee.resolver))
             data += res
     else:
-        data = chickadee.run(params.get('data'), params.get(chickadee.resolver, None))
+        data = chickadee.run(params.get('data'), params.get(chickadee.resolver))
 
     logger.debug("Writing output")
     chickadee.outfile = params.get('output-file')

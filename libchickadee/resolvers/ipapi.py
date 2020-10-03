@@ -190,7 +190,7 @@ class Resolver(ResolverBase):
 
             if rdata.status_code == 200:
                 self.rate_limit(rdata.headers)
-                resolved_recs += [x for x in rdata.json()]
+                resolved_recs += rdata.json()
             elif rdata.status_code == 429:
                 self.rate_limit(rdata.headers)
                 self.sleeper()
