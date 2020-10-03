@@ -173,33 +173,24 @@ class Resolver(ResolverBase):
             records.append({'query': ip})
 
         resolved_recs = []
+        orig_recs = range(0, len(records), 100)
         if self.pbar:
             orig_recs = trange(0, len(records), 100,
                                desc="Resolving IPs", unit_scale=True)
-        else:
-            orig_recs = range(0, len(records), 100)
+        params = {
+            'fields': ','.join(self.fields) if isinstance(self.fields, list) else self.fields, 'lang': self.lang,
+        }
+        if self.api_key:
+            params['key'] = self.api_key
 
         for x in orig_recs:
-            params = {
-                'fields': ','.join(self.fields) if isinstance(self.fields, list) else self.fields,
-                'lang': self.lang,
-            }
-            if self.api_key:
-                params['key'] = self.api_key
-
             if self.enable_sleep:
                 self.sleeper()
-
-            rdata = requests.post(
-                self.uri+"batch",
-                json=records[x:x+100],
-                params=params
-            )
+            rdata = requests.post(self.uri+"batch", json=records[x:x+100], params=params)
 
             if rdata.status_code == 200:
                 self.rate_limit(rdata.headers)
-                result_list = [x for x in rdata.json()]
-                resolved_recs += result_list
+                resolved_recs += [x for x in rdata.json()]
             elif rdata.status_code == 429:
                 self.rate_limit(rdata.headers)
                 self.sleeper()
@@ -207,8 +198,7 @@ class Resolver(ResolverBase):
             else:  # pragma: no cover
                 msg = "Unknown error encountered: {}".format(rdata.status_code)
                 logger.error(msg)
-                result_list = [{'query': result, 'status': 'failed', 'message': msg} for result in records[x:x+100]]
-                resolved_recs += result_list
+                resolved_recs += [{'query': result, 'status': 'failed', 'message': msg} for result in records[x:x+100]]
         return resolved_recs
 
     def single(self):
