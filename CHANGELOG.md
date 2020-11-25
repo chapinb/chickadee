@@ -1,5 +1,11 @@
 # Changelog
 
+## 20201125.0
+
+### Fixed
+
+* Moved noisy logging message from library parser file to chickadee script file
+
 ## 20200928.0
 
 ### Fixed

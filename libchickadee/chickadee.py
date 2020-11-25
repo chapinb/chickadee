@@ -439,6 +439,7 @@ class Chickadee(object):
             if not resolver_class:
                 raise ValueError("Unable to configure resolver. Please report to github.com/chapinb/chickadee/issues")
             resolver = resolver_class(api_key, fields=self.fields, lang=self.lang)
+            logger.debug("Resolver API key found.")
         else:
             resolver_class = resolvers[self.resolver]['free_resolver']
             if not resolver_class:

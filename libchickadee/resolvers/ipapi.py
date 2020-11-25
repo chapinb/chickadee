@@ -256,4 +256,3 @@ class ProResolver(Resolver):
         self.uri = 'https://pro.ip-api.com/'
         self.api_key = api_key
         self.enable_sleep = False
-        logger.debug("API key found.")
