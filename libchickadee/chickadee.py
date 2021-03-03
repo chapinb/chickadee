@@ -469,16 +469,16 @@ class Chickadee(object):
 
         if self.out_format == 'csv':
             logger.debug("Writing CSV report")
-            ResolverBase.write_csv(self.outfile, results, self.fields)
+            ResolverBase.write_csv(outfile=self.outfile, data=results, headers=self.fields)
         elif self.out_format == 'json':
             logger.debug("Writing json report")
-            ResolverBase.write_json(self.outfile, results, self.fields)
+            ResolverBase.write_json(outfile=self.outfile, data=results, headers=self.fields, lines=False)
         elif self.out_format == 'jsonl':
             logger.debug("Writing json lines report")
-            ResolverBase.write_json(self.outfile, results, self.fields, lines=True)
+            ResolverBase.write_json(outfile=self.outfile, data=results, headers=self.fields, lines=True)
 
 
-def setup_logging(path, verbose=False):  # pragma: no cover
+def setup_logging(path=None, verbose=False):  # pragma: no cover
     """Function to setup logging configuration
 
     Args:
@@ -510,15 +510,14 @@ def setup_logging(path, verbose=False):  # pragma: no cover
     else:
         stderr_handle.setLevel(logging.INFO)
     stderr_handle.setFormatter(log_format)
+    logger.handlers = [stderr_handle]
 
-    # Setup file logging
-    file_handle = logging.FileHandler(path, 'a')
-    file_handle.setLevel(logging.DEBUG)
-    file_handle.setFormatter(log_format)
-
-    # Add handles
-    logger.addHandler(stderr_handle)
-    logger.addHandler(file_handle)
+    if path:
+        # Setup file logging
+        file_handle = logging.FileHandler(path, 'a')
+        file_handle.setLevel(logging.DEBUG)
+        file_handle.setFormatter(log_format)
+        logger.addHandler(file_handle)
 
 
 def config_handing(config_file=None, search_conf_path=None):
@@ -526,7 +525,7 @@ def config_handing(config_file=None, search_conf_path=None):
 
     Args:
         config_file (str): Path to config file to read values from.
-        search_conf_path (list): List of paths to look for config file
+        search_conf_path (str): Path to look for config file
 
     Returns:
         dictionary containing configuration options.
@@ -563,6 +562,8 @@ def config_handing(config_file=None, search_conf_path=None):
         logger.debug('Error accessing config file {}. {}'.format(
             config_file, fail_warn))
         return
+
+    logger.debug("Using config file at {}".format(config_file))
 
     conf = configparser.ConfigParser()
     conf.read(config_file)
@@ -787,6 +788,7 @@ def entry(args=None):  # pragma: no cover
         args = sys.argv[1:]
     # Handle parameters from config file and command line.
     args = arg_handling(args)
+    setup_logging(args.log, args.verbose)
     config = config_handing(args.config)
     params = join_config_args(config, args)
 
@@ -800,10 +802,8 @@ def entry(args=None):  # pragma: no cover
     # Set up logging
     setup_logging(params.get('log'), params.get('verbose'))
     logger.debug("Starting Chickadee")
-    for arg in vars(args):
-        logger.debug("Argument {} is set to {}".format(
-            arg, getattr(args, arg)
-        ))
+    for arg_name, arg_value in params.items():
+        logger.debug("Argument {} is set to {}".format(arg_name, arg_value))
 
     logger.debug("Configuring Chickadee")
     fields = params.get('fields').split(',') if len(params.get('fields', [])) else None
