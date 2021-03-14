@@ -4,8 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parsers &#8212; chickadee 20200801-rc1 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parsers &#8212; chickadee 20200805 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="utilities.html" title="Utilities"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200801-rc1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200805 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Parsers</a></li> 
       </ul>
     </div>  
@@ -106,6 +106,12 @@ for resolution.</p>
 
 </dd></dl>
 
+<dl class="py function">
+<dt id="libchickadee.parsers.run_parser_from_cli">
+<code class="sig-prename descclassname">libchickadee.parsers.</code><code class="sig-name descname">run_parser_from_cli</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">args</span></em>, <em class="sig-param"><span class="n">parser_obj</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.run_parser_from_cli" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow a parser to run from the command line, both for testing and increased usability.</p>
+</dd></dl>
+
 </div>
 <span class="target" id="module-libchickadee.parsers.plain_text"></span><div class="section" id="plain-text-parser">
 <h2>Plain Text Parser<a class="headerlink" href="#plain-text-parser" title="Permalink to this headline">¶</a></h2>
@@ -117,8 +123,7 @@ to first decompress it.</p>
 <dl class="py class">
 <dt id="libchickadee.parsers.plain_text.PlainTextParser">
 <em class="property">class </em><code class="sig-prename descclassname">libchickadee.parsers.plain_text.</code><code class="sig-name descname">PlainTextParser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ignore_bogon</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.plain_text.PlainTextParser" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class to extract IP addresses from plain text
-and gzipped plain text files.</p>
+<dd><p>Class to extract IP addresses from plain text and gzipped plain text files.</p>
 <dl class="py method">
 <dt id="libchickadee.parsers.plain_text.PlainTextParser.is_gz_file">
 <em class="property">static </em><code class="sig-name descname">is_gz_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.plain_text.PlainTextParser.is_gz_file" title="Permalink to this definition">¶</a></dt>
@@ -189,7 +194,8 @@ Does not change functionality.</p></li>
 <dl class="py class">
 <dt id="libchickadee.parsers.evtx.EVTXParser">
 <em class="property">class </em><code class="sig-prename descclassname">libchickadee.parsers.evtx.</code><code class="sig-name descname">EVTXParser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ignore_bogon</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.evtx.EVTXParser" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
+<dd><p>Class to expose EVTX record contents for IP address extraction</p>
+<dl class="py method">
 <dt id="libchickadee.parsers.evtx.EVTXParser.parse_file">
 <code class="sig-name descname">parse_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_entry</span></em>, <em class="sig-param"><span class="n">is_stream</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.parsers.evtx.EVTXParser.parse_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse EVTX contents. Must be a path to an existing EVTX file.
@@ -277,13 +283,13 @@ Does not change functionality.</p></li>
         <li class="right" >
           <a href="utilities.html" title="Utilities"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200801-rc1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200805 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Parsers</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright MIT 2020, Chapin Bryce.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>
 </html>

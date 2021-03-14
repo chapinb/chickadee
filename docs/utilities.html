@@ -4,8 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Utilities &#8212; chickadee 20200801-rc1 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Utilities &#8212; chickadee 20200805 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="index.html" title="Chickadee Documentation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200801-rc1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200805 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Utilities</a></li> 
       </ul>
     </div>  
@@ -105,7 +105,7 @@ optional arguments:
   -V, --version         Displays version
   -l LOG, --log LOG     Path to log file (default: chickadee.log)
 
-Built by Chapin Bryce, v.20200801.0
+Built by Chapin Bryce, v.20200805.0
 </pre></div>
 </div>
 </div>
@@ -156,12 +156,12 @@ Built by Chapin Bryce, v.20200801.0
 <h3>Module Documentation<a class="headerlink" href="#module-documentation" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="libchickadee.chickadee.Chickadee">
-<em class="property">class </em><code class="sig-prename descclassname">libchickadee.chickadee.</code><code class="sig-name descname">Chickadee</code><span class="sig-paren">(</span><em class="sig-param">outformat='json'</em>, <em class="sig-param">outfile=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em>, <em class="sig-param">fields=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.Chickadee" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">libchickadee.chickadee.</code><code class="sig-name descname">Chickadee</code><span class="sig-paren">(</span><em class="sig-param">out_format='json'</em>, <em class="sig-param">outfile=&lt;colorama.ansitowin32.StreamWrapper object&gt;</em>, <em class="sig-param">fields=None</em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.Chickadee" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class to handle chickadee script operations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>outformat</strong> (<em>str</em>) – One of <code class="docutils literal notranslate"><span class="pre">json</span></code>, <code class="docutils literal notranslate"><span class="pre">jsonl</span></code>, <code class="docutils literal notranslate"><span class="pre">csv</span></code></p></li>
+<li><p><strong>out_format</strong> (<em>str</em>) – One of <code class="docutils literal notranslate"><span class="pre">json</span></code>, <code class="docutils literal notranslate"><span class="pre">jsonl</span></code>, <code class="docutils literal notranslate"><span class="pre">csv</span></code></p></li>
 <li><p><strong>outfile</strong> (<em>str</em><em> or </em><em>file_obj</em>) – Destination to write report.</p></li>
 <li><p><strong>fields</strong> (<em>list</em>) – Collection of fields to resolve and report on.</p></li>
 </ul>
@@ -221,7 +221,7 @@ plain text, gzipped compressed plain text, and xlsx.</p>
 <dt id="libchickadee.chickadee.Chickadee.get_api_key">
 <em class="property">static </em><code class="sig-name descname">get_api_key</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.Chickadee.get_api_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>DEPRECIATED</p>
-<p>Retrieve an API key set as an envar. Looks for value in
+<p>Retrieve an API key set as an environment variable. Looks for value in
 <code class="docutils literal notranslate"><span class="pre">CHICKADEE_API_KEY</span></code>. May be depreciated in the near future.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -229,6 +229,20 @@ plain text, gzipped compressed plain text, and xlsx.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>(str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="libchickadee.chickadee.Chickadee.get_resolver">
+<code class="sig-name descname">get_resolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">api_key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.Chickadee.get_resolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the proper resolver to use, based on the available API keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>api_key</strong> (<em>str</em>) – API key value to register with the resolver</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Instance of an initialized resolver</p>
 </dd>
 </dl>
 </dd></dl>
@@ -247,10 +261,10 @@ a data set.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>dictionary of distinct IP addresses to resolve.</p>
+<dd class="field-even"><p>List containing resolved IP address information</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>data_dict (dict)</p>
+<dd class="field-odd"><p>results (list)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -305,7 +319,7 @@ distinct IPs with their associated frequency count.</p>
 <dd><p>Write results to output format and/or files.</p>
 <p>Leverages the writers found in libchickadee.resolvers. Currently
 supports csv, json, and json lines formats, specified in
-<code class="docutils literal notranslate"><span class="pre">self.outformat</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">self.out_format</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>results</strong> (<em>list</em>) – List of GeoIP results</p>
@@ -364,6 +378,26 @@ supports csv, json, and json lines formats, specified in
 </dd></dl>
 
 <dl class="py function">
+<dt id="libchickadee.chickadee.find_config_file">
+<code class="sig-prename descclassname">libchickadee.chickadee.</code><code class="sig-name descname">find_config_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">search_conf_path</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filename_patterns</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.find_config_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the search operations for identifying configuration files on the system</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>search_conf_path</strong> (<em>str</em>) – Path to look for a configuration file</p></li>
+<li><p><strong>filename_patterns</strong> (<em>list</em>) – Patterns to use to find a configuration file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The path to the first identified configuration file.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="libchickadee.chickadee.join_config_args">
 <code class="sig-prename descclassname">libchickadee.chickadee.</code><code class="sig-name descname">join_config_args</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">args</span></em>, <em class="sig-param"><span class="n">definitions</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.join_config_args" title="Permalink to this definition">¶</a></dt>
 <dd><p>Join config file and argument parameters, where the args override configs.</p>
@@ -378,6 +412,26 @@ config.</p></li>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Parameter information to use for script execution.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="libchickadee.chickadee.parse_config_sections">
+<code class="sig-prename descclassname">libchickadee.chickadee.</code><code class="sig-name descname">parse_config_sections</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conf</span></em>, <em class="sig-param"><span class="n">section_defs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.chickadee.parse_config_sections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the sections of the configuration file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conf</strong> (<em>dict</em>) – Loaded configuration file information</p></li>
+<li><p><strong>section_defs</strong> (<em>dict</em>) – Mapping of configuration file values and defaults</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Final configuration to use with the script execution</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>(dict)</p>
@@ -483,13 +537,13 @@ config.</p></li>
         <li class="right" >
           <a href="index.html" title="Chickadee Documentation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200801-rc1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">chickadee 20200805 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Utilities</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright MIT 2020, Chapin Bryce.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
     </div>
   </body>
 </html>

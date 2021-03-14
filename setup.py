@@ -21,7 +21,7 @@ setuptools.setup(
         ]
     },
     install_requires=[
-        "requests ~= 2.22.0",
+        "requests >= 2.22.0",
         "openpyxl ~= 2.6.3",
         "tqdm ~= 4.36.1",
         "netaddr ~= 0.7.19",

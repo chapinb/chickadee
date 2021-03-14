@@ -1,5 +1,11 @@
 # Changelog
 
+## 20210314.1
+
+### Fixed
+
+* Updated requirements.txt to allow more versions of requests
+
 ## 20201125.0
 
 ### Fixed
