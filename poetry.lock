@@ -525,7 +525,7 @@ testing = ["contextlib2", "pathlib2", "unittest2"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.1"
-content-hash = "a9fba28af3821e57c577dbc64c2db145fe1abb66a2de3bae68ceda0bfb345056"
+content-hash = "c0d4873e9f85722752c1b64d2964384287a340659f71debbe32f50fae65777f8"
 
 [metadata.files]
 alabaster = [
