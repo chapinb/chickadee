@@ -100,8 +100,8 @@ class ChickadeeConfigTestCase(unittest.TestCase):
         """Test the parsing of the configuration file when provided"""
         # Str, list, bool, dict, int
         test_conf = 'chickadee.ini'
-        open_file = open(test_conf, 'w')
-        body = """
+        with open(test_conf, 'w') as open_file:
+            body = """
 [main]
 output-format = csv
 verbose = true
@@ -110,8 +110,7 @@ fields = query,country
 resolver = ip_api
 ip_api = not-an-api-key
         """
-        open_file.write(body)
-        open_file.close()
+            open_file.write(body)
         data = config_handing(test_conf)
         self.assertDictEqual(
             data,
@@ -331,9 +330,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
         chickadee.fields = self.fields
         mock_query.return_value = self.txt_data_results
         data = chickadee.run(os.path.join(self.test_data_dir, 'txt_ips.txt'))
-        batch_result = []  # No reverse field
-        for item in self.txt_data_results:
-            batch_result.append(item)
+        batch_result = list(self.txt_data_results)
         self.assertCountEqual(data, batch_result)
 
     @patch("libchickadee.resolvers.ipapi.Resolver.batch")
@@ -345,9 +342,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
         mock_query.return_value = self.txt_data_results
         data = chickadee.run(os.path.join(self.test_data_dir,
                                           'txt_ips.txt.gz'))
-        batch_result = []  # No reverse field
-        for item in self.txt_data_results:
-            batch_result.append(item)
+        batch_result = list(self.txt_data_results)
         self.assertCountEqual(data, batch_result)
 
     @patch("libchickadee.resolvers.ipapi.Resolver.batch")
@@ -358,9 +353,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
         chickadee.fields = self.fields
         mock_query.return_value = self.xlsx_data_results
         data = chickadee.run(os.path.join(self.test_data_dir, 'test_ips.xlsx'))
-        batch_result = []  # No reverse field
-        for item in self.xlsx_data_results:
-            batch_result.append(item)
+        batch_result = list(self.xlsx_data_results)
         self.assertCountEqual(data, batch_result)
 
     @patch("libchickadee.resolvers.ipapi.Resolver.batch")
