@@ -29,7 +29,7 @@ class ParserBaseTestCase(unittest.TestCase):
                    "fe00::517b:deaa:fb23:5013",
                    "ff00::517b:deaa:fb23:5013",
                    "100::517b:deaa:fb23:5013"
-                   ]
+                   ]  # nosec
         for ip in ip_list:
             self.assertTrue(ParserBase.is_bogon(ip))
 

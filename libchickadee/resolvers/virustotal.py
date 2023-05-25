@@ -175,7 +175,7 @@ class ProResolver(ResolverBase):
 
         self.last_request = datetime.now()
         rdata = requests.get(
-            self.uri, params=params
+            self.uri, params=params, timeout=60,
         )
 
         if rdata.status_code == 200:

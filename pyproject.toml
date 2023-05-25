@@ -47,6 +47,8 @@ python-evtx = "^0.7.4"
 pytest = "*"
 pytest-cov = "*"
 flake8 = "^6.0.0"
+mypy = "*"
+types-requests = "*"
 
 [tool.poetry.group.docs.dependencies]
 sphinx = "^6.1.3"

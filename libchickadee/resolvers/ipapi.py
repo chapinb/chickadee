@@ -186,7 +186,7 @@ class Resolver(ResolverBase):
         for x in orig_recs:
             if self.enable_sleep:
                 self.sleeper()
-            rdata = requests.post(self.uri+"batch", json=records[x:x+100], params=params)
+            rdata = requests.post(self.uri+"batch", json=records[x:x+100], params=params, timeout=60)
 
             if rdata.status_code == 200:
                 self.rate_limit(rdata.headers)
@@ -222,7 +222,8 @@ class Resolver(ResolverBase):
 
         rdata = requests.get(
             self.uri+"json/"+self.data,
-            params=params
+            params=params,
+            timeout=60,
         )
         if rdata.status_code == 200:
             self.rate_limit(rdata.headers)

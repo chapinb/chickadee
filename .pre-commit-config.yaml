@@ -22,3 +22,14 @@ repos:
       - id: poetry-lock
       - id: poetry-export
         args: ["-f", "requirements.txt", "-o", "requirements.txt"]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 'v1.1.1'
+    hooks:
+    - id: mypy
+      additional_dependencies: [types-requests]
+
+  - repo: https://github.com/PyCQA/bandit
+    rev: '1.7.5'
+    hooks:
+    - id: bandit

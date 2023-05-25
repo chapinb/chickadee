@@ -11,7 +11,7 @@ __license__ = 'MIT Copyright 2020 Chapin Bryce'
 def get_pypi_version():
     """Check pypi.org for version information"""
     url = 'https://pypi.org/pypi/chickadee/json'
-    rdata = requests.get(url)
+    rdata = requests.get(url, timeout=60)
     return float(rdata.json().get('info', {}).get('version', '0'))
 
 
