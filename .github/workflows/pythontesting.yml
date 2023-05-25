@@ -41,4 +41,4 @@ jobs:
       run: poetry run mypy .
 
     - name: Run SAST
-      run: poetry run bandit .
+      run: poetry run bandit -r libchickadee
