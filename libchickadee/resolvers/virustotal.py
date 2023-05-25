@@ -139,7 +139,7 @@ class ProResolver(ResolverBase):
         if time_since_last_request.total_seconds() > 15:
             return
         time_to_sleep = (15-time_since_last_request.total_seconds()) + .25  # Add padding
-        logger.info('Sleeping for {} seconds due to rate limiting.'.format(time_to_sleep))
+        logger.info(f'Sleeping for {time_to_sleep} seconds due to rate limiting.')
         time.sleep(time_to_sleep)
 
     def batch(self):
@@ -157,8 +157,7 @@ class ProResolver(ResolverBase):
             all_ips = tqdm(self.data)
         for x in all_ips:
             self.data = x
-            resp = self.single()
-            if resp:
+            if resp := self.single():
                 records.append(resp[0])
         return records
 
@@ -190,7 +189,9 @@ class ProResolver(ResolverBase):
         elif rdata.status_code == 403:
             logger.error("Authorization error. Please check API key")
         else:
-            logger.error("Unknown error occurred, status code {}, please report".format(rdata.status_code))
+            logger.error(
+                f"Unknown error occurred, status code {rdata.status_code}, please report"
+            )
 
     def parse_vt_resp(self, query, vt_resp):
         """Transform the raw response from VirusTotal in to a dictionary easier for analysis
@@ -216,9 +217,7 @@ class ProResolver(ResolverBase):
 
         # ASNs
         if vt_resp.get("asn"):
-            attributes["asn"] = "AS{} {}".format(
-                vt_resp.get("asn"), vt_resp.get("as_owner")
-            )
+            attributes["asn"] = f'AS{vt_resp.get("asn")} {vt_resp.get("as_owner")}'
 
         # Parse WhoIs
         self._extract_whois(attributes, vt_resp)
