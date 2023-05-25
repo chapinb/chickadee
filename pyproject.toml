@@ -51,6 +51,8 @@ mypy = "*"
 types-requests = "*"
 pytest-watch = "*"
 bandit = "*"
+types-openpyxl = "*"
+types-tqdm = "*"
 
 [tool.poetry.group.docs.dependencies]
 sphinx = "^6.1.3"
@@ -61,3 +63,18 @@ chickadee = "libchickadee.chickadee:entry"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+exclude = [
+    "build",
+    "dist"
+]
+
+[[tool.mypy.overrides]]
+module = [
+    "Evtx",
+    "Evtx.Evtx",
+    "_io",
+    "netaddr"
+]
+ignore_missing_imports = true
