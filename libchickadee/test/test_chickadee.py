@@ -19,7 +19,7 @@ class ChickadeeConfigTestCase(unittest.TestCase):
     def setUp(self):
         """Configure defaults across tests"""
         self.default_columns = "query,message,mobile,org"
-        
+
     def test_argparse(self):
         """Validate command line argument parsing."""
         args = [

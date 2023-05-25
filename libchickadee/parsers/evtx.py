@@ -36,4 +36,3 @@ if __name__ == "__main__":  # pragma: no cover
 
     ev_parser = EVTXParser()
     run_parser_from_cli(args=args, parser_obj=ev_parser)
-
