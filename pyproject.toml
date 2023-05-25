@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "chickadee"
-version = "20210314.1"
+version = "20230525.1"
 description = "Yet another GeoIP enrichment tool."
 authors = ["Chapin Bryce <mail@chapinb.com>"]
 license = "MIT"
