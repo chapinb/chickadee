@@ -50,6 +50,7 @@ flake8 = "^6.0.0"
 mypy = "*"
 types-requests = "*"
 pytest-watch = "*"
+bandit = "*"
 
 [tool.poetry.group.docs.dependencies]
 sphinx = "^6.1.3"
