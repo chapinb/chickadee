@@ -314,9 +314,11 @@ class ProResolver(ResolverBase):
         """
         # * Get count
         # * Get all hashes
-        attributes["undetected_sample_count"] = len(vt_resp.get("undetected_communicating_samples", [])) + \
-                                                len(vt_resp.get("undetected_downloaded_samples", [])) + len(
-            vt_resp.get("undetected_referrer_samples", []))
+        attributes["undetected_sample_count"] = \
+            len(vt_resp.get("undetected_communicating_samples", [])) + \
+            len(vt_resp.get("undetected_downloaded_samples", [])) + \
+            len(vt_resp.get("undetected_referrer_samples", []))
+
         undetected_samples = {
             x.get('sha256') for x in
             vt_resp.get('undetected_communicating_samples', [])}
@@ -341,9 +343,11 @@ class ProResolver(ResolverBase):
         """
         # * Get count
         # * Get all hashes
-        attributes["detected_sample_count"] = len(vt_resp.get("detected_communicating_samples", [])) + \
-                                              len(vt_resp.get("detected_downloaded_samples", [])) + len(
-            vt_resp.get("detected_referrer_samples", []))
+        attributes["detected_sample_count"] = \
+            len(vt_resp.get("detected_communicating_samples", [])) + \
+            len(vt_resp.get("detected_downloaded_samples", [])) + \
+            len(vt_resp.get("detected_referrer_samples", []))
+
         detected_communicating_samples = {
             x.get('sha256'): x.get('positives')
             for x in vt_resp.get('detected_communicating_samples', [])}

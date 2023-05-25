@@ -35,4 +35,4 @@ jobs:
         poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name: Test with unittest
-      run: poetry run python -m unittest discover
+      run: poetry run pytest --cov --cov-report term --cov-branch --durations 3 --cov-fail-under 85
