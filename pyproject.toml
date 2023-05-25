@@ -37,8 +37,8 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.8.1"
 requests = "^2.31.0"
-openpyxl = "^3.0.10"
-tqdm = "^4.64.1"
+openpyxl = "^3.1"
+tqdm = "^4.65"
 netaddr = "^0.8.0"
 python-evtx = "^0.7.4"
 

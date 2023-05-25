@@ -750,7 +750,7 @@ testing = ["contextlib2", "pathlib2", "unittest2"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.1"
-content-hash = "d85095bfd05372799937616015022f80a9655e990d8142950f8c39b6b10a6f27"
+content-hash = "b150d9c33c2ee569621883badffe16e5788a0f786bd1ef82839eec5ee8f9594b"
 
 [metadata.files]
 alabaster = [
