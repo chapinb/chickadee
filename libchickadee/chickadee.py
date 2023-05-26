@@ -804,7 +804,7 @@ def entry(args=None):  # pragma: no cover
         ))
 
     logger.debug("Configuring Chickadee")
-    fields = params.get('fields').split(',') if len(params.get('fields', [])) else None
+    fields = params.get('fields', '').split(',') if len(params.get('fields', '')) > 0 else None
     chickadee = Chickadee(fields=fields)
     chickadee.resolver = params.get('resolver', 'ip_api')
     chickadee.resolve_ips = not params.get('no-resolve')
