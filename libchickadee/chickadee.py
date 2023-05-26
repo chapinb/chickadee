@@ -476,27 +476,21 @@ class Chickadee:
             ResolverBase.write_json(self.outfile, results, self.fields, lines=True)
 
 
-def setup_logging(logging_obj, path, verbose=False):  # pragma: no cover
-    """Function to setup logging configuration
+def setup_logging(logging_obj, log_file, verbose=False):
+    """Function to setup logging configuration and test it.
 
     Args:
-        logging_obj: The instance used for logging
-        path (str): File path to write log messages to
-        verbose (bool): If the debug messages should be displayed on STDERR
-
-    Returns:
-        None
+        logging_obj: A logging instance, returned from logging.getLogger().
+        log_file: File path to write log messages to.
+        verbose: Whether or not to enable the debug level in STDERR output.
     """
-    # Set logger object, uses module's name
-    logging_obj = logging.getLogger(__name__)
-
-    # Set default logger level to DEBUG. You can change this later
     logging_obj.setLevel(logging.DEBUG)
 
     # Logging formatter. Best to keep consistent for most use cases
     log_format = logging.Formatter(
-        '%(asctime)s %(filename)s %(levelname)s %(module)s '
-        '%(funcName)s:%(lineno)d - %(message)s')
+        "%(asctime)s %(filename)s %(levelname)s %(module)s "
+        "%(funcName)s %(lineno)d %(message)s"
+    )
 
     # Setup STDERR logging, allowing you uninterrupted
     # STDOUT redirection
@@ -508,7 +502,7 @@ def setup_logging(logging_obj, path, verbose=False):  # pragma: no cover
     stderr_handle.setFormatter(log_format)
 
     # Setup file logging
-    file_handle = logging.FileHandler(path, 'a')
+    file_handle = logging.FileHandler(log_file, "a")
     file_handle.setLevel(logging.DEBUG)
     file_handle.setFormatter(log_format)
 
