@@ -189,7 +189,7 @@ class CustomArgFormatter(argparse.RawTextHelpFormatter,
     """Custom argparse formatter class"""
 
 
-class Chickadee(object):
+class Chickadee:
     """Class to handle chickadee script operations.
 
     Args:

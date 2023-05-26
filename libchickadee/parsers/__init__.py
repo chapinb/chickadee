@@ -75,7 +75,7 @@ def run_parser_from_cli(args, parser_obj):  # pragma: no cover
         print(json.dumps({"count": count, "ip": ip}))
 
 
-class ParserBase(object):
+class ParserBase:
     """Base class for parsers, containing common utilities."""
     def __init__(self, ignore_bogon=True):
         """Configure the parser and set default values."""
