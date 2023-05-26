@@ -256,8 +256,8 @@ class Chickadee:
             logger.debug("Detected the data source as raw value(s)")
             result_dict = self.str_handler(self.input_data)  # String handler
 
-        logger.info("Extracted {} distinct IPs".format(
-            len(list(result_dict.keys()))))
+        logger.info("Extracted %s distinct IPs",
+            len(list(result_dict.keys())))
 
         # Resolve if requested
         if self.resolve_ips:
@@ -327,7 +327,7 @@ class Chickadee:
         else:
             is_stream = False
             # Extract IPs with proper handler
-            logger.debug("Extracting IPs from {}".format(file_path))
+            logger.debug("Extracting IPs from %s", file_path)
 
         if not is_stream and file_path.lower().endswith('xlsx'):
             file_parser = XLSXParser(ignore_bogon)
@@ -338,8 +338,8 @@ class Chickadee:
         try:
             file_parser.parse_file(file_path, is_stream)
         except Exception as e:
-            logger.error("Failed to parse {}".format(file_path))
-            logger.error("Error message: {}".format(e))
+            logger.error("Failed to parse %s", file_path)
+            logger.error("Error message: %s", e)
         return file_parser.ips
 
     def dir_handler(self, folder_path):
@@ -358,13 +358,11 @@ class Chickadee:
         for root, _, files in os.walk(folder_path):
             for file_name in files:
                 file_entry = os.path.join(root, file_name)
-                logger.debug("Parsing file {}".format(file_entry))
+                logger.debug("Parsing file %s", file_entry)
                 file_results = self.file_handler(file_entry, self.ignore_bogon)
-                logger.debug("Parsed file {}, {} results".format(
-                    file_entry, len(file_results)))
+                logger.debug("Parsed file %s, %s results", file_entry, len(file_results))
                 result_dict = dict(Counter(result_dict)+Counter(file_results))
-        logger.debug("{} total distinct IPs discovered".format(
-            len(result_dict)))
+        logger.debug("%s total distinct IPs discovered", len(result_dict))
         return result_dict
 
     def resolve(self, data_dict, api_key=None):
@@ -554,12 +552,12 @@ def config_handing(config_file=None, search_conf_path=None):
 
     fail_warn = 'Relying on argument defaults'
     if not config_file:
-        logger.debug('Config file not found. {}'.format(fail_warn))
+        logger.debug('Config file not found. %s', fail_warn)
         return
 
     if not (os.path.exists(config_file) and os.path.isfile(config_file)):
-        logger.debug('Error accessing config file {}. {}'.format(
-            config_file, fail_warn))
+        logger.debug('Error accessing config file %s. %s',
+            config_file, fail_warn)
         return
 
     conf = configparser.ConfigParser()
@@ -616,7 +614,7 @@ def find_config_file(search_conf_path=None, filename_patterns=None):
 
     for location in search_conf_path:
         if not (os.path.exists(location) and os.path.isdir(location)):
-            logger.debug("Unable to access config file location {}.".format(location))
+            logger.debug("Unable to access config file location %s.", location)
             continue
         for file_name in os.listdir(location):
             for pattern in filename_patterns:
@@ -799,9 +797,7 @@ def entry(args=None):  # pragma: no cover
     setup_logging(logger, params.get('log'), params.get('verbose'))
     logger.debug("Starting Chickadee")
     for arg in vars(args):
-        logger.debug("Argument {} is set to {}".format(
-            arg, getattr(args, arg)
-        ))
+        logger.debug("Argument %s is set to %s", arg, getattr(args, arg))
 
     logger.debug("Configuring Chickadee")
     fields = params.get('fields', '').split(',') if len(params.get('fields', '')) > 0 else None
