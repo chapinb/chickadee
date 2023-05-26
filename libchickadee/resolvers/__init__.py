@@ -180,7 +180,7 @@ class ResolverBase:
             for entry in data:
                 open_file.write(json.dumps(entry)+"\n")
         else:
-            open_file.write(json.dumps(data))
+            json.dump(data, open_file)
 
         if was_opened:
             open_file.close()
