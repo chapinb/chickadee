@@ -62,7 +62,7 @@ class IPAPITestCase(unittest.TestCase):
         """Batch Query Method Test"""
         mock_query.return_value = self.expected_result.copy()
         data = self.resolver.query(self.test_data_ips)
-        res = [x for x in data]
+        res = list(data)
         batch_result = []  # No reverse field
         for item in self.expected_result:
             batch_result.append(item)
@@ -83,7 +83,7 @@ class IPAPITestCase(unittest.TestCase):
         mock_query.return_value = MockResponse(json_data=self.expected_result, status_code=200)
         self.resolver.data = self.test_data_ips
         data = self.resolver.batch()
-        res = [x for x in data]
+        res = list(data)
         self.assertEqual(len(res), len(self.expected_result))
 
     @patch("libchickadee.resolvers.ipapi.Resolver.single")
