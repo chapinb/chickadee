@@ -3,16 +3,16 @@
 import requests
 import sys
 
-__author__ = 'Chapin Bryce'
+__author__ = "Chapin Bryce"
 __date__ = 20200202
-__license__ = 'MIT Copyright 2020 Chapin Bryce'
+__license__ = "MIT Copyright 2020 Chapin Bryce"
 
 
 def get_pypi_version():
     """Check pypi.org for version information"""
-    url = 'https://pypi.org/pypi/chickadee/json'
+    url = "https://pypi.org/pypi/chickadee/json"
     rdata = requests.get(url, timeout=60)
-    return float(rdata.json().get('info', {}).get('version', '0'))
+    return float(rdata.json().get("info", {}).get("version", "0"))
 
 
 def update_available(current_version):
@@ -23,6 +23,7 @@ def update_available(current_version):
 
 if __name__ == "__main__":
     from libchickadee import __version__
+
     if update_available(__version__):
         sys.stderr.write(
             "Chickadee update is available. Please update "

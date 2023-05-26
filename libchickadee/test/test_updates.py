@@ -4,14 +4,15 @@ import unittest
 from libchickadee import __version__
 from libchickadee.update import update_available, get_pypi_version
 
-__author__ = 'Chapin Bryce'
+__author__ = "Chapin Bryce"
 __date__ = 20200229
-__license__ = 'MIT Copyright 2020 Chapin Bryce'
-__desc__ = '''Yet another GeoIP resolution tool.'''
+__license__ = "MIT Copyright 2020 Chapin Bryce"
+__desc__ = """Yet another GeoIP resolution tool."""
 
 
 class TestUpdate(unittest.TestCase):
     """Run unit testing of the updates functionality."""
+
     def test_up_to_date(self):
         """Test version up to date"""
         last_public_release = get_pypi_version()
@@ -31,5 +32,5 @@ class TestUpdate(unittest.TestCase):
         self.assertIsInstance(__version__, float)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

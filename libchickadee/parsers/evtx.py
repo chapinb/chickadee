@@ -18,7 +18,9 @@ class EVTXParser(ParserBase):
                 Does not change functionality.
         """
         if is_stream:
-            raise NotImplementedError("Providing EVTX files as an input stream of data is not yet supported.")
+            raise NotImplementedError(
+                "Providing EVTX files as an input stream of data is not yet supported."
+            )
 
         # Open file
         with Evtx.Evtx.Evtx(file_entry) as event_log:
@@ -30,8 +32,9 @@ class EVTXParser(ParserBase):
 
 if __name__ == "__main__":  # pragma: no cover
     import argparse
+
     parser = argparse.ArgumentParser()
-    parser.add_argument('path', help="File or folder to parse")
+    parser.add_argument("path", help="File or folder to parse")
     args = parser.parse_args()
 
     ev_parser = EVTXParser()

@@ -5,17 +5,23 @@ import sys
 import io
 from unittest.mock import patch
 
-from libchickadee.chickadee import Chickadee, arg_handling, join_config_args, find_config_file
+from libchickadee.chickadee import (
+    Chickadee,
+    arg_handling,
+    join_config_args,
+    find_config_file,
+)
 from libchickadee.chickadee import config_handing
 
-__author__ = 'Chapin Bryce'
+__author__ = "Chapin Bryce"
 __date__ = 20200407
-__license__ = 'MIT Copyright 2020 Chapin Bryce'
-__desc__ = '''Yet another GeoIP resolution tool.'''
+__license__ = "MIT Copyright 2020 Chapin Bryce"
+__desc__ = """Yet another GeoIP resolution tool."""
 
 
 class ChickadeeConfigTestCase(unittest.TestCase):
     """Test case handling configuration file functionality"""
+
     def setUp(self):
         """Configure defaults across tests"""
         self.default_columns = "query,message,mobile,org"
@@ -23,9 +29,23 @@ class ChickadeeConfigTestCase(unittest.TestCase):
     def test_argparse(self):
         """Validate command line argument parsing."""
         args = [
-            "1.1.1.1", "-t", "csv", "-w", "test.out", "-n", "-s",
-            "--lang", "es", "-c", "test.config", "-p", "-v",
-            "--log", "test.log", "-f", self.default_columns
+            "1.1.1.1",
+            "-t",
+            "csv",
+            "-w",
+            "test.out",
+            "-n",
+            "-s",
+            "--lang",
+            "es",
+            "-c",
+            "test.config",
+            "-p",
+            "-v",
+            "--log",
+            "test.log",
+            "-f",
+            self.default_columns,
         ]
         parsed = arg_handling(args)
 
@@ -49,29 +69,25 @@ class ChickadeeConfigTestCase(unittest.TestCase):
                 "fields": self.default_columns,
                 "lang": "es",
                 "progress": True,
-                'log': 'test.log',
-                'verbose': True,
-                'resolver': 'ip_api',
-                'virustotal': '',
-                'ip_api': '',
-                'no-count': False,
-                'no-resolve': True,
-                'include-bogon': False,
-                'single': True,
-                'output-format': 'csv',
-                'output-file': 'test.out'
-            }
+                "log": "test.log",
+                "verbose": True,
+                "resolver": "ip_api",
+                "virustotal": "",
+                "ip_api": "",
+                "no-count": False,
+                "no-resolve": True,
+                "include-bogon": False,
+                "single": True,
+                "output-format": "csv",
+                "output-file": "test.out",
+            },
         )
 
     def test_configparse(self):
         """Test the parsing of configuration file and command line arguments"""
         args = ["1.1.1.1", "-f", self.default_columns]
         parsed = arg_handling(args)
-        opts = {
-            "fields": "query,message",
-            "progress": True,
-            "lang": "es"
-        }
+        opts = {"fields": "query,message", "progress": True, "lang": "es"}
         joined = join_config_args(opts, parsed)
 
         self.assertDictEqual(
@@ -81,26 +97,25 @@ class ChickadeeConfigTestCase(unittest.TestCase):
                 "fields": self.default_columns,
                 "lang": "es",
                 "progress": True,
-                'log': os.path.abspath(os.path.join(
-                    os.getcwd(), 'chickadee.log')),
-                'verbose': False,
-                'resolver': 'ip_api',
-                'ip_api': '',
-                'virustotal': '',
-                'no-count': False,
-                'no-resolve': False,
-                'include-bogon': False,
-                'single': False,
-                'output-format': 'jsonl',
-                'output-file': sys.stdout,
-            }
+                "log": os.path.abspath(os.path.join(os.getcwd(), "chickadee.log")),
+                "verbose": False,
+                "resolver": "ip_api",
+                "ip_api": "",
+                "virustotal": "",
+                "no-count": False,
+                "no-resolve": False,
+                "include-bogon": False,
+                "single": False,
+                "output-format": "jsonl",
+                "output-file": sys.stdout,
+            },
         )
 
     def test_parse_config_file_provided(self):
         """Test the parsing of the configuration file when provided"""
         # Str, list, bool, dict, int
-        test_conf = 'chickadee.ini'
-        with open(test_conf, 'w') as open_file:
+        test_conf = "chickadee.ini"
+        with open(test_conf, "w") as open_file:
             body = """
 [main]
 output-format = csv
@@ -120,24 +135,23 @@ ip_api = not-an-api-key
                 "fields": "query,country",
                 "progress": None,
                 "no-resolve": None,
-                'include-bogon': None,
+                "include-bogon": None,
                 "log": None,
                 "resolver": "ip_api",
-                'virustotal': None,
-                "ip_api": "not-an-api-key"
-            }
+                "virustotal": None,
+                "ip_api": "not-an-api-key",
+            },
         )
         os.remove(test_conf)
 
     def test_find_config_file(self):
         """Test the identification of a configuration file"""
         # Str, list, bool, dict, int
-        test_conf = 'unittesting.chickadee.ini'
-        conf_path_userdir = os.path.join(
-            os.path.expanduser("~"), test_conf)
-        conf_path_workdir = os.path.abspath('unittesting.chickadee.ini')
+        test_conf = "unittesting.chickadee.ini"
+        conf_path_userdir = os.path.join(os.path.expanduser("~"), test_conf)
+        conf_path_workdir = os.path.abspath("unittesting.chickadee.ini")
         for conf_path in [conf_path_userdir, conf_path_workdir]:
-            open_conf = open(conf_path, 'w')
+            open_conf = open(conf_path, "w")
             open_conf.close()
             actual = find_config_file(filename_patterns=["unittesting.chickadee.ini"])
             os.remove(conf_path)
@@ -146,31 +160,38 @@ ip_api = not-an-api-key
 
 class ChickadeeStringTestCase(unittest.TestCase):
     """Chickadee script tests."""
+
     def setUp(self):
         """Set default and common values across tests"""
-        self.test_data_ips = [
-            '10.0.1.2', '8.8.8.8', '2001:4860:4860::8888'
-        ]
+        self.test_data_ips = ["10.0.1.2", "8.8.8.8", "2001:4860:4860::8888"]
         self.expected_result = [
-            {'query': '10.0.1.2', 'count': 1},
-
-            {'as': 'AS15169 Google LLC', 'country': 'United States',
-             'org': 'Level 3', 'proxy': False, 'query': '8.8.8.8', 'count': 1},
-
-            {'as': 'AS15169 Google LLC', 'country': 'United States',
-             'org': 'Google LLC', 'proxy': False, 'count': 1,
-             'query': '2001:4860:4860::8888'}
+            {"query": "10.0.1.2", "count": 1},
+            {
+                "as": "AS15169 Google LLC",
+                "country": "United States",
+                "org": "Level 3",
+                "proxy": False,
+                "query": "8.8.8.8",
+                "count": 1,
+            },
+            {
+                "as": "AS15169 Google LLC",
+                "country": "United States",
+                "org": "Google LLC",
+                "proxy": False,
+                "count": 1,
+                "query": "2001:4860:4860::8888",
+            },
         ]
 
-        self.fields = ['query', 'count', 'as', 'country', 'org', 'proxy']
+        self.fields = ["query", "count", "as", "country", "org", "proxy"]
 
-    def test_no_resolve(self, resolve='No resolve'):
+    def test_no_resolve(self, resolve="No resolve"):
         """Confirm the handling when no resolution is requested"""
         results = [
-            {'query': '10.0.1.2', 'count': 1, 'message': resolve},
-            {'query': '8.8.8.8', 'count': 1, 'message': resolve},
-            {'query': '2001:4860:4860::8888', 'count': 1,
-             'message': resolve}
+            {"query": "10.0.1.2", "count": 1, "message": resolve},
+            {"query": "8.8.8.8", "count": 1, "message": resolve},
+            {"query": "2001:4860:4860::8888", "count": 1, "message": resolve},
         ]
         for count, ip in enumerate(self.test_data_ips):
             chickadee = Chickadee()
@@ -198,7 +219,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
         chickadee.ignore_bogon = False
         chickadee.fields = self.fields
         mock_query.return_value = self.expected_result
-        data = chickadee.run(','.join(self.test_data_ips))
+        data = chickadee.run(",".join(self.test_data_ips))
         self.assertCountEqual(data, self.expected_result)
 
     def test_chickadee_force_single(self):
@@ -207,20 +228,21 @@ class ChickadeeStringTestCase(unittest.TestCase):
 
         class MockResolver:
             """Fake resolver"""
+
             def __init__(self, *args, **kwargs):
                 """Set defaults"""
                 self.data = None
 
             def single(self):
                 """Mock the single method, returning a list of data."""
-                return [x for x in expected_results if x['query'] == self.data]
+                return [x for x in expected_results if x["query"] == self.data]
 
         chickadee = Chickadee()
         chickadee.ignore_bogon = False
         chickadee.force_single = True
         chickadee.fields = self.fields
         with patch("libchickadee.chickadee.ipapi.Resolver", MockResolver):
-            data = chickadee.run(','.join(self.test_data_ips))
+            data = chickadee.run(",".join(self.test_data_ips))
         self.assertCountEqual(data, self.expected_result)
 
     def test_improper_type(self):
@@ -228,7 +250,7 @@ class ChickadeeStringTestCase(unittest.TestCase):
         failed = False
         try:
             # Provide improper data type
-            Chickadee.str_handler(['test'])
+            Chickadee.str_handler(["test"])
         except TypeError:
             failed = True
         self.assertTrue(failed)
@@ -244,82 +266,133 @@ class ChickadeeStringTestCase(unittest.TestCase):
 
 class ChickadeeFileTestCase(unittest.TestCase):
     """Chickadee script tests."""
+
     def setUp(self):
         """Test setup."""
-        self.test_data_dir = os.path.join(
-            os.path.dirname(__file__), 'test_data')
+        self.test_data_dir = os.path.join(os.path.dirname(__file__), "test_data")
         google_asn = "AS15169 Google LLC"
         usa = "United States"
         google_llc = "Google LLC"
         self.txt_data_results = [
-            {"as": google_asn,
-             "country": usa, "org": google_llc,
-             "proxy": False, "query": "2001:4860:4860::8844",
-             "count": 1},
-
-            {"as": google_asn,
-             "country": usa, "org": google_llc,
-             "proxy": False, "query": "2001:4860:4860::8844",
-             "count": 1},
-
+            {
+                "as": google_asn,
+                "country": usa,
+                "org": google_llc,
+                "proxy": False,
+                "query": "2001:4860:4860::8844",
+                "count": 1,
+            },
+            {
+                "as": google_asn,
+                "country": usa,
+                "org": google_llc,
+                "proxy": False,
+                "query": "2001:4860:4860::8844",
+                "count": 1,
+            },
             {"query": "10.0.1.2", "count": 1},
-
-            {"as": google_asn,
-             "country": usa, "org": "Level 3",
-             "proxy": False, "query": "8.8.8.8", "count": 1},
-
-            {"as": google_asn,
-             "country": usa, "org": google_llc,
-             "proxy": False, "query": "2001:4860:4860::8888",
-             "count": 1},
-
-            {"as": "AS3215 Orange S.A.",
-             "country": "France", "org": "", "proxy": True,
-             "query": "2.2.2.2", "count": 1},
-
-            {"as": google_asn,
-             "country": usa, "org": google_llc,
-             "proxy": False, "query": "2001:4860:4860::8888", "count": 1},
-
-            {"as": "AS3356 Level 3 Parent, LLC",
-             "country": usa, "org": "Informs",
-             "proxy": True, "query": "4.4.4.4", "count": 1},
-
-            {"as": "AS13335 Cloudflare, Inc.",
-             "country": "Australia", "org": "", "proxy": False,
-             "query": "1.1.1.1", "count": 2}
+            {
+                "as": google_asn,
+                "country": usa,
+                "org": "Level 3",
+                "proxy": False,
+                "query": "8.8.8.8",
+                "count": 1,
+            },
+            {
+                "as": google_asn,
+                "country": usa,
+                "org": google_llc,
+                "proxy": False,
+                "query": "2001:4860:4860::8888",
+                "count": 1,
+            },
+            {
+                "as": "AS3215 Orange S.A.",
+                "country": "France",
+                "org": "",
+                "proxy": True,
+                "query": "2.2.2.2",
+                "count": 1,
+            },
+            {
+                "as": google_asn,
+                "country": usa,
+                "org": google_llc,
+                "proxy": False,
+                "query": "2001:4860:4860::8888",
+                "count": 1,
+            },
+            {
+                "as": "AS3356 Level 3 Parent, LLC",
+                "country": usa,
+                "org": "Informs",
+                "proxy": True,
+                "query": "4.4.4.4",
+                "count": 1,
+            },
+            {
+                "as": "AS13335 Cloudflare, Inc.",
+                "country": "Australia",
+                "org": "",
+                "proxy": False,
+                "query": "1.1.1.1",
+                "count": 2,
+            },
         ]
 
-        self.fields = ['query', 'count', 'as', 'country', 'org', 'proxy']
+        self.fields = ["query", "count", "as", "country", "org", "proxy"]
 
         self.xlsx_data_results = [
-            {"as": google_asn,
-             "country": usa, "org": google_llc,
-             "proxy": False, "query": "2001:4860:4860::8844",
-             "count": 2},
-
+            {
+                "as": google_asn,
+                "country": usa,
+                "org": google_llc,
+                "proxy": False,
+                "query": "2001:4860:4860::8844",
+                "count": 2,
+            },
             {"query": "10.0.1.2", "count": 1},
-
-            {"as": google_asn,
-             "country": usa, "org": "Level 3",
-             "proxy": False, "query": "8.8.8.8", "count": 1},
-
-            {"as": google_asn,
-             "country": usa, "org": google_llc,
-             "proxy": False, "query": "2001:4860:4860::8888",
-             "count": 1},
-
-            {"as": "AS3215 Orange S.A.",
-             "country": "France", "org": "", "proxy": True,
-             "query": "2.2.2.2", "count": 1},
-
-            {"as": "AS3356 Level 3 Parent, LLC",
-             "country": usa, "org": "Informs",
-             "proxy": True, "query": "4.4.4.4", "count": 1},
-
-            {"as": "AS13335 Cloudflare, Inc.",
-             "country": "Australia", "org": "", "proxy": False,
-             "query": "1.1.1.1", "count": 2}
+            {
+                "as": google_asn,
+                "country": usa,
+                "org": "Level 3",
+                "proxy": False,
+                "query": "8.8.8.8",
+                "count": 1,
+            },
+            {
+                "as": google_asn,
+                "country": usa,
+                "org": google_llc,
+                "proxy": False,
+                "query": "2001:4860:4860::8888",
+                "count": 1,
+            },
+            {
+                "as": "AS3215 Orange S.A.",
+                "country": "France",
+                "org": "",
+                "proxy": True,
+                "query": "2.2.2.2",
+                "count": 1,
+            },
+            {
+                "as": "AS3356 Level 3 Parent, LLC",
+                "country": usa,
+                "org": "Informs",
+                "proxy": True,
+                "query": "4.4.4.4",
+                "count": 1,
+            },
+            {
+                "as": "AS13335 Cloudflare, Inc.",
+                "country": "Australia",
+                "org": "",
+                "proxy": False,
+                "query": "1.1.1.1",
+                "count": 2,
+            },
         ]
 
     @patch("libchickadee.resolvers.ipapi.Resolver.batch")
@@ -329,7 +402,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
         chickadee.ignore_bogon = False
         chickadee.fields = self.fields
         mock_query.return_value = self.txt_data_results
-        data = chickadee.run(os.path.join(self.test_data_dir, 'txt_ips.txt'))
+        data = chickadee.run(os.path.join(self.test_data_dir, "txt_ips.txt"))
         batch_result = list(self.txt_data_results)
         self.assertCountEqual(data, batch_result)
 
@@ -340,8 +413,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
         chickadee.ignore_bogon = False
         chickadee.fields = self.fields
         mock_query.return_value = self.txt_data_results
-        data = chickadee.run(os.path.join(self.test_data_dir,
-                                          'txt_ips.txt.gz'))
+        data = chickadee.run(os.path.join(self.test_data_dir, "txt_ips.txt.gz"))
         batch_result = list(self.txt_data_results)
         self.assertCountEqual(data, batch_result)
 
@@ -352,7 +424,7 @@ class ChickadeeFileTestCase(unittest.TestCase):
         chickadee.ignore_bogon = False
         chickadee.fields = self.fields
         mock_query.return_value = self.xlsx_data_results
-        data = chickadee.run(os.path.join(self.test_data_dir, 'test_ips.xlsx'))
+        data = chickadee.run(os.path.join(self.test_data_dir, "test_ips.xlsx"))
         batch_result = list(self.xlsx_data_results)
         self.assertCountEqual(data, batch_result)
 
@@ -360,39 +432,71 @@ class ChickadeeFileTestCase(unittest.TestCase):
     def test_ipapi_resolve_query_folder(self, mock_query):
         """Batch Query Method Test"""
         expected = [
-            {"country": "Australia", "org": "",
-             "as": "AS13335 Cloudflare, Inc.",
-             "proxy": False, "query": "1.1.1.1", "count": 6},
-
+            {
+                "country": "Australia",
+                "org": "",
+                "as": "AS13335 Cloudflare, Inc.",
+                "proxy": False,
+                "query": "1.1.1.1",
+                "count": 6,
+            },
             {"query": "10.0.1.2", "count": 3},
-
-            {"country": "United States", "org": "Level 3",
-             "as": "AS15169 Google LLC",
-             "proxy": False, "query": "8.8.8.8", "count": 3},
-
-            {"country": "United States", "org": "Google LLC",
-             "as": "AS15169 Google LLC",
-             "proxy": False, "query": "2001:4860:4860::8888", "count": 3},
-
-            {"country": "United States", "org": "Informs",
-             "as": "AS3356 Level 3 Parent, LLC", "proxy": True,
-             "query": "4.4.4.4",
-             "count": 3},
-
-            {"country": "United States", "org": "Google LLC",
-             "as": "AS15169 Google LLC",
-             "proxy": False, "query": "2001:4860:4860::8844", "count": 4},
-
-            {"country": "United States", "org": "Google LLC",
-             "as": "AS15169 Google LLC",
-             "proxy": False, "query": "2001:4860:4860::8888", "count": 3},
-
-            {"country": "France", "org": "", "as": "AS3215 Orange S.A.",
-             "proxy": True, "query": "2.2.2.2", "count": 3},
-
-            {"country": "United States", "org": "Google LLC",
-             "as": "AS15169 Google LLC",
-             "proxy": False, "query": "2001:4860:4860::8844", "count": 4}
+            {
+                "country": "United States",
+                "org": "Level 3",
+                "as": "AS15169 Google LLC",
+                "proxy": False,
+                "query": "8.8.8.8",
+                "count": 3,
+            },
+            {
+                "country": "United States",
+                "org": "Google LLC",
+                "as": "AS15169 Google LLC",
+                "proxy": False,
+                "query": "2001:4860:4860::8888",
+                "count": 3,
+            },
+            {
+                "country": "United States",
+                "org": "Informs",
+                "as": "AS3356 Level 3 Parent, LLC",
+                "proxy": True,
+                "query": "4.4.4.4",
+                "count": 3,
+            },
+            {
+                "country": "United States",
+                "org": "Google LLC",
+                "as": "AS15169 Google LLC",
+                "proxy": False,
+                "query": "2001:4860:4860::8844",
+                "count": 4,
+            },
+            {
+                "country": "United States",
+                "org": "Google LLC",
+                "as": "AS15169 Google LLC",
+                "proxy": False,
+                "query": "2001:4860:4860::8888",
+                "count": 3,
+            },
+            {
+                "country": "France",
+                "org": "",
+                "as": "AS3215 Orange S.A.",
+                "proxy": True,
+                "query": "2.2.2.2",
+                "count": 3,
+            },
+            {
+                "country": "United States",
+                "org": "Google LLC",
+                "as": "AS15169 Google LLC",
+                "proxy": False,
+                "query": "2001:4860:4860::8844",
+                "count": 4,
+            },
         ]
         mock_query.return_value = expected
 
@@ -406,11 +510,8 @@ class ChickadeeFileTestCase(unittest.TestCase):
         """Validate the extraction of IP addresses when input is provided via stdin"""
         stream = io.TextIOWrapper(io.StringIO("test 1.1.1.1 ip"))
         ips = Chickadee.file_handler(stream, ignore_bogon=True)
-        self.assertDictEqual(
-            ips,
-            {"1.1.1.1": 1}
-        )
+        self.assertDictEqual(ips, {"1.1.1.1": 1})
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

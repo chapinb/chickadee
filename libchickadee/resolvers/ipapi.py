@@ -86,19 +86,31 @@ from . import ResolverBase
 
 logger = logging.getLogger(__name__)
 
-__author__ = 'Chapin Bryce'
+__author__ = "Chapin Bryce"
 __date__ = 20200114
-__license__ = 'MIT Copyright 2020 Chapin Bryce'
-__desc__ = '''Yet another GeoIP resolution tool.'''
+__license__ = "MIT Copyright 2020 Chapin Bryce"
+__desc__ = """Yet another GeoIP resolution tool."""
 
 FIELDS = [  # Ordered list of fields to gather
-    'query', 'count',
-    'as', 'org', 'isp',
-    'continent', 'country', 'regionName', 'city',
-    'district', 'zip',
-    'mobile', 'proxy', 'reverse',
-    'lat', 'lon', 'timezone',
-    'status', 'message'
+    "query",
+    "count",
+    "as",
+    "org",
+    "isp",
+    "continent",
+    "country",
+    "regionName",
+    "city",
+    "district",
+    "zip",
+    "mobile",
+    "proxy",
+    "reverse",
+    "lat",
+    "lon",
+    "timezone",
+    "status",
+    "message",
 ]
 
 
@@ -112,16 +124,15 @@ class Resolver(ResolverBase):
         fields (list): Collection of fields to request in resolution.
         lang (str): Language for returned results.
     """
-    def __init__(self, fields=None, lang='en'):
+
+    def __init__(self, fields=None, lang="en"):
         """Initialize class object and configure default values."""
-        self.supported_langs = [
-            'en', 'de', 'es', 'pt-BR', 'fr', 'ja', 'zh-CN', 'ru'
-        ]
+        self.supported_langs = ["en", "de", "es", "pt-BR", "fr", "ja", "zh-CN", "ru"]
         super().__init__()
 
-        self.lang = 'en' if lang not in self.supported_langs else lang
+        self.lang = "en" if lang not in self.supported_langs else lang
         self.fields = [] if not fields else fields
-        self.uri = 'http://ip-api.com/'
+        self.uri = "http://ip-api.com/"
         self.api_key = None
         self.enable_sleep = True
         self.wait_time = datetime.now()
@@ -138,9 +149,10 @@ class Resolver(ResolverBase):
         Return:
             None
         """
-        if int(headers.get('X-Rl', '0')) < 1:
-            self.wait_time = datetime.now() + \
-                timedelta(seconds=int(headers.get('X-Ttl', '0'))+0.25)
+        if int(headers.get("X-Rl", "0")) < 1:
+            self.wait_time = datetime.now() + timedelta(
+                seconds=int(headers.get("X-Ttl", "0")) + 0.25
+            )
 
     def sleeper(self):
         """Method to sleep operations for rate limiting. Executes sleep.
@@ -154,8 +166,8 @@ class Resolver(ResolverBase):
             if wait_time.total_seconds() < 0:
                 self.wait_time = datetime.now()
                 return
-            wt_sec = wait_time.total_seconds()+1  # add a buffer
-            logger.info(f'Sleeping for {wt_sec} seconds due to rate limiting.')
+            wt_sec = wait_time.total_seconds() + 1  # add a buffer
+            logger.info(f"Sleeping for {wt_sec} seconds due to rate limiting.")
             time.sleep(wt_sec)
 
     def batch(self):
@@ -167,17 +179,21 @@ class Resolver(ResolverBase):
         Returns:
             (list): List of resolved IP address records with specified fields.
         """
-        records = [{'query': ip} for ip in self.data]
+        records = [{"query": ip} for ip in self.data]
         resolved_recs = []
         orig_recs = range(0, len(records), 100)
         if self.pbar:
-            orig_recs = trange(0, len(records), 100,
-                               desc="Resolving IPs", unit_scale=True)
+            orig_recs = trange(
+                0, len(records), 100, desc="Resolving IPs", unit_scale=True
+            )
         params = {
-            'fields': ','.join(self.fields) if isinstance(self.fields, list) else self.fields, 'lang': self.lang,
+            "fields": ",".join(self.fields)
+            if isinstance(self.fields, list)
+            else self.fields,
+            "lang": self.lang,
         }
         if self.api_key:
-            params['key'] = self.api_key
+            params["key"] = self.api_key
 
         for x in orig_recs:
             if self.enable_sleep:
@@ -199,7 +215,10 @@ class Resolver(ResolverBase):
             else:  # pragma: no cover
                 msg = f"Unknown error encountered: {rdata.status_code}"
                 logger.error(msg)
-                resolved_recs += [{'query': result, 'status': 'failed', 'message': msg} for result in records[x:x+100]]
+                resolved_recs += [
+                    {"query": result, "status": "failed", "message": msg}
+                    for result in records[x : x + 100]
+                ]
         return resolved_recs
 
     def single(self):
@@ -212,11 +231,11 @@ class Resolver(ResolverBase):
             (list): List of resolved IP address records with specified fields.
         """
         params = {
-            'fields': ','.join(self.fields),
-            'lang': self.lang,
+            "fields": ",".join(self.fields),
+            "lang": self.lang,
         }
         if self.api_key:
-            params['key'] = self.api_key
+            params["key"] = self.api_key
 
         if self.enable_sleep:
             self.sleeper()
@@ -232,7 +251,7 @@ class Resolver(ResolverBase):
         else:  # pragma: no cover
             msg = f"Unknown error encountered: {rdata.status_code}"
             logger.error(msg)
-            return [{'query': self.data, 'status': 'failed', 'message': msg}]
+            return [{"query": self.data, "status": "failed", "message": msg}]
 
 
 class ProResolver(Resolver):
@@ -246,11 +265,12 @@ class ProResolver(Resolver):
         fields (list): Collection of fields to request in resolution.
         lang (str): Language for returned results.
     """
-    def __init__(self, api_key, fields=None, lang='en'):  # pragma: no cover
+
+    def __init__(self, api_key, fields=None, lang="en"):  # pragma: no cover
         """Initialize class object and configure default values."""
         super().__init__()
-        self.lang = 'en' if lang not in self.supported_langs else lang
+        self.lang = "en" if lang not in self.supported_langs else lang
         self.fields = [] if not fields else fields
-        self.uri = 'https://pro.ip-api.com/'
+        self.uri = "https://pro.ip-api.com/"
         self.api_key = api_key
         self.enable_sleep = False

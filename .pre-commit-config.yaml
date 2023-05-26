@@ -33,3 +33,9 @@ repos:
     rev: '1.7.5'
     hooks:
     - id: bandit
+
+  - repo: https://github.com/psf/black
+    rev: '23.3.0'
+    hooks:
+      - id: black
+        args: ["--check"]
