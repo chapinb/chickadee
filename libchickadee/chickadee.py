@@ -751,16 +751,16 @@ def join_config_args(config, args, definitions=None):
         config_val = config.get(k) if config else None
 
         # Get from args if non-default
-        if (
-            args_val != v
-            and args_val is not None
-            or not config_val
-            and args_val is not None
-        ):
+        if args_val != v and args_val is not None:
             final_config[k] = args_val
 
+        # Next get from the config
         elif config_val:
             final_config[k] = config_val
+
+        # Otherwise load from args if present
+        elif args_val is not None:
+            final_config[k] = args_val
 
         else:
             final_config[k] = v
