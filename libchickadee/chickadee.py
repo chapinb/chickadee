@@ -438,13 +438,12 @@ class Chickadee:
                 raise ValueError("Unable to configure resolver. Please report to github.com/chapinb/chickadee/issues")
             resolver = resolver_class(api_key, fields=self.fields, lang=self.lang)
             logger.debug("Resolver API key found.")
-        else:
-            resolver_class = resolvers[self.resolver]['free_resolver']
-            if not resolver_class:
-                raise ValueError(
-                    f"Unable to configure resolver. An API key may be required for {self.resolver}")
+        elif resolver_class := resolvers[self.resolver]['free_resolver']:
             resolver = resolver_class(fields=self.fields, lang=self.lang)
 
+        else:
+            raise ValueError(
+                f"Unable to configure resolver. An API key may be required for {self.resolver}")
         if not self.fields:
             # Inherit the fields used by the resolver if none are used.
             self.fields = resolver.fields
@@ -629,13 +628,16 @@ def _generate_default_config_search_path():
     """
     search_conf_path = [os.path.abspath('.'), os.path.expanduser('~')]
     if 'win32' in sys.platform:
-        search_conf_path.append(
-            os.path.join(os.getenv('APPDATA'), 'chickadee'))
-        search_conf_path.append('C:\\ProgramData\\chickadee')
+        search_conf_path.extend(
+            (
+                os.path.join(os.getenv('APPDATA'), 'chickadee'),
+                'C:\\ProgramData\\chickadee',
+            )
+        )
     elif 'linux' in sys.platform or 'darwin' in sys.platform:
-        search_conf_path.append(
-            os.path.expanduser('~/.config/chickadee'))
-        search_conf_path.append('/etc/chickadee')
+        search_conf_path.extend(
+            (os.path.expanduser('~/.config/chickadee'), '/etc/chickadee')
+        )
     return search_conf_path
 
 
@@ -749,18 +751,17 @@ def join_config_args(config, args, definitions=None):
         config_val = config.get(k) if config else None
 
         # Get from args if non-default
-        if args_val != v and args_val is not None:
+        if (
+            args_val != v
+            and args_val is not None
+            or not config_val
+            and args_val is not None
+        ):
             final_config[k] = args_val
 
-        # Next get from config
         elif config_val:
             final_config[k] = config_val
 
-        # Otherwise load from args if present
-        elif args_val is not None:
-            final_config[k] = args_val
-
-        # And if all else fails, load from the definitions dictionary
         else:
             final_config[k] = v
 

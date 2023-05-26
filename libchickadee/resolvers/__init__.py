@@ -200,10 +200,7 @@ class ResolverBase:
         # Include headers with no value if not present in original
         selected_data = []
         for x in data:
-            d = {}
-            for k, v in x.items():
-                if k in headers:
-                    d[k] = v
+            d = {k: v for k, v in x.items() if k in headers}
             for h in headers:
                 if h not in d:
                     d[h] = None

@@ -63,9 +63,7 @@ class IPAPITestCase(unittest.TestCase):
         mock_query.return_value = self.expected_result.copy()
         data = self.resolver.query(self.test_data_ips)
         res = list(data)
-        batch_result = []  # No reverse field
-        for item in self.expected_result:
-            batch_result.append(item)
+        batch_result = list(self.expected_result)
         self.assertCountEqual(res, batch_result)
 
     @patch("libchickadee.resolvers.ipapi.requests.get")
