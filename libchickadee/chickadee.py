@@ -341,11 +341,12 @@ class Chickadee:
             file_parser = EVTXParser(ignore_bogon)
         else:
             file_parser = PlainTextParser(ignore_bogon)
+
         try:
             file_parser.parse_file(file_path, is_stream)
         except Exception as e:
-            logger.error("Failed to parse %s", file_path)
-            logger.error("Error message: %s", e)
+            logger.exception("Failed to parse %s", file_path, exc_info=e)
+
         return file_parser.ips
 
     def dir_handler(self, folder_path):
