@@ -478,24 +478,22 @@ class Chickadee:
             ResolverBase.write_json(self.outfile, results, self.fields, lines=True)
 
 
-def setup_logging(path, verbose=False):  # pragma: no cover
+def setup_logging(logging_obj, path, verbose=False):  # pragma: no cover
     """Function to setup logging configuration
 
     Args:
+        logging_obj: The instance used for logging
         path (str): File path to write log messages to
         verbose (bool): If the debug messages should be displayed on STDERR
 
     Returns:
         None
     """
-    # Allow us to modify the `logger` variable within a function
-    global logger
-
     # Set logger object, uses module's name
-    logger = logging.getLogger(__name__)
+    logging_obj = logging.getLogger(__name__)
 
     # Set default logger level to DEBUG. You can change this later
-    logger.setLevel(logging.DEBUG)
+    logging_obj.setLevel(logging.DEBUG)
 
     # Logging formatter. Best to keep consistent for most use cases
     log_format = logging.Formatter(
@@ -517,8 +515,8 @@ def setup_logging(path, verbose=False):  # pragma: no cover
     file_handle.setFormatter(log_format)
 
     # Add handles
-    logger.addHandler(stderr_handle)
-    logger.addHandler(file_handle)
+    logging_obj.addHandler(stderr_handle)
+    logging_obj.addHandler(file_handle)
 
 
 def config_handing(config_file=None, search_conf_path=None):
@@ -798,7 +796,7 @@ def entry(args=None):  # pragma: no cover
         )
 
     # Set up logging
-    setup_logging(params.get('log'), params.get('verbose'))
+    setup_logging(logger, params.get('log'), params.get('verbose'))
     logger.debug("Starting Chickadee")
     for arg in vars(args):
         logger.debug("Argument {} is set to {}".format(
