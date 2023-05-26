@@ -189,7 +189,7 @@ class CustomArgFormatter(argparse.RawTextHelpFormatter,
     """Custom argparse formatter class"""
 
 
-class Chickadee(object):
+class Chickadee:
     """Class to handle chickadee script operations.
 
     Args:
@@ -256,8 +256,8 @@ class Chickadee(object):
             logger.debug("Detected the data source as raw value(s)")
             result_dict = self.str_handler(self.input_data)  # String handler
 
-        logger.info("Extracted {} distinct IPs".format(
-            len(list(result_dict.keys()))))
+        logger.debug("Extracted %s distinct IPs",
+            len(list(result_dict.keys())))
 
         # Resolve if requested
         if self.resolve_ips:
@@ -327,7 +327,7 @@ class Chickadee(object):
         else:
             is_stream = False
             # Extract IPs with proper handler
-            logger.debug("Extracting IPs from {}".format(file_path))
+            logger.debug("Extracting IPs from %s", file_path)
 
         if not is_stream and file_path.lower().endswith('xlsx'):
             file_parser = XLSXParser(ignore_bogon)
@@ -338,8 +338,8 @@ class Chickadee(object):
         try:
             file_parser.parse_file(file_path, is_stream)
         except Exception as e:
-            logger.error("Failed to parse {}".format(file_path))
-            logger.error("Error message: {}".format(e))
+            logger.error("Failed to parse %s", file_path)
+            logger.error("Error message: %s", e)
         return file_parser.ips
 
     def dir_handler(self, folder_path):
@@ -358,13 +358,11 @@ class Chickadee(object):
         for root, _, files in os.walk(folder_path):
             for file_name in files:
                 file_entry = os.path.join(root, file_name)
-                logger.debug("Parsing file {}".format(file_entry))
+                logger.debug("Parsing file %s", file_entry)
                 file_results = self.file_handler(file_entry, self.ignore_bogon)
-                logger.debug("Parsed file {}, {} results".format(
-                    file_entry, len(file_results)))
+                logger.debug("Parsed file %s, %s results", file_entry, len(file_results))
                 result_dict = dict(Counter(result_dict)+Counter(file_results))
-        logger.debug("{} total distinct IPs discovered".format(
-            len(result_dict)))
+        logger.debug("%s total distinct IPs discovered", len(result_dict))
         return result_dict
 
     def resolve(self, data_dict, api_key=None):
@@ -440,13 +438,12 @@ class Chickadee(object):
                 raise ValueError("Unable to configure resolver. Please report to github.com/chapinb/chickadee/issues")
             resolver = resolver_class(api_key, fields=self.fields, lang=self.lang)
             logger.debug("Resolver API key found.")
-        else:
-            resolver_class = resolvers[self.resolver]['free_resolver']
-            if not resolver_class:
-                raise ValueError(
-                    "Unable to configure resolver. An API key may be required for {}".format(self.resolver))
+        elif resolver_class := resolvers[self.resolver]['free_resolver']:
             resolver = resolver_class(fields=self.fields, lang=self.lang)
 
+        else:
+            raise ValueError(
+                f"Unable to configure resolver. An API key may be required for {self.resolver}")
         if not self.fields:
             # Inherit the fields used by the resolver if none are used.
             self.fields = resolver.fields
@@ -478,29 +475,21 @@ class Chickadee(object):
             ResolverBase.write_json(self.outfile, results, self.fields, lines=True)
 
 
-def setup_logging(path, verbose=False):  # pragma: no cover
-    """Function to setup logging configuration
+def setup_logging(logging_obj, log_file, verbose=False):
+    """Function to setup logging configuration and test it.
 
     Args:
-        path (str): File path to write log messages to
-        verbose (bool): If the debug messages should be displayed on STDERR
-
-    Returns:
-        None
+        logging_obj: A logging instance, returned from logging.getLogger().
+        log_file: File path to write log messages to.
+        verbose: Whether or not to enable the debug level in STDERR output.
     """
-    # Allow us to modify the `logger` variable within a function
-    global logger
-
-    # Set logger object, uses module's name
-    logger = logging.getLogger(__name__)
-
-    # Set default logger level to DEBUG. You can change this later
-    logger.setLevel(logging.DEBUG)
+    logging_obj.setLevel(logging.DEBUG)
 
     # Logging formatter. Best to keep consistent for most use cases
     log_format = logging.Formatter(
-        '%(asctime)s %(filename)s %(levelname)s %(module)s '
-        '%(funcName)s:%(lineno)d - %(message)s')
+        "%(asctime)s %(filename)s %(levelname)s %(module)s "
+        "%(funcName)s %(lineno)d %(message)s"
+    )
 
     # Setup STDERR logging, allowing you uninterrupted
     # STDOUT redirection
@@ -512,13 +501,13 @@ def setup_logging(path, verbose=False):  # pragma: no cover
     stderr_handle.setFormatter(log_format)
 
     # Setup file logging
-    file_handle = logging.FileHandler(path, 'a')
+    file_handle = logging.FileHandler(log_file, "a")
     file_handle.setLevel(logging.DEBUG)
     file_handle.setFormatter(log_format)
 
     # Add handles
-    logger.addHandler(stderr_handle)
-    logger.addHandler(file_handle)
+    logging_obj.addHandler(stderr_handle)
+    logging_obj.addHandler(file_handle)
 
 
 def config_handing(config_file=None, search_conf_path=None):
@@ -556,12 +545,12 @@ def config_handing(config_file=None, search_conf_path=None):
 
     fail_warn = 'Relying on argument defaults'
     if not config_file:
-        logger.debug('Config file not found. {}'.format(fail_warn))
+        logger.debug('Config file not found. %s', fail_warn)
         return
 
     if not (os.path.exists(config_file) and os.path.isfile(config_file)):
-        logger.debug('Error accessing config file {}. {}'.format(
-            config_file, fail_warn))
+        logger.debug('Error accessing config file %s. %s',
+            config_file, fail_warn)
         return
 
     conf = configparser.ConfigParser()
@@ -618,7 +607,7 @@ def find_config_file(search_conf_path=None, filename_patterns=None):
 
     for location in search_conf_path:
         if not (os.path.exists(location) and os.path.isdir(location)):
-            logger.debug("Unable to access config file location {}.".format(location))
+            logger.debug("Unable to access config file location %s.", location)
             continue
         for file_name in os.listdir(location):
             for pattern in filename_patterns:
@@ -639,13 +628,16 @@ def _generate_default_config_search_path():
     """
     search_conf_path = [os.path.abspath('.'), os.path.expanduser('~')]
     if 'win32' in sys.platform:
-        search_conf_path.append(
-            os.path.join(os.getenv('APPDATA'), 'chickadee'))
-        search_conf_path.append('C:\\ProgramData\\chickadee')
+        search_conf_path.extend(
+            (
+                os.path.join(os.getenv('APPDATA'), 'chickadee'),
+                'C:\\ProgramData\\chickadee',
+            )
+        )
     elif 'linux' in sys.platform or 'darwin' in sys.platform:
-        search_conf_path.append(
-            os.path.expanduser('~/.config/chickadee'))
-        search_conf_path.append('/etc/chickadee')
+        search_conf_path.extend(
+            (os.path.expanduser('~/.config/chickadee'), '/etc/chickadee')
+        )
     return search_conf_path
 
 
@@ -659,7 +651,7 @@ def arg_handling(args):
     parser = argparse.ArgumentParser(
         description=__desc__,
         formatter_class=CustomArgFormatter,
-        epilog="Built by {}, v.{}".format(__author__, __version__)
+        epilog=f"Built by {__author__}, v.{__version__}"
     )
     parser.add_argument(
         'data',
@@ -762,7 +754,7 @@ def join_config_args(config, args, definitions=None):
         if args_val != v and args_val is not None:
             final_config[k] = args_val
 
-        # Next get from config
+        # Next get from the config
         elif config_val:
             final_config[k] = config_val
 
@@ -770,7 +762,6 @@ def join_config_args(config, args, definitions=None):
         elif args_val is not None:
             final_config[k] = args_val
 
-        # And if all else fails, load from the definitions dictionary
         else:
             final_config[k] = v
 
@@ -798,15 +789,13 @@ def entry(args=None):  # pragma: no cover
         )
 
     # Set up logging
-    setup_logging(params.get('log'), params.get('verbose'))
+    setup_logging(logger, params.get('log'), params.get('verbose'))
     logger.debug("Starting Chickadee")
     for arg in vars(args):
-        logger.debug("Argument {} is set to {}".format(
-            arg, getattr(args, arg)
-        ))
+        logger.debug("Argument %s is set to %s", arg, getattr(args, arg))
 
     logger.debug("Configuring Chickadee")
-    fields = params.get('fields').split(',') if len(params.get('fields', [])) else None
+    fields = params.get('fields', '').split(',') if len(params.get('fields', '')) > 0 else None
     chickadee = Chickadee(fields=fields)
     chickadee.resolver = params.get('resolver', 'ip_api')
     chickadee.resolve_ips = not params.get('no-resolve')

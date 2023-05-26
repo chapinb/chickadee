@@ -1,26 +1,80 @@
 [tool.poetry]
 name = "chickadee"
-version = "20210314.1"
+version = "20230525.1"
 description = "Yet another GeoIP enrichment tool."
 authors = ["Chapin Bryce <mail@chapinb.com>"]
 license = "MIT"
 readme = "README.md"
+homepage = "https://chapinb.com/chickadee/"
+documentation = "https://chapinb.com/chickadee/"
+repository = "https://github.com/chapinb/chickadee"
+keywords = ["geoip", "enrichment", "ip", "ip address", "security"]
+classifiers = [
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3 :: Only",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Telecommunications Industry",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Other Audience",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Natural Language :: English",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Security",
+    "Topic :: Utilities"
+]
+packages = [
+    { include = "libchickadee" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.8.1"
 requests = "^2.31.0"
-openpyxl = "^3.0.10"
-tqdm = "^4.64.1"
+openpyxl = "^3.1"
+tqdm = "^4.65"
 netaddr = "^0.8.0"
 python-evtx = "^0.7.4"
 
 
-[tool.poetry.group.dev.dependencies]
+[tool.poetry.group.test.dependencies]
 pytest = "*"
 pytest-cov = "*"
 flake8 = "^6.0.0"
+mypy = "*"
+types-requests = "*"
+pytest-watch = "*"
+bandit = "*"
+types-openpyxl = "*"
+types-tqdm = "*"
+
+[tool.poetry.group.docs.dependencies]
 sphinx = "^6.1.3"
+
+[tool.poetry.scripts]
+chickadee = "libchickadee.chickadee:entry"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+exclude = [
+    "build",
+    "dist"
+]
+
+[[tool.mypy.overrides]]
+module = [
+    "Evtx",
+    "Evtx.Evtx",
+    "_io",
+    "netaddr"
+]
+ignore_missing_imports = true

@@ -180,7 +180,7 @@ class ResolverBase:
             for entry in data:
                 open_file.write(json.dumps(entry)+"\n")
         else:
-            open_file.write(json.dumps(data))
+            json.dump(data, open_file)
 
         if was_opened:
             open_file.close()
@@ -200,10 +200,7 @@ class ResolverBase:
         # Include headers with no value if not present in original
         selected_data = []
         for x in data:
-            d = {}
-            for k, v in x.items():
-                if k in headers:
-                    d[k] = v
+            d = {k: v for k, v in x.items() if k in headers}
             for h in headers:
                 if h not in d:
                     d[h] = None
@@ -249,7 +246,7 @@ class ResolverBase:
         elif isinstance(raw_row.get(header, None), dict):
             # For each object in a dictionary, add a new header and append to
             for key, value in raw_row[header].items():
-                new_header = '{}.{}'.format(header, key)
+                new_header = f'{header}.{key}'
                 if new_header not in headers:
                     headers.append(new_header)
                 row[new_header] = value

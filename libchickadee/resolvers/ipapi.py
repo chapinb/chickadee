@@ -155,8 +155,7 @@ class Resolver(ResolverBase):
                 self.wait_time = datetime.now()
                 return
             wt_sec = wait_time.total_seconds()+1  # add a buffer
-            logger.info(
-                'Sleeping for {} seconds due to rate limiting.'.format(wt_sec))
+            logger.info(f'Sleeping for {wt_sec} seconds due to rate limiting.')
             time.sleep(wt_sec)
 
     def batch(self):
@@ -168,10 +167,7 @@ class Resolver(ResolverBase):
         Returns:
             (list): List of resolved IP address records with specified fields.
         """
-        records = []
-        for ip in self.data:
-            records.append({'query': ip})
-
+        records = [{'query': ip} for ip in self.data]
         resolved_recs = []
         orig_recs = range(0, len(records), 100)
         if self.pbar:
@@ -186,7 +182,12 @@ class Resolver(ResolverBase):
         for x in orig_recs:
             if self.enable_sleep:
                 self.sleeper()
-            rdata = requests.post(self.uri+"batch", json=records[x:x+100], params=params)
+            rdata = requests.post(
+                f"{self.uri}batch",
+                json=records[x : x + 100],
+                params=params,
+                timeout=60,
+            )
 
             if rdata.status_code == 200:
                 self.rate_limit(rdata.headers)
@@ -196,7 +197,7 @@ class Resolver(ResolverBase):
                 self.sleeper()
                 return self.batch()
             else:  # pragma: no cover
-                msg = "Unknown error encountered: {}".format(rdata.status_code)
+                msg = f"Unknown error encountered: {rdata.status_code}"
                 logger.error(msg)
                 resolved_recs += [{'query': result, 'status': 'failed', 'message': msg} for result in records[x:x+100]]
         return resolved_recs
@@ -220,10 +221,7 @@ class Resolver(ResolverBase):
         if self.enable_sleep:
             self.sleeper()
 
-        rdata = requests.get(
-            self.uri+"json/"+self.data,
-            params=params
-        )
+        rdata = requests.get(f"{self.uri}json/{self.data}", params=params, timeout=60)
         if rdata.status_code == 200:
             self.rate_limit(rdata.headers)
             return [rdata.json()]
@@ -232,7 +230,7 @@ class Resolver(ResolverBase):
             self.sleeper()
             return self.single()
         else:  # pragma: no cover
-            msg = "Unknown error encountered: {}".format(rdata.status_code)
+            msg = f"Unknown error encountered: {rdata.status_code}"
             logger.error(msg)
             return [{'query': self.data, 'status': 'failed', 'message': msg}]
 

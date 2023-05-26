@@ -19,37 +19,19 @@ Installation
 
 You may install Chickadee on your platform using ``pip install chickadee`` (you
 may need to use ``pip3`` depending on your system configuration).
-**Please ensure you are using Python 3**
+**Please ensure you are using Python 3.8 or later**
 
-You may also install via the source code as detailed below.
-
-macOS and Linux
-^^^^^^^^^^^^^^^
+You may also install the latest unreleased version from the source code
+as detailed below.
 
 Requirements:
 
-* Python 3+, installed on your path
-* Virtualenv (``pip3 install virtualenv``)
+* Python >=3.8, installed on your path
+* Poetry, https://python-poetry.org
 
 #. Clone the git repo: ``git clone https://github.com/chapinb/chickadee.git``
-#. Create your virtual environment ``virtualenv -p python3 venv3`` and
-   activate it (``source venv3/bin/activate``)
-#. Install dependencies: ``pip install .``
-#. Run ``chickadee --help`` to get started.
-
-Windows
-^^^^^^^
-
-Requirements:
-
-* Python 3+, installed on your path
-* Virtualenv (``pip.exe install virtualenv``)
-
-#. Clone the git repo: ``git clone https://github.com/chapinb/chickadee.git``
-#. Create your virtual environment ``virtualenv -p python3 venv3`` and activate
-   it (``.\\venv3\\Scripts\\activate``)
-#. Install dependencies: ``pip install .``
-#. Run ``chickadee --help`` to get started.
+#. Install package ``poetry install``
+#. Run ``poetry run chickadee --help`` to get started.
 
 Install the latest features without Git
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -145,7 +127,7 @@ library from the command line.
 """
 
 __author__ = 'Chapin Bryce'
-__date__ = 20210314
-__version__ = 20210314.1
-__license__ = 'MIT Copyright 2021 Chapin Bryce'
+__date__ = 20230525
+__version__ = 20230525.1
+__license__ = 'MIT Copyright 2023 Chapin Bryce'
 __desc__ = '''Yet another GeoIP resolution tool.'''
