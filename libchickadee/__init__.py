@@ -126,8 +126,8 @@ library from the command line.
 
 """
 
-__author__ = 'Chapin Bryce'
+__author__ = "Chapin Bryce"
 __date__ = 20230525
 __version__ = 20230525.1
-__license__ = 'MIT Copyright 2023 Chapin Bryce'
-__desc__ = '''Yet another GeoIP resolution tool.'''
+__license__ = "MIT Copyright 2023 Chapin Bryce"
+__desc__ = """Yet another GeoIP resolution tool."""

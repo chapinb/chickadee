@@ -53,6 +53,9 @@ pytest-watch = "*"
 bandit = "*"
 types-openpyxl = "*"
 types-tqdm = "*"
+black = "*"
+isort = "*"
+radon = "*"
 
 [tool.poetry.group.docs.dependencies]
 sphinx = "^6.1.3"

@@ -11,10 +11,10 @@ from openpyxl import load_workbook
 
 from libchickadee.parsers import ParserBase, run_parser_from_cli
 
-__author__ = 'Chapin Bryce'
+__author__ = "Chapin Bryce"
 __date__ = 20200107
-__license__ = 'MIT Copyright 2020 Chapin Bryce'
-__desc__ = '''Yet another GeoIP resolution tool.'''
+__license__ = "MIT Copyright 2020 Chapin Bryce"
+__desc__ = """Yet another GeoIP resolution tool."""
 
 
 class XLSXParser(ParserBase):
@@ -30,7 +30,9 @@ class XLSXParser(ParserBase):
                 Does not change functionality.
         """
         if is_stream:
-            raise NotImplementedError("Providing XLSX files as an input stream of data is not yet supported.")
+            raise NotImplementedError(
+                "Providing XLSX files as an input stream of data is not yet supported."
+            )
 
         wb = load_workbook(file_entry)
 
@@ -42,10 +44,11 @@ class XLSXParser(ParserBase):
                         self.check_ips(cell.value)
 
 
-if __name__ == '__main__':  # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
     import argparse
+
     parser = argparse.ArgumentParser()
-    parser.add_argument('path', help="File or folder to parse")
+    parser.add_argument("path", help="File or folder to parse")
     args = parser.parse_args()
 
     xl_parser = XLSXParser()

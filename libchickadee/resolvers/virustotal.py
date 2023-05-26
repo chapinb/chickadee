@@ -83,28 +83,39 @@ from . import ResolverBase
 
 logger = logging.getLogger(__name__)
 
-__author__ = 'Chapin Bryce'
+__author__ = "Chapin Bryce"
 __date__ = 20200805
-__license__ = 'MIT Copyright 2020 Chapin Bryce'
-__desc__ = 'Resolver for VirusTotal'
+__license__ = "MIT Copyright 2020 Chapin Bryce"
+__desc__ = "Resolver for VirusTotal"
 
 FIELDS = [
-    'query', 'count',
-    'asn', 'country',
-    'subnet',
-    'resolution_count', 'detected_sample_count', 'undetected_sample_count',
-    'detected_url_count', 'undetected_url_count',
-    'status', 'message'
+    "query",
+    "count",
+    "asn",
+    "country",
+    "subnet",
+    "resolution_count",
+    "detected_sample_count",
+    "undetected_sample_count",
+    "detected_url_count",
+    "undetected_url_count",
+    "status",
+    "message",
 ]
 
 NON_DEFAULT_FIELDS = [
-    "resolutions", "detected_samples", "undetected_samples", "detected_urls", "undetected_urls"
+    "resolutions",
+    "detected_samples",
+    "undetected_samples",
+    "detected_urls",
+    "undetected_urls",
 ]
 
 
 class ProResolver(ResolverBase):
     """VirusTotal authenticated API resolver. Requires an API key.
     Full API documentation here: https://developers.virustotal.com/reference"""
+
     def __init__(self, api_key, fields=None, lang="en"):
         """Initialize class object and configure default values.
 
@@ -115,10 +126,8 @@ class ProResolver(ResolverBase):
         """
         super().__init__()
 
-        self.supported_langs = [
-            "en"
-        ]
-        self.lang = 'en' if lang not in self.supported_langs else lang
+        self.supported_langs = ["en"]
+        self.lang = "en" if lang not in self.supported_langs else lang
         self.fields = FIELDS if not fields else fields
         self.uri = "https://www.virustotal.com/vtapi/v2/ip-address/report"
         self.api_key = api_key
@@ -138,8 +147,10 @@ class ProResolver(ResolverBase):
         time_since_last_request = current_request - self.last_request
         if time_since_last_request.total_seconds() > 15:
             return
-        time_to_sleep = (15-time_since_last_request.total_seconds()) + .25  # Add padding
-        logger.info(f'Sleeping for {time_to_sleep} seconds due to rate limiting.')
+        time_to_sleep = (
+            15 - time_since_last_request.total_seconds()
+        ) + 0.25  # Add padding
+        logger.info(f"Sleeping for {time_to_sleep} seconds due to rate limiting.")
         time.sleep(time_to_sleep)
 
     def batch(self):
@@ -167,14 +178,13 @@ class ProResolver(ResolverBase):
         Returns:
             (list): Report information
         """
-        params = {
-            'apikey': self.api_key,
-            'ip': self.data
-        }
+        params = {"apikey": self.api_key, "ip": self.data}
 
         self.last_request = datetime.now()
         rdata = requests.get(
-            self.uri, params=params, timeout=60,
+            self.uri,
+            params=params,
+            timeout=60,
         )
 
         if rdata.status_code == 200:
@@ -204,16 +214,18 @@ class ProResolver(ResolverBase):
             (dict): Formatted response for analysis
         """
         attributes = dict.fromkeys(self.fields.copy())
-        attributes.update({
-            "query": query,
-            "asn": "",
-            "continent": vt_resp.get("continent"),
-            "country": vt_resp.get("country"),
-            "subnet": vt_resp.get("network"),
-            "status": vt_resp.get("response_code"),
-            "message": vt_resp.get("IP address in dataset"),
-            "whois": "",
-        })
+        attributes.update(
+            {
+                "query": query,
+                "asn": "",
+                "continent": vt_resp.get("continent"),
+                "country": vt_resp.get("country"),
+                "subnet": vt_resp.get("network"),
+                "status": vt_resp.get("response_code"),
+                "message": vt_resp.get("IP address in dataset"),
+                "whois": "",
+            }
+        )
 
         # ASNs
         if vt_resp.get("asn"):
@@ -251,8 +263,7 @@ class ProResolver(ResolverBase):
             None. Updates attributes dictionary
         """
         attributes["resolution_count"] = len(vt_resp.get("resolutions", []))
-        hostname_set = {x.get('hostname') for x in
-                        vt_resp.get("resolutions", [])}
+        hostname_set = {x.get("hostname") for x in vt_resp.get("resolutions", [])}
         attributes["resolutions"] = sorted(list(hostname_set))
 
     def _extract_undetected_urls(self, attributes, vt_resp):
@@ -274,11 +285,10 @@ class ProResolver(ResolverBase):
         # * 2: Number of positive detections
         # * 3: Number of scanners
         # * 4: Time of last scan
-        attributes["undetected_url_count"] = len(
-            vt_resp.get("undetected_urls", []))
+        attributes["undetected_url_count"] = len(vt_resp.get("undetected_urls", []))
         detected_urls = {
-            self.defang_ioc(x[0])
-            for x in vt_resp.get('undetected_urls', [])}
+            self.defang_ioc(x[0]) for x in vt_resp.get("undetected_urls", [])
+        }
         attributes["undetected_urls"] = sorted(list(detected_urls))
 
     def _extract_detected_urls(self, attributes, vt_resp):
@@ -293,11 +303,11 @@ class ProResolver(ResolverBase):
         """
         # * Get count
         # * Get all defanged URLs
-        attributes["detected_url_count"] = len(
-            vt_resp.get("detected_urls", []))
+        attributes["detected_url_count"] = len(vt_resp.get("detected_urls", []))
         detected_urls = {
-            self.defang_ioc(x.get('url')): x.get('positives')
-            for x in vt_resp.get('detected_urls', [])}
+            self.defang_ioc(x.get("url")): x.get("positives")
+            for x in vt_resp.get("detected_urls", [])
+        }
         attributes["detected_urls"] = detected_urls
 
     @staticmethod
@@ -313,20 +323,21 @@ class ProResolver(ResolverBase):
         """
         # * Get count
         # * Get all hashes
-        attributes["undetected_sample_count"] = \
-            len(vt_resp.get("undetected_communicating_samples", [])) + \
-            len(vt_resp.get("undetected_downloaded_samples", [])) + \
-            len(vt_resp.get("undetected_referrer_samples", []))
+        attributes["undetected_sample_count"] = (
+            len(vt_resp.get("undetected_communicating_samples", []))
+            + len(vt_resp.get("undetected_downloaded_samples", []))
+            + len(vt_resp.get("undetected_referrer_samples", []))
+        )
 
         undetected_samples = {
-            x.get('sha256') for x in
-            vt_resp.get('undetected_communicating_samples', [])}
-        undetected_samples = undetected_samples.union({
-            x.get('sha256') for x in
-            vt_resp.get('undetected_downloaded_samples', [])})
-        undetected_samples = undetected_samples.union({
-            x.get('sha256') for x in
-            vt_resp.get('undetected_referrer_samples', [])})
+            x.get("sha256") for x in vt_resp.get("undetected_communicating_samples", [])
+        }
+        undetected_samples = undetected_samples.union(
+            {x.get("sha256") for x in vt_resp.get("undetected_downloaded_samples", [])}
+        )
+        undetected_samples = undetected_samples.union(
+            {x.get("sha256") for x in vt_resp.get("undetected_referrer_samples", [])}
+        )
         attributes["undetected_samples"] = sorted(list(undetected_samples))
 
     @staticmethod
@@ -342,27 +353,38 @@ class ProResolver(ResolverBase):
         """
         # * Get count
         # * Get all hashes
-        attributes["detected_sample_count"] = \
-            len(vt_resp.get("detected_communicating_samples", [])) + \
-            len(vt_resp.get("detected_downloaded_samples", [])) + \
-            len(vt_resp.get("detected_referrer_samples", []))
+        attributes["detected_sample_count"] = (
+            len(vt_resp.get("detected_communicating_samples", []))
+            + len(vt_resp.get("detected_downloaded_samples", []))
+            + len(vt_resp.get("detected_referrer_samples", []))
+        )
 
         detected_communicating_samples = {
-            x.get('sha256'): x.get('positives')
-            for x in vt_resp.get('detected_communicating_samples', [])}
+            x.get("sha256"): x.get("positives")
+            for x in vt_resp.get("detected_communicating_samples", [])
+        }
         detected_downloaded_samples = {
-            x.get('sha256'): x.get('positives')
-            for x in vt_resp.get('detected_downloaded_samples', [])}
+            x.get("sha256"): x.get("positives")
+            for x in vt_resp.get("detected_downloaded_samples", [])
+        }
         detected_referrer_samples = {
-            x.get('sha256'): x.get('positives')
-            for x in vt_resp.get('detected_referrer_samples', [])}
+            x.get("sha256"): x.get("positives")
+            for x in vt_resp.get("detected_referrer_samples", [])
+        }
         # Sum up the counts across categories for the same samples
         attributes["detected_samples"] = dict(
             functools.reduce(
-                operator.add, map(
-                    collections.Counter, [detected_communicating_samples,
-                                          detected_downloaded_samples,
-                                          detected_referrer_samples])))
+                operator.add,
+                map(
+                    collections.Counter,
+                    [
+                        detected_communicating_samples,
+                        detected_downloaded_samples,
+                        detected_referrer_samples,
+                    ],
+                ),
+            )
+        )
 
     @staticmethod
     def _extract_whois(attributes, vt_resp):
@@ -377,10 +399,10 @@ class ProResolver(ResolverBase):
         """
         # OtherRemarks holds info not stored in key/value config
         whois = {"OtherRemarks": ""}
-        for line in vt_resp.get('whois', "").split("\n"):
+        for line in vt_resp.get("whois", "").split("\n"):
             if len(line) == 0:
                 continue
-            if ':' not in line:
+            if ":" not in line:
                 whois["OtherRemarks"] += line + "\n"
                 continue
             split_line = line.split(":", 1)

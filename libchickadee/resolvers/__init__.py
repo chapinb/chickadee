@@ -12,13 +12,13 @@ formats.
 Module Documentation
 --------------------
 """
-import json
 import csv
+import json
 
-__author__ = 'Chapin Bryce'
+__author__ = "Chapin Bryce"
 __date__ = 20200107
-__license__ = 'MIT Copyright 2020 Chapin Bryce'
-__desc__ = '''Yet another GeoIP resolution tool.'''
+__license__ = "MIT Copyright 2020 Chapin Bryce"
+__desc__ = """Yet another GeoIP resolution tool."""
 
 
 class ResolverBase:
@@ -31,10 +31,11 @@ class ResolverBase:
     Returns:
         (ResolverBase)
     """
+
     def __init__(self):
         """Initialize class object and set defaults."""
         self.uri = None
-        self.lang = 'en'
+        self.lang = "en"
         self.supported_langs = []
         self.fields = []
         self.pbar = False  # Enable progress bars
@@ -124,14 +125,13 @@ class ResolverBase:
 
         was_opened = False
         if isinstance(outfile, str):
-            open_file = open(outfile, 'w', newline="")
+            open_file = open(outfile, "w", newline="")
             was_opened = True
         else:
             open_file = outfile
 
         # Write only provided headers, ignore others
-        csvfile = csv.DictWriter(open_file, headers,
-                                 extrasaction='ignore')
+        csvfile = csv.DictWriter(open_file, headers, extrasaction="ignore")
         csvfile.writeheader()
 
         csvfile.writerows(rows_to_write)
@@ -170,7 +170,7 @@ class ResolverBase:
         was_opened = False
         open_file = outfile
         if isinstance(outfile, str):
-            open_file = open(outfile, 'w', newline="")
+            open_file = open(outfile, "w", newline="")
             was_opened = True
 
         if headers:
@@ -178,7 +178,7 @@ class ResolverBase:
 
         if lines:
             for entry in data:
-                open_file.write(json.dumps(entry)+"\n")
+                open_file.write(json.dumps(entry) + "\n")
         else:
             json.dump(data, open_file)
 
@@ -246,7 +246,7 @@ class ResolverBase:
         elif isinstance(raw_row.get(header, None), dict):
             # For each object in a dictionary, add a new header and append to
             for key, value in raw_row[header].items():
-                new_header = f'{header}.{key}'
+                new_header = f"{header}.{key}"
                 if new_header not in headers:
                     headers.append(new_header)
                 row[new_header] = value
