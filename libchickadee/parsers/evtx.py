@@ -1,8 +1,8 @@
 """Extract IP addresses from EVTX files."""
 
-from libchickadee.parsers import ParserBase, run_parser_from_cli
-
 import Evtx.Evtx
+
+from libchickadee.parsers import ParserBase, run_parser_from_cli
 
 
 class EVTXParser(ParserBase):

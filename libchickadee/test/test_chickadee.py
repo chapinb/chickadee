@@ -1,17 +1,17 @@
 """Chickadee script tests."""
-import unittest
+import io
 import os
 import sys
-import io
+import unittest
 from unittest.mock import patch
 
 from libchickadee.chickadee import (
     Chickadee,
     arg_handling,
-    join_config_args,
+    config_handing,
     find_config_file,
+    join_config_args,
 )
-from libchickadee.chickadee import config_handing
 
 __author__ = "Chapin Bryce"
 __date__ = 20200407

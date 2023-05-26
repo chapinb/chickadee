@@ -12,8 +12,8 @@ formats.
 Module Documentation
 --------------------
 """
-import json
 import csv
+import json
 
 __author__ = "Chapin Bryce"
 __date__ = 20200107

@@ -2,7 +2,7 @@
 import unittest
 
 from libchickadee import __version__
-from libchickadee.update import update_available, get_pypi_version
+from libchickadee.update import get_pypi_version, update_available
 
 __author__ = "Chapin Bryce"
 __date__ = 20200229

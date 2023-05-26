@@ -1,6 +1,6 @@
 """XLSX parsing tests."""
-import unittest
 import os
+import unittest
 
 from libchickadee.parsers.xlsx import XLSXParser
 

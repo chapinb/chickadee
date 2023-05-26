@@ -1,10 +1,10 @@
 """VirusTotal Resolver Tests."""
 import datetime
-import time
-import unittest
 import json
 import os
-from unittest.mock import patch, MagicMock
+import time
+import unittest
+from unittest.mock import MagicMock, patch
 
 from libchickadee.resolvers.virustotal import ProResolver
 

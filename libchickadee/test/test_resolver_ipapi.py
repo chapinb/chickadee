@@ -1,11 +1,11 @@
 """IP-API Resolver Tests."""
-import unittest
-from datetime import datetime
-from unittest.mock import patch
 import csv
 import json
 import os
+import unittest
 from collections import OrderedDict
+from datetime import datetime
+from unittest.mock import patch
 
 from libchickadee.resolvers.ipapi import Resolver
 

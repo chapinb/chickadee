@@ -1,6 +1,6 @@
 """EVTX parsing tests."""
-import unittest
 import os
+import unittest
 
 from libchickadee.parsers.evtx import EVTXParser
 

@@ -147,28 +147,27 @@ Module Documentation
 """
 
 import argparse
+import configparser
+import logging
 import os
 import sys
-import logging
-from pathlib import PurePath
 from collections import Counter
-import _io
-import configparser
+from pathlib import PurePath
 
+import _io
 from tqdm import tqdm
 
 # Import lib features
 from libchickadee import __version__
-from libchickadee.update import update_available
-
-# Import resolvers
-from libchickadee.resolvers import ipapi, virustotal, ResolverBase
+from libchickadee.parsers.evtx import EVTXParser
 
 # Import Parsers
 from libchickadee.parsers.plain_text import PlainTextParser
 from libchickadee.parsers.xlsx import XLSXParser
-from libchickadee.parsers.evtx import EVTXParser
 
+# Import resolvers
+from libchickadee.resolvers import ResolverBase, ipapi, virustotal
+from libchickadee.update import update_available
 
 __author__ = "Chapin Bryce"
 __date__ = 20200805

@@ -1,6 +1,6 @@
 """Plain-text parsing tests"""
-import unittest
 import os
+import unittest
 
 from libchickadee.parsers.plain_text import PlainTextParser
 

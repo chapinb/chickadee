@@ -1,7 +1,8 @@
 """Script to check for available chickadee updates and alert the user."""
 
-import requests
 import sys
+
+import requests
 
 __author__ = "Chapin Bryce"
 __date__ = 20200202
