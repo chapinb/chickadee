@@ -444,7 +444,7 @@ class Chickadee:
             resolver_class = resolvers[self.resolver]['free_resolver']
             if not resolver_class:
                 raise ValueError(
-                    "Unable to configure resolver. An API key may be required for {}".format(self.resolver))
+                    f"Unable to configure resolver. An API key may be required for {self.resolver}")
             resolver = resolver_class(fields=self.fields, lang=self.lang)
 
         if not self.fields:
@@ -659,7 +659,7 @@ def arg_handling(args):
     parser = argparse.ArgumentParser(
         description=__desc__,
         formatter_class=CustomArgFormatter,
-        epilog="Built by {}, v.{}".format(__author__, __version__)
+        epilog=f"Built by {__author__}, v.{__version__}"
     )
     parser.add_argument(
         'data',

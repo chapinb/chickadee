@@ -249,7 +249,7 @@ class ResolverBase:
         elif isinstance(raw_row.get(header, None), dict):
             # For each object in a dictionary, add a new header and append to
             for key, value in raw_row[header].items():
-                new_header = '{}.{}'.format(header, key)
+                new_header = f'{header}.{key}'
                 if new_header not in headers:
                     headers.append(new_header)
                 row[new_header] = value

@@ -56,7 +56,7 @@ IPV6GROUPS = (
 )
 
 # Reverse rows for greedy match
-IPV6ADDR = '|'.join('(?:{})'.format(g) for g in IPV6GROUPS[::-1])
+IPV6ADDR = '|'.join(f'(?:{g})' for g in IPV6GROUPS[::-1])
 
 IPv4Pattern = re.compile(IPV4ADDR)
 IPv6Pattern = re.compile(IPV6ADDR)
@@ -70,7 +70,7 @@ def run_parser_from_cli(args, parser_obj):  # pragma: no cover
                 parser_obj.parse_file(os.path.join(root, fentry))
     else:
         parser_obj.parse_file(args.path)
-    sys.stderr.write("{} unique IPs discovered, shown below with their frequency.\n".format(len(parser_obj.ips)))
+    sys.stderr.write(f"{len(parser_obj.ips)} unique IPs discovered, shown below with their frequency.\n")
     for ip, count in parser_obj.ips.items():
         print(json.dumps({"count": count, "ip": ip}))
 
