@@ -712,7 +712,7 @@ def arg_handling(args):
     parser.add_argument(
         "-s",
         "--single",
-        help="Use the significantly slower single item API. " "Adds reverse DNS.",
+        help="Use the significantly slower single item API. Adds reverse DNS.",
         action="store_true",
     )
     parser.add_argument(
