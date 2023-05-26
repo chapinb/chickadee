@@ -256,7 +256,7 @@ class Chickadee:
             logger.debug("Detected the data source as raw value(s)")
             result_dict = self.str_handler(self.input_data)  # String handler
 
-        logger.info("Extracted %s distinct IPs",
+        logger.debug("Extracted %s distinct IPs",
             len(list(result_dict.keys())))
 
         # Resolve if requested
