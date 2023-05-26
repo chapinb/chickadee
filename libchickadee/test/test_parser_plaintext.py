@@ -36,16 +36,16 @@ class PlainTextParserTestCase(unittest.TestCase):
 
     def test_ip_extraction_gz(self):
         """Test GZ Text file extraction"""
-        self.parser.parse_file(self.test_data_dir + "/txt_ips.txt.gz")
+        self.parser.parse_file(f"{self.test_data_dir}/txt_ips.txt.gz")
         self.assertEqual(self.test_data_ips, self.parser.ips)
 
     def test_gz_gzip_detection(self):
         """Test GZ detection"""
-        self.assertTrue(self.parser.is_gz_file(self.test_data_dir + "/txt_ips.txt.gz"))
+        self.assertTrue(self.parser.is_gz_file(f"{self.test_data_dir}/txt_ips.txt.gz"))
 
     def test_gz_txt_detection(self):
         """Test GZ detection"""
-        self.assertFalse(self.parser.is_gz_file(self.test_data_dir + "/txt_ips.txt"))
+        self.assertFalse(self.parser.is_gz_file(f"{self.test_data_dir}/txt_ips.txt"))
 
 
 if __name__ == "__main__":

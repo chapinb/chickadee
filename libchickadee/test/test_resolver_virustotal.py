@@ -39,9 +39,8 @@ class IPAPITestCase(unittest.TestCase):
         ]
         self.resolver = ProResolver(api_key="")
         local_dir = os.path.abspath(__file__).rsplit(os.sep, 1)[0]
-        resource_file = open(os.path.join(local_dir, "vt_resp_data.json"))
-        self.vt_rep_data_list = json.load(resource_file)
-        resource_file.close()
+        with open(os.path.join(local_dir, "vt_resp_data.json")) as resource_file:
+            self.vt_rep_data_list = json.load(resource_file)
 
     def test_parse_vt_resp(self):
         """Confirm the parsing of VT responses."""
