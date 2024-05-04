@@ -1,5 +1,5 @@
 requests>=2.24.0
 openpyxl~=3.0.5
-tqdm~=4.50.0
+tqdm~=4.66.3
 netaddr~=0.8.0
 python-evtx~=0.6.1
