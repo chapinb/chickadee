@@ -4,3 +4,4 @@ wheel~=0.38.0
 coverage~=5.3
 flake8~=3.8.4
 sphinx~=3.3.0
+requests>=2.32.0 # not directly required, pinned by Snyk to avoid a vulnerability
