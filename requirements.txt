@@ -3,3 +3,4 @@ openpyxl~=3.0.5
 tqdm~=4.50.0
 netaddr~=0.8.0
 python-evtx~=0.6.1
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
