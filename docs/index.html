@@ -70,12 +70,12 @@ as detailed below.</p>
 <p>Requirements:</p>
 <ul class="simple">
 <li><p>Python &gt;=3.10, installed on your path</p></li>
-<li><p>Poetry, <a class="reference external" href="https://python-poetry.org">https://python-poetry.org</a></p></li>
+<li><p>uv, <a class="reference external" href="https://astral.sh/uv">https://astral.sh/uv</a></p></li>
 </ul>
 <ol class="arabic simple">
 <li><p>Clone the git repo: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/chapinb/chickadee.git</span></code></p></li>
-<li><p>Install package <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span></code></p></li>
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">chickadee</span> <span class="pre">--help</span></code> to get started.</p></li>
+<li><p>Install dependencies <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">sync</span></code></p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span> <span class="pre">chickadee</span> <span class="pre">--help</span></code> to get started.</p></li>
 </ol>
 <section id="install-the-latest-features-without-git">
 <h4>Install the latest features without Git<a class="headerlink" href="#install-the-latest-features-without-git" title="Permalink to this heading">¶</a></h4>
@@ -106,15 +106,15 @@ contributing to projects!</p>
 <li><p>Clone your fork to your local system</p></li>
 <li><p>Check out a new branch with a descriptive name.
 ie <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">-b</span> <span class="pre">zipfile-support</span></code></p></li>
-<li><p>Install development dependencies in dev-requirements.txt</p></li>
+<li><p>Install development dependencies <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">sync</span> <span class="pre">--group</span> <span class="pre">test</span> <span class="pre">--group</span> <span class="pre">docs</span></code></p></li>
 <li><p>Make your modifications and write unit tests for new functionality</p></li>
 <li><p>Submit a pull request to the main chickadee repository</p></li>
 </ol>
 <p>A few tips to help get your new feature integrated smoothly:</p>
 <ul class="simple">
-<li><p>Ensure the whole project passes with <code class="docutils literal notranslate"><span class="pre">flake8</span></code>. Avoid excluding linting
+<li><p>Ensure the whole project passes with <code class="docutils literal notranslate"><span class="pre">ruff</span></code>. Avoid excluding linting
 warnings whenever possible.</p></li>
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">coverage</span> <span class="pre">run</span> <span class="pre">-m</span> <span class="pre">unittest</span> <span class="pre">discover</span></code> and ensure all tests pass
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">--cov</span> <span class="pre">--cov-branch</span> <span class="pre">--cov-fail-under</span> <span class="pre">80</span></code> and ensure all tests pass
 and all code files have at least 80% coverage. Avoid pragma statements
 whenever possible.</p></li>
 <li><p>Add documentation to your new functions/scripts and integrate into
