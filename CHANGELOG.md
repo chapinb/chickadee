@@ -4,7 +4,8 @@
 
 ### Fixed
 
-* Fixed plaintext stream parsing to avoid misreading already-buffered bytes before gzip detection.
+* Fixed plaintext stream parsing from STDIN when the underlying stream is not seekable (common on Linux pipes).
+* Fixed gzip signature detection for plaintext streams to avoid losing or misreading already-buffered bytes.
 
 ### Changed
 
@@ -12,6 +13,7 @@
 * Updated minimum supported Python version to 3.10 in project metadata and docs.
 * Migrated dependency management from Poetry to uv.
 * Switched linting/formatting to ruff and removed devscripts in favor of documented commands.
+* Added a regression test for non-seekable STDIN stream handling in `Chickadee.file_handler`.
 
 ## 20210314.1
 
