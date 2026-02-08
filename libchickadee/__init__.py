@@ -76,8 +76,8 @@ A few tips to help get your new feature integrated smoothly:
 
 * Ensure the whole project passes with ``ruff``. Avoid excluding linting
   warnings whenever possible.
-* Run ``pytest --cov --cov-branch --cov-fail-under 80`` and ensure all tests pass
-  and all code files have at least 80% coverage. Avoid pragma statements
+* Run ``pytest --cov --cov-branch --cov-fail-under 85`` and ensure all tests pass
+  and all code files have at least 85% coverage. Avoid pragma statements
   whenever possible.
 * Add documentation to your new functions/scripts and integrate into
   the overall project documentation. Build the documentation before
