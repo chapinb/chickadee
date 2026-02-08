@@ -51,15 +51,11 @@ Repository = "https://github.com/chapinb/chickadee"
 test = [
     "pytest",
     "pytest-cov",
-    "flake8>=6.0.0,<7.0.0",
     "mypy",
     "types-requests",
     "pytest-watch",
-    "bandit",
     "types-openpyxl",
     "types-tqdm",
-    "black",
-    "isort>=5.12.0,<6.0.0",
     "radon"
 ]
 docs = [
@@ -87,3 +83,10 @@ module = [
     "netaddr"
 ]
 ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 127
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "S"]
