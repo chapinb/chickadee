@@ -6,6 +6,7 @@
 
 * Updated CI to test Python 3.10-3.14.
 * Updated minimum supported Python version to 3.10 in project metadata and docs.
+* Migrated dependency management from Poetry to uv.
 
 ## 20210314.1
 
