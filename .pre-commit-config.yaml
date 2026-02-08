@@ -13,6 +13,7 @@ repos:
       - id: detect-aws-credentials
         args: ["--allow-missing-credentials"]
       - id: detect-private-key
+      - id: mixed-line-ending
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: 'v1.1.1'
