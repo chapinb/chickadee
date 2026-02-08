@@ -1,4 +1,5 @@
 """IP-API Resolver Tests."""
+
 import csv
 import json
 import os
@@ -53,9 +54,7 @@ class IPAPITestCase(unittest.TestCase):
                 "query": "2001:4860:4860::8888",
             },
         ]
-        self.resolver = Resolver(
-            fields=["query", "count", "as", "country", "org", "proxy"]
-        )
+        self.resolver = Resolver(fields=["query", "count", "as", "country", "org", "proxy"])
 
     @patch("libchickadee.resolvers.ipapi.Resolver.single")
     def test_ipapi_resolve_query_single(self, mock_query):
@@ -78,9 +77,7 @@ class IPAPITestCase(unittest.TestCase):
     def test_ipapi_resolve_single(self, mock_query):
         """Single Query Method Test"""
         for count, ip in enumerate(self.test_data_ips):
-            mock_query.return_value = MockResponse(
-                json_data=self.expected_result[count], status_code=200
-            )
+            mock_query.return_value = MockResponse(json_data=self.expected_result[count], status_code=200)
             self.resolver.data = ip
             data = self.resolver.single()
             self.assertEqual(data, [self.expected_result[count]])
@@ -88,9 +85,7 @@ class IPAPITestCase(unittest.TestCase):
     @patch("libchickadee.resolvers.ipapi.requests.post")
     def test_ipapi_resolve_batch(self, mock_query):
         """Batch Query Method Test"""
-        mock_query.return_value = MockResponse(
-            json_data=self.expected_result, status_code=200
-        )
+        mock_query.return_value = MockResponse(json_data=self.expected_result, status_code=200)
         self.resolver.data = self.test_data_ips
         data = self.resolver.batch()
         res = list(data)
@@ -122,9 +117,7 @@ class IPAPITestCase(unittest.TestCase):
             "expected_data": [self.expected_result[1]],
             "mock_data": [
                 MockResponse(json_data={}, status_code=429, rl="0", ttl="2"),
-                MockResponse(
-                    json_data=self.expected_result[1], status_code=200, rl="0", ttl="0"
-                ),
+                MockResponse(json_data=self.expected_result[1], status_code=200, rl="0", ttl="0"),
             ],
         }
         batch = {
@@ -132,9 +125,7 @@ class IPAPITestCase(unittest.TestCase):
             "expected_data": self.expected_result,
             "mock_data": [
                 MockResponse(json_data={}, status_code=429, rl="0", ttl="2"),
-                MockResponse(
-                    json_data=self.expected_result, status_code=200, rl="0", ttl="0"
-                ),
+                MockResponse(json_data=self.expected_result, status_code=200, rl="0", ttl="0"),
             ],
         }
         for test in [single, batch]:

@@ -1,4 +1,5 @@
 """Plain-text parsing tests"""
+
 import unittest
 
 from libchickadee.parsers import ParserBase
@@ -20,7 +21,7 @@ class ParserBaseTestCase(unittest.TestCase):
 
     def test_bogon(self):
         """Test the identification of bogon IP addresses"""
-        ip_list = [  
+        ip_list = [
             "10.1.1.1",
             "192.168.1.1",
             "127.0.0.1",

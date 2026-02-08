@@ -75,6 +75,7 @@ Module Documentation
 --------------------
 
 """
+
 import logging
 import time
 from datetime import datetime, timedelta
@@ -150,9 +151,7 @@ class Resolver(ResolverBase):
             None
         """
         if int(headers.get("X-Rl", "0")) < 1:
-            self.wait_time = datetime.now() + timedelta(
-                seconds=int(headers.get("X-Ttl", "0")) + 0.25
-            )
+            self.wait_time = datetime.now() + timedelta(seconds=int(headers.get("X-Ttl", "0")) + 0.25)
 
     def sleeper(self):
         """Method to sleep operations for rate limiting. Executes sleep.
@@ -183,13 +182,9 @@ class Resolver(ResolverBase):
         resolved_recs = []
         orig_recs = range(0, len(records), 100)
         if self.pbar:
-            orig_recs = trange(
-                0, len(records), 100, desc="Resolving IPs", unit_scale=True
-            )
+            orig_recs = trange(0, len(records), 100, desc="Resolving IPs", unit_scale=True)
         params = {
-            "fields": ",".join(self.fields)
-            if isinstance(self.fields, list)
-            else self.fields,
+            "fields": ",".join(self.fields) if isinstance(self.fields, list) else self.fields,
             "lang": self.lang,
         }
         if self.api_key:
@@ -215,10 +210,7 @@ class Resolver(ResolverBase):
             else:  # pragma: no cover
                 msg = f"Unknown error encountered: {rdata.status_code}"
                 logger.error(msg)
-                resolved_recs += [
-                    {"query": result, "status": "failed", "message": msg}
-                    for result in records[x : x + 100]
-                ]
+                resolved_recs += [{"query": result, "status": "failed", "message": msg} for result in records[x : x + 100]]
         return resolved_recs
 
     def single(self):

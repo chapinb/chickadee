@@ -69,6 +69,7 @@ Module Documentation
 --------------------
 
 """
+
 import collections
 import functools
 import logging
@@ -147,9 +148,7 @@ class ProResolver(ResolverBase):
         time_since_last_request = current_request - self.last_request
         if time_since_last_request.total_seconds() > 15:
             return
-        time_to_sleep = (
-            15 - time_since_last_request.total_seconds()
-        ) + 0.25  # Add padding
+        time_to_sleep = (15 - time_since_last_request.total_seconds()) + 0.25  # Add padding
         logger.info(f"Sleeping for {time_to_sleep} seconds due to rate limiting.")
         time.sleep(time_to_sleep)
 
@@ -199,9 +198,7 @@ class ProResolver(ResolverBase):
         elif rdata.status_code == 403:
             logger.error("Authorization error. Please check API key")
         else:
-            logger.error(
-                f"Unknown error occurred, status code {rdata.status_code}, please report"
-            )
+            logger.error(f"Unknown error occurred, status code {rdata.status_code}, please report")
 
     def parse_vt_resp(self, query, vt_resp):
         """Transform the raw response from VirusTotal in to a dictionary easier for analysis
@@ -229,7 +226,7 @@ class ProResolver(ResolverBase):
 
         # ASNs
         if vt_resp.get("asn"):
-            attributes["asn"] = f'AS{vt_resp.get("asn")} {vt_resp.get("as_owner")}'
+            attributes["asn"] = f"AS{vt_resp.get('asn')} {vt_resp.get('as_owner')}"
 
         # Parse WhoIs
         self._extract_whois(attributes, vt_resp)
@@ -286,9 +283,7 @@ class ProResolver(ResolverBase):
         # * 3: Number of scanners
         # * 4: Time of last scan
         attributes["undetected_url_count"] = len(vt_resp.get("undetected_urls", []))
-        detected_urls = {
-            self.defang_ioc(x[0]) for x in vt_resp.get("undetected_urls", [])
-        }
+        detected_urls = {self.defang_ioc(x[0]) for x in vt_resp.get("undetected_urls", [])}
         attributes["undetected_urls"] = sorted(list(detected_urls))
 
     def _extract_detected_urls(self, attributes, vt_resp):
@@ -304,10 +299,7 @@ class ProResolver(ResolverBase):
         # * Get count
         # * Get all defanged URLs
         attributes["detected_url_count"] = len(vt_resp.get("detected_urls", []))
-        detected_urls = {
-            self.defang_ioc(x.get("url")): x.get("positives")
-            for x in vt_resp.get("detected_urls", [])
-        }
+        detected_urls = {self.defang_ioc(x.get("url")): x.get("positives") for x in vt_resp.get("detected_urls", [])}
         attributes["detected_urls"] = detected_urls
 
     @staticmethod
@@ -329,9 +321,7 @@ class ProResolver(ResolverBase):
             + len(vt_resp.get("undetected_referrer_samples", []))
         )
 
-        undetected_samples = {
-            x.get("sha256") for x in vt_resp.get("undetected_communicating_samples", [])
-        }
+        undetected_samples = {x.get("sha256") for x in vt_resp.get("undetected_communicating_samples", [])}
         undetected_samples = undetected_samples.union(
             {x.get("sha256") for x in vt_resp.get("undetected_downloaded_samples", [])}
         )
@@ -360,17 +350,12 @@ class ProResolver(ResolverBase):
         )
 
         detected_communicating_samples = {
-            x.get("sha256"): x.get("positives")
-            for x in vt_resp.get("detected_communicating_samples", [])
+            x.get("sha256"): x.get("positives") for x in vt_resp.get("detected_communicating_samples", [])
         }
         detected_downloaded_samples = {
-            x.get("sha256"): x.get("positives")
-            for x in vt_resp.get("detected_downloaded_samples", [])
+            x.get("sha256"): x.get("positives") for x in vt_resp.get("detected_downloaded_samples", [])
         }
-        detected_referrer_samples = {
-            x.get("sha256"): x.get("positives")
-            for x in vt_resp.get("detected_referrer_samples", [])
-        }
+        detected_referrer_samples = {x.get("sha256"): x.get("positives") for x in vt_resp.get("detected_referrer_samples", [])}
         # Sum up the counts across categories for the same samples
         attributes["detected_samples"] = dict(
             functools.reduce(
