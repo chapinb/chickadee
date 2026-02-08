@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.10, <3.15"
 
 [[package]]
@@ -131,10 +131,7 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
-docs = [
-    { name = "sphinx" },
-]
-test = [
+dev = [
     { name = "mypy" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -143,6 +140,9 @@ test = [
     { name = "types-openpyxl" },
     { name = "types-requests" },
     { name = "types-tqdm" },
+]
+docs = [
+    { name = "sphinx" },
 ]
 
 [package.metadata]
@@ -155,8 +155,7 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-docs = [{ name = "sphinx", specifier = ">=6.1.3,<7.0.0" }]
-test = [
+dev = [
     { name = "mypy" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -166,6 +165,7 @@ test = [
     { name = "types-requests" },
     { name = "types-tqdm" },
 ]
+docs = [{ name = "sphinx", specifier = ">=6.1.3,<7.0.0" }]
 
 [[package]]
 name = "colorama"

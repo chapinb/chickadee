@@ -48,7 +48,7 @@ Documentation = "https://chapinb.com/chickadee/"
 Repository = "https://github.com/chapinb/chickadee"
 
 [dependency-groups]
-test = [
+dev = [
     "pytest",
     "pytest-cov",
     "mypy",
