@@ -19,14 +19,14 @@ Installation
 
 You may install Chickadee on your platform using ``pip install chickadee`` (you
 may need to use ``pip3`` depending on your system configuration).
-**Please ensure you are using Python 3.8 or later**
+**Please ensure you are using Python 3.10 or later**
 
 You may also install the latest unreleased version from the source code
 as detailed below.
 
 Requirements:
 
-* Python >=3.8, installed on your path
+* Python >=3.10, installed on your path
 * Poetry, https://python-poetry.org
 
 #. Clone the git repo: ``git clone https://github.com/chapinb/chickadee.git``

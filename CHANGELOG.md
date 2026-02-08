@@ -1,5 +1,12 @@
 # Changelog
 
+## 20260208.0
+
+### Changed
+
+* Updated CI to test Python 3.10-3.14.
+* Updated minimum supported Python version to 3.10 in project metadata and docs.
+
 ## 20210314.1
 
 ### Fixed
