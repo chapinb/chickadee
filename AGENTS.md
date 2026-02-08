@@ -7,7 +7,7 @@
   - Do not spend time reviewing `docs/`, as it is generated from `doc_src/` and should not be edited directly.
 
 ## Build, Test, and Development Commands
-- `uv sync --group test --group docs` installs dependency groups from `pyproject.toml`.
+- `uv sync` installs dependencies (the `dev` group includes docs tooling).
 - `uv run chickadee --help` runs the CLI entry point defined in `[project.scripts]`.
 - `uvx pre-commit run --all-files` runs formatting, linting, and type checks.
 - `uv run pytest --cov --cov-branch --cov-fail-under 85` runs tests with coverage.

@@ -56,9 +56,7 @@ dev = [
     "pytest-watch",
     "types-openpyxl",
     "types-tqdm",
-    "radon"
-]
-docs = [
+    "radon",
     "sphinx>=6.1.3,<7.0.0"
 ]
 

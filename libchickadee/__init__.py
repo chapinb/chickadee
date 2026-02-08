@@ -68,7 +68,7 @@ The below steps outline the technical process for contributing to chickadee:
 #. Clone your fork to your local system
 #. Check out a new branch with a descriptive name.
    ie ``git checkout -b zipfile-support``
-#. Install development dependencies ``uv sync --group test --group docs``
+#. Install development dependencies ``uv sync``
 #. Make your modifications and write unit tests for new functionality
 #. Submit a pull request to the main chickadee repository
 
