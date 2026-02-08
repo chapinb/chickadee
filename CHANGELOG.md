@@ -2,6 +2,10 @@
 
 ## 20260208.0
 
+### Fixed
+
+* Fixed plaintext stream parsing to avoid misreading already-buffered bytes before gzip detection.
+
 ### Changed
 
 * Updated CI to test Python 3.10-3.14.

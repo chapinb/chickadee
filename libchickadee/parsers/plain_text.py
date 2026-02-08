@@ -56,7 +56,8 @@ class PlainTextParser(ParserBase):
         else:
             # Encode if needed
             two_bytes = file_entry.buffer.read(2)
-            two_bytes = two_bytes.encode() if isinstance(two_bytes, str) else two_bytes.read(2)
+            if isinstance(two_bytes, str):
+                two_bytes = two_bytes.encode()
 
             file_entry.seek(0)
             # Check for gzip stream
