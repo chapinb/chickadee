@@ -147,7 +147,7 @@ dev = [
 requires-dist = [
     { name = "netaddr", specifier = ">=0.8.0,<0.9.0" },
     { name = "openpyxl", specifier = ">=3.1,<4.0" },
-    { name = "python-evtx", specifier = ">=0.7.4,<0.8.0" },
+    { name = "python-evtx", specifier = ">=0.7.4,<1.0.0" },
     { name = "requests", specifier = ">=2.31.0,<3.0.0" },
     { name = "tqdm", specifier = ">=4.65,<5.0" },
 ]
@@ -172,15 +172,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/d8/53/6f443c9a4a8358a93a6792e2acffb9d9d5cb0a5cfd8802644b7b1c9a02e4/colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44", size = 27697, upload-time = "2022-10-25T02:36:22.414Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6", size = 25335, upload-time = "2022-10-25T02:36:20.889Z" },
-]
-
-[[package]]
-name = "configparser"
-version = "4.0.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/16/4f/48975536bd488d3a272549eb795ac4a13a5f7fcdc8995def77fbef3532ee/configparser-4.0.2.tar.gz", hash = "sha256:c7d282687a5308319bf3d2e7706e575c635b0a470342641c93bea0ea3b5331df", size = 72498, upload-time = "2019-09-12T07:46:40.583Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/7a/2a/95ed0501cf5d8709490b1d3a3f9b5cf340da6c433f896bbe9ce08dbe6785/configparser-4.0.2-py2.py3-none-any.whl", hash = "sha256:254c1d9c79f60c45dfde850850883d5aaa7f19a23f13561243a050d5a7c3fe4c", size = 22828, upload-time = "2019-09-12T07:46:33.392Z" },
 ]
 
 [[package]]
@@ -539,18 +530,6 @@ wheels = [
 ]
 
 [[package]]
-name = "more-itertools"
-version = "5.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "six" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/dd/26/30fc0d541d9fdf55faf5ba4b0fd68f81d5bd2447579224820ad525934178/more-itertools-5.0.0.tar.gz", hash = "sha256:38a936c0a6d98a38bcc2d03fdaaedaba9f412879461dd2ceff8d37564d6522e4", size = 67359, upload-time = "2018-12-27T19:48:10.197Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a4/a6/42f17d065bda1fac255db13afc94c93dbfb64393eae37c749b4cb0752fc7/more_itertools-5.0.0-py3-none-any.whl", hash = "sha256:fe7a7cae1ccb57d33952113ff4fa1bc5f879963600ed74918f1236e212ee50b9", size = 52304, upload-time = "2018-12-27T19:48:08.733Z" },
-]
-
-[[package]]
 name = "mypy"
 version = "1.19.1"
 source = { registry = "https://pypi.org/simple" }
@@ -663,15 +642,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pyparsing"
-version = "2.4.7"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/c1/47/dfc9c342c9842bbe0036c7f763d2d6686bcf5eb1808ba3e170afdb282210/pyparsing-2.4.7.tar.gz", hash = "sha256:c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1", size = 649718, upload-time = "2020-04-05T22:21:25.349Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/8a/bb/488841f56197b13700afd5658fc279a2025a39e22449b7cf29864669b15d/pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b", size = 67842, upload-time = "2020-04-05T22:21:22.897Z" },
-]
-
-[[package]]
 name = "pytest"
 version = "9.0.2"
 source = { registry = "https://pypi.org/simple" }
@@ -717,19 +687,14 @@ sdist = { url = "https://files.pythonhosted.org/packages/36/47/ab65fc1d682befc31
 
 [[package]]
 name = "python-evtx"
-version = "0.7.4"
+version = "0.8.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "configparser" },
     { name = "hexdump" },
-    { name = "more-itertools" },
-    { name = "pyparsing" },
-    { name = "six" },
-    { name = "zipp" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7a/0f/02e95a23a9f9a68429af28b8bf90f067a02db65480144e25615ad3b147a7/python-evtx-0.7.4.tar.gz", hash = "sha256:693d441a2d9744c5d8d502f2bdeee468e087ea362ac8c8934b4187fb75e9ec14", size = 24042, upload-time = "2021-03-22T16:00:17.678Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/34/44/e28f31531834b1cd93d14472ec84136dad565e9db0f7abcbae96176c1e65/python_evtx-0.8.1.tar.gz", hash = "sha256:e96cea25536a3de5074af7f1bdbf011084d09c2e00664ab754d979820ed75fea", size = 28324, upload-time = "2025-05-02T08:24:38Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3d/2b/38756a77c025c1f74f1a7e0b976adc569ce0cbaf3be38d56d3a2cbbcd30f/python_evtx-0.7.4-py3-none-any.whl", hash = "sha256:60ed71185750e9d64830b3bead48ad543242a6287781368e6bc11a32ef49ac46", size = 35338, upload-time = "2021-03-22T16:00:16.079Z" },
+    { url = "https://files.pythonhosted.org/packages/32/12/f16a7a2f118a07649633b8f72803b932c8d9f0d24a2822cc08a1879ddf6f/python_evtx-0.8.1-py3-none-any.whl", hash = "sha256:46336b854dbe0a1e75873ae30db5f583c9d2262ff1d21bdb6b1e624ecfa18ddb", size = 26725, upload-time = "2025-05-02T08:24:36.279Z" },
 ]
 
 [[package]]
@@ -1006,16 +971,4 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/07/f6/d0e5b343768e8bcb4cda79f0f2f55051bf26177ecd5651f84c07567461cf/watchdog-6.0.0-py3-none-win32.whl", hash = "sha256:07df1fdd701c5d4c8e55ef6cf55b8f0120fe1aef7ef39a1c6fc6bc2e606d517a", size = 79065, upload-time = "2024-11-01T14:07:09.525Z" },
     { url = "https://files.pythonhosted.org/packages/db/d9/c495884c6e548fce18a8f40568ff120bc3a4b7b99813081c8ac0c936fa64/watchdog-6.0.0-py3-none-win_amd64.whl", hash = "sha256:cbafb470cf848d93b5d013e2ecb245d4aa1c8fd0504e863ccefa32445359d680", size = 79070, upload-time = "2024-11-01T14:07:10.686Z" },
     { url = "https://files.pythonhosted.org/packages/33/e8/e40370e6d74ddba47f002a32919d91310d6074130fe4e17dabcafc15cbf1/watchdog-6.0.0-py3-none-win_ia64.whl", hash = "sha256:a1914259fa9e1454315171103c6a30961236f508b9b623eae470268bbcc6a22f", size = 79067, upload-time = "2024-11-01T14:07:11.845Z" },
-]
-
-[[package]]
-name = "zipp"
-version = "1.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "more-itertools" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/d4/cd/ef86396dce8910413b6ca1ef31ec09367c47e15fc1a12def2cc8ae134dea/zipp-1.0.0.tar.gz", hash = "sha256:d38fbe01bbf7a3593a32bc35a9c4453c32bc42b98c377f9bff7e9f8da157786c", size = 10821, upload-time = "2020-01-13T23:10:45.052Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f4/50/cc72c5bcd48f6e98219fc4a88a5227e9e28b81637a99c49feba1d51f4d50/zipp-1.0.0-py2.py3-none-any.whl", hash = "sha256:8dda78f06bd1674bd8720df8a50bb47b6e1233c503a4eed8e7810686bde37656", size = 4111, upload-time = "2020-01-13T23:10:43.608Z" },
 ]
