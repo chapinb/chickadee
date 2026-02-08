@@ -56,9 +56,7 @@ def run_parser_from_cli(args, parser_obj):  # pragma: no cover
                 parser_obj.parse_file(os.path.join(root, fentry))
     else:
         parser_obj.parse_file(args.path)
-    sys.stderr.write(
-        f"{len(parser_obj.ips)} unique IPs discovered, shown below with their frequency.\n"
-    )
+    sys.stderr.write(f"{len(parser_obj.ips)} unique IPs discovered, shown below with their frequency.\n")
     for ip, count in parser_obj.ips.items():
         print(json.dumps({"count": count, "ip": ip}))
 
@@ -121,11 +119,4 @@ class ParserBase:
             (bool): Whether or not the IP is a known BOGON address.
         """
         ip = IPAddress(ip_addr)
-        return bool(
-            (
-                ip.is_private()
-                or ip.is_link_local()
-                or ip.is_reserved()
-                or ip.is_multicast()
-            )
-        )
+        return bool((ip.is_private() or ip.is_link_local() or ip.is_reserved() or ip.is_multicast()))

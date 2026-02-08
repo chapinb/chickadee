@@ -30,9 +30,7 @@ class XLSXParser(ParserBase):
                 Does not change functionality.
         """
         if is_stream:
-            raise NotImplementedError(
-                "Providing XLSX files as an input stream of data is not yet supported."
-            )
+            raise NotImplementedError("Providing XLSX files as an input stream of data is not yet supported.")
 
         wb = load_workbook(file_entry)
 

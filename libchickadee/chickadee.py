@@ -146,6 +146,7 @@ Module Documentation
 
 """
 
+import _io
 import argparse
 import configparser
 import logging
@@ -154,7 +155,6 @@ import sys
 from collections import Counter
 from pathlib import PurePath
 
-import _io
 from tqdm import tqdm
 
 # Import lib features
@@ -183,9 +183,7 @@ for more information.
 logger = logging.getLogger(__name__)
 
 
-class CustomArgFormatter(
-    argparse.RawTextHelpFormatter, argparse.ArgumentDefaultsHelpFormatter
-):
+class CustomArgFormatter(argparse.RawTextHelpFormatter, argparse.ArgumentDefaultsHelpFormatter):
     """Custom argparse formatter class"""
 
 
@@ -242,15 +240,11 @@ class Chickadee:
         self.input_data = input_data
         result_dict = {}
         # Extract and resolve IP addresses
-        if not isinstance(self.input_data, _io.TextIOWrapper) and os.path.isdir(
-            self.input_data
-        ):
+        if not isinstance(self.input_data, _io.TextIOWrapper) and os.path.isdir(self.input_data):
             logger.debug("Detected the data source as a directory")
             result_dict = self.dir_handler(self.input_data)  # Dir handler
 
-        elif isinstance(self.input_data, _io.TextIOWrapper) or os.path.isfile(
-            self.input_data
-        ):
+        elif isinstance(self.input_data, _io.TextIOWrapper) or os.path.isfile(self.input_data):
             logger.debug("Detected the data source as a file")
             # File handler
             result_dict = self.file_handler(self.input_data, self.ignore_bogon)
@@ -265,10 +259,7 @@ class Chickadee:
         if self.resolve_ips:
             return self.resolve(result_dict, api_key)
 
-        return [
-            {"query": k, "count": v, "message": "No resolve"}
-            for k, v in result_dict.items()
-        ]
+        return [{"query": k, "count": v, "message": "No resolve"} for k, v in result_dict.items()]
 
     @staticmethod
     def get_api_key():
@@ -280,9 +271,7 @@ class Chickadee:
         Returns:
             (str): API key, if found
         """
-        raise NotImplementedError(
-            "Please use a configuration file to specify the API key"
-        )
+        raise NotImplementedError("Please use a configuration file to specify the API key")
 
     @staticmethod
     def str_handler(data):
@@ -366,9 +355,7 @@ class Chickadee:
                 file_entry = os.path.join(root, file_name)
                 logger.debug("Parsing file %s", file_entry)
                 file_results = self.file_handler(file_entry, self.ignore_bogon)
-                logger.debug(
-                    "Parsed file %s, %s results", file_entry, len(file_results)
-                )
+                logger.debug("Parsed file %s, %s results", file_entry, len(file_results))
                 result_dict = dict(Counter(result_dict) + Counter(file_results))
         logger.debug("%s total distinct IPs discovered", len(result_dict))
         return result_dict
@@ -443,18 +430,14 @@ class Chickadee:
             logger.debug("Using authenticated resolution service")
             resolver_class = resolvers[self.resolver]["pro_resolver"]
             if not resolver_class:
-                raise ValueError(
-                    "Unable to configure resolver. Please report to github.com/chapinb/chickadee/issues"
-                )
+                raise ValueError("Unable to configure resolver. Please report to github.com/chapinb/chickadee/issues")
             resolver = resolver_class(api_key, fields=self.fields, lang=self.lang)
             logger.debug("Resolver API key found.")
         elif resolver_class := resolvers[self.resolver]["free_resolver"]:
             resolver = resolver_class(fields=self.fields, lang=self.lang)
 
         else:
-            raise ValueError(
-                f"Unable to configure resolver. An API key may be required for {self.resolver}"
-            )
+            raise ValueError(f"Unable to configure resolver. An API key may be required for {self.resolver}")
         if not self.fields:
             # Inherit the fields used by the resolver if none are used.
             self.fields = resolver.fields
@@ -497,10 +480,7 @@ def setup_logging(logging_obj, log_file, verbose=False):
     logging_obj.setLevel(logging.DEBUG)
 
     # Logging formatter. Best to keep consistent for most use cases
-    log_format = logging.Formatter(
-        "%(asctime)s %(filename)s %(levelname)s %(module)s "
-        "%(funcName)s %(lineno)d %(message)s"
-    )
+    log_format = logging.Formatter("%(asctime)s %(filename)s %(levelname)s %(module)s %(funcName)s %(lineno)d %(message)s")
 
     # Setup STDERR logging, allowing you uninterrupted
     # STDOUT redirection
@@ -593,9 +573,7 @@ def parse_config_sections(conf, section_defs):
             elif isinstance(v, bool):
                 conf_value = conf_section.getboolean(k)
             elif isinstance(v, dict):
-                raise NotImplementedError(
-                    "Unable to parse dictionary objects from config file mapping"
-                )
+                raise NotImplementedError("Unable to parse dictionary objects from config file mapping")
             config[k] = conf_value
     return config
 
@@ -647,9 +625,7 @@ def _generate_default_config_search_path():
             )
         )
     elif "linux" in sys.platform or "darwin" in sys.platform:
-        search_conf_path.extend(
-            (os.path.expanduser("~/.config/chickadee"), "/etc/chickadee")
-        )
+        search_conf_path.extend((os.path.expanduser("~/.config/chickadee"), "/etc/chickadee"))
     return search_conf_path
 
 
@@ -728,12 +704,8 @@ def arg_handling(args):
         help="Include BOGON addresses in results.",
     )
     parser.add_argument("-c", "--config", help="Path to config file to load")
-    parser.add_argument(
-        "-p", "--progress", help="Enable progress bar", action="store_true"
-    )
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Include debug log messages"
-    )
+    parser.add_argument("-p", "--progress", help="Enable progress bar", action="store_true")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Include debug log messages")
     parser.add_argument(
         "-V",
         "--version",
@@ -745,11 +717,7 @@ def arg_handling(args):
         "-l",
         "--log",
         help="Path to log file",
-        default=os.path.abspath(
-            os.path.join(
-                os.getcwd(), PurePath(__file__).name.rsplit(".", 1)[0] + ".log"
-            )
-        ),
+        default=os.path.abspath(os.path.join(os.getcwd(), PurePath(__file__).name.rsplit(".", 1)[0] + ".log")),
     )
     return parser.parse_args(args)
 
@@ -782,11 +750,7 @@ def join_config_args(config, args, definitions=None):
             "include-bogon": False,
             "single": False,
             "lang": "en",
-            "log": os.path.abspath(
-                os.path.join(
-                    os.getcwd(), PurePath(__file__).name.rsplit(".", 1)[0] + ".log"
-                )
-            ),
+            "log": os.path.abspath(os.path.join(os.getcwd(), PurePath(__file__).name.rsplit(".", 1)[0] + ".log")),
             "verbose": False,
             "resolver": "ip_api",
             "ip_api": "",  # Hold the related API key
@@ -831,10 +795,7 @@ def entry(args=None):  # pragma: no cover
 
     # Check for update
     if update_available(__version__):
-        sys.stderr.write(
-            "Chickadee update is available. Please update "
-            "using 'pip3 install --upgrade chickadee'.\n"
-        )
+        sys.stderr.write("Chickadee update is available. Please update using 'pip3 install --upgrade chickadee'.\n")
 
     # Set up logging
     setup_logging(logger, params.get("log"), params.get("verbose"))
@@ -843,11 +804,7 @@ def entry(args=None):  # pragma: no cover
         logger.debug("Argument %s is set to %s", arg, getattr(args, arg))
 
     logger.debug("Configuring Chickadee")
-    fields = (
-        params.get("fields", "").split(",")
-        if len(params.get("fields", "")) > 0
-        else None
-    )
+    fields = params.get("fields", "").split(",") if len(params.get("fields", "")) > 0 else None
     chickadee = Chickadee(fields=fields)
     chickadee.resolver = params.get("resolver", "ip_api")
     chickadee.resolve_ips = not params.get("no-resolve")

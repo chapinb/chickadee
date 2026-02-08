@@ -52,25 +52,16 @@ class PlainTextParser(ParserBase):
             None
         """
         if not is_stream:
-            file_data = (
-                GzipFile(filename=file_entry)
-                if self.is_gz_file(file_entry)
-                else open(file_entry, "rb")
-            )
+            file_data = GzipFile(filename=file_entry) if self.is_gz_file(file_entry) else open(file_entry, "rb")
         else:
             # Encode if needed
             two_bytes = file_entry.buffer.read(2)
-            two_bytes = (
-                two_bytes.encode() if isinstance(two_bytes, str) else two_bytes.read(2)
-            )
+            if isinstance(two_bytes, str):
+                two_bytes = two_bytes.encode()
 
             file_entry.seek(0)
             # Check for gzip stream
-            file_data = (
-                GzipFile(fileobj=file_entry)
-                if binascii.hexlify(two_bytes) == b"1f8b"
-                else file_entry.buffer
-            )
+            file_data = GzipFile(fileobj=file_entry) if binascii.hexlify(two_bytes) == b"1f8b" else file_entry.buffer
 
         for raw_line in file_data:
             line = raw_line if isinstance(raw_line, str) else raw_line.decode()

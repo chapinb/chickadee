@@ -26,7 +26,4 @@ if __name__ == "__main__":
     from libchickadee import __version__
 
     if update_available(__version__):
-        sys.stderr.write(
-            "Chickadee update is available. Please update "
-            "using 'pip3 install --upgrade chickadee'.\n"
-        )
+        sys.stderr.write("Chickadee update is available. Please update using 'pip3 install --upgrade chickadee'.\n")

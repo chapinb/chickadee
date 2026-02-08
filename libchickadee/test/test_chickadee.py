@@ -1,4 +1,5 @@
 """Chickadee script tests."""
+
 import io
 import os
 import sys

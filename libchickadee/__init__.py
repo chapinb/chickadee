@@ -19,19 +19,19 @@ Installation
 
 You may install Chickadee on your platform using ``pip install chickadee`` (you
 may need to use ``pip3`` depending on your system configuration).
-**Please ensure you are using Python 3.8 or later**
+**Please ensure you are using Python 3.10 or later**
 
 You may also install the latest unreleased version from the source code
 as detailed below.
 
 Requirements:
 
-* Python >=3.8, installed on your path
-* Poetry, https://python-poetry.org
+* Python >=3.10, installed on your path
+* uv, https://astral.sh/uv
 
 #. Clone the git repo: ``git clone https://github.com/chapinb/chickadee.git``
-#. Install package ``poetry install``
-#. Run ``poetry run chickadee --help`` to get started.
+#. Install dependencies ``uv sync``
+#. Run ``uv run chickadee --help`` to get started.
 
 Install the latest features without Git
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -68,16 +68,16 @@ The below steps outline the technical process for contributing to chickadee:
 #. Clone your fork to your local system
 #. Check out a new branch with a descriptive name.
    ie ``git checkout -b zipfile-support``
-#. Install development dependencies in dev-requirements.txt
+#. Install development dependencies ``uv sync``
 #. Make your modifications and write unit tests for new functionality
 #. Submit a pull request to the main chickadee repository
 
 A few tips to help get your new feature integrated smoothly:
 
-* Ensure the whole project passes with ``flake8``. Avoid excluding linting
+* Ensure the whole project passes with ``ruff``. Avoid excluding linting
   warnings whenever possible.
-* Run ``coverage run -m unittest discover`` and ensure all tests pass
-  and all code files have at least 80% coverage. Avoid pragma statements
+* Run ``pytest --cov --cov-branch --cov-fail-under 85`` and ensure all tests pass
+  and all code files have at least 85% coverage. Avoid pragma statements
   whenever possible.
 * Add documentation to your new functions/scripts and integrate into
   the overall project documentation. Build the documentation before
@@ -128,6 +128,6 @@ library from the command line.
 
 __author__ = "Chapin Bryce"
 __date__ = 20230525
-__version__ = 20230525.1
+__version__ = 20260208.0
 __license__ = "MIT Copyright 2023 Chapin Bryce"
 __desc__ = """Yet another GeoIP resolution tool."""

@@ -1,4 +1,5 @@
 """Plain-text parsing tests"""
+
 import unittest
 
 from libchickadee import __version__

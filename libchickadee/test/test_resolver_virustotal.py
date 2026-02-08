@@ -1,4 +1,5 @@
 """VirusTotal Resolver Tests."""
+
 import datetime
 import json
 import os
@@ -114,12 +115,8 @@ class IPAPITestCase(unittest.TestCase):
         for status_code, err_msg in subtests.items():
             mock_requests.return_value.status_code = status_code
             with self.subTest(id=status_code):
-                with self.assertLogs(
-                    "libchickadee.resolvers.virustotal", level="ERROR"
-                ) as mock_log:
-                    actual = self.resolver.query(
-                        self.vt_rep_data_list["Test0"]["query"]
-                    )
+                with self.assertLogs("libchickadee.resolvers.virustotal", level="ERROR") as mock_log:
+                    actual = self.resolver.query(self.vt_rep_data_list["Test0"]["query"])
                 self.assertIsNone(actual)
                 self.assertEqual(mock_log.records[0].message, err_msg)
 
@@ -132,9 +129,7 @@ class IPAPITestCase(unittest.TestCase):
         mock_requests.return_value.status_code = 403
 
         self.resolver.query(data="1.1.1.1")
-        self.assertGreaterEqual(
-            self.resolver.last_request, initial_time + datetime.timedelta(seconds=2)
-        )
+        self.assertGreaterEqual(self.resolver.last_request, initial_time + datetime.timedelta(seconds=2))
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 """Plain-text parsing tests"""
+
 import unittest
 
 from libchickadee.parsers import ParserBase
@@ -25,7 +26,7 @@ class ParserBaseTestCase(unittest.TestCase):
             "192.168.1.1",
             "127.0.0.1",
             "172.16.1.1",
-            "0.0.0.0",
+            "0.0.0.0",  # noqa: S104
             "100.64.1.1",
             "169.254.1.1",
             "192.0.0.23",

@@ -1,4 +1,6 @@
 """Plain-text parsing tests"""
+
+import io
 import os
 import unittest
 
@@ -38,6 +40,12 @@ class PlainTextParserTestCase(unittest.TestCase):
         """Test GZ Text file extraction"""
         self.parser.parse_file(self.test_data_dir + "/txt_ips.txt.gz")
         self.assertEqual(self.test_data_ips, self.parser.ips)
+
+    def test_stream_plaintext(self):
+        """Test stream parsing with bytes-backed buffer"""
+        stream = io.TextIOWrapper(io.BytesIO(b"8.8.8.8\n"))
+        self.parser.parse_file(stream, is_stream=True)
+        self.assertEqual({"8.8.8.8": 1}, self.parser.ips)
 
     def test_gz_gzip_detection(self):
         """Test GZ detection"""
