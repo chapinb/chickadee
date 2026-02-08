@@ -120,7 +120,7 @@ wheels = [
 
 [[package]]
 name = "chickadee"
-version = "20230525.1"
+version = "20260208.0"
 source = { editable = "." }
 dependencies = [
     { name = "netaddr" },
@@ -137,12 +137,10 @@ dev = [
     { name = "pytest-cov" },
     { name = "pytest-watch" },
     { name = "radon" },
+    { name = "sphinx" },
     { name = "types-openpyxl" },
     { name = "types-requests" },
     { name = "types-tqdm" },
-]
-docs = [
-    { name = "sphinx" },
 ]
 
 [package.metadata]
@@ -161,11 +159,11 @@ dev = [
     { name = "pytest-cov" },
     { name = "pytest-watch" },
     { name = "radon" },
+    { name = "sphinx", specifier = ">=6.1.3,<7.0.0" },
     { name = "types-openpyxl" },
     { name = "types-requests" },
     { name = "types-tqdm" },
 ]
-docs = [{ name = "sphinx", specifier = ">=6.1.3,<7.0.0" }]
 
 [[package]]
 name = "colorama"
