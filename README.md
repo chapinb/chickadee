@@ -68,3 +68,15 @@ Please create a fork of the repository, make your changes, and submit a pull
 request for review!
 
 You can always use the issues tab to suggest features and identify bugs.
+
+## Development
+
+This project uses `uv` for dependency management.
+
+Common commands:
+
+```
+uv sync --group test --group docs
+uv run chickadee --help
+uv run pytest --cov --cov-branch --cov-fail-under 85
+```

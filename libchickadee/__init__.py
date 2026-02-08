@@ -27,11 +27,11 @@ as detailed below.
 Requirements:
 
 * Python >=3.10, installed on your path
-* Poetry, https://python-poetry.org
+* uv, https://astral.sh/uv
 
 #. Clone the git repo: ``git clone https://github.com/chapinb/chickadee.git``
-#. Install package ``poetry install``
-#. Run ``poetry run chickadee --help`` to get started.
+#. Install dependencies ``uv sync``
+#. Run ``uv run chickadee --help`` to get started.
 
 Install the latest features without Git
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -68,7 +68,7 @@ The below steps outline the technical process for contributing to chickadee:
 #. Clone your fork to your local system
 #. Check out a new branch with a descriptive name.
    ie ``git checkout -b zipfile-support``
-#. Install development dependencies in dev-requirements.txt
+#. Install development dependencies ``uv sync --group test --group docs``
 #. Make your modifications and write unit tests for new functionality
 #. Submit a pull request to the main chickadee repository
 
@@ -76,7 +76,7 @@ A few tips to help get your new feature integrated smoothly:
 
 * Ensure the whole project passes with ``flake8``. Avoid excluding linting
   warnings whenever possible.
-* Run ``coverage run -m unittest discover`` and ensure all tests pass
+* Run ``pytest --cov --cov-branch --cov-fail-under 80`` and ensure all tests pass
   and all code files have at least 80% coverage. Avoid pragma statements
   whenever possible.
 * Add documentation to your new functions/scripts and integrate into
