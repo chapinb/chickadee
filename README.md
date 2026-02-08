@@ -78,8 +78,6 @@ Common commands:
 ```
 uv sync --group test --group docs
 uv run chickadee --help
+uvx pre-commit run --all-files
 uv run pytest --cov --cov-branch --cov-fail-under 85
-uv run mypy .
-uvx ruff format --check .
-uvx ruff check .
 ```
