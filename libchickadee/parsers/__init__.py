@@ -14,7 +14,7 @@ import os
 import re
 import sys
 
-from netaddr import IPAddress
+from netaddr import IPAddress, IPNetwork
 
 __author__ = "Chapin Bryce"
 __date__ = 20200107
@@ -46,6 +46,7 @@ IPV6ADDR = "|".join(f"(?:{g})" for g in IPV6GROUPS[::-1])
 
 IPv4Pattern = re.compile(IPV4ADDR)
 IPv6Pattern = re.compile(IPV6ADDR)
+IPV6_SITE_LOCAL = IPNetwork("fec0::/10")
 
 
 def run_parser_from_cli(args, parser_obj):  # pragma: no cover
@@ -119,4 +120,10 @@ class ParserBase:
             (bool): Whether or not the IP is a known BOGON address.
         """
         ip = IPAddress(ip_addr)
-        return bool((ip.is_private() or ip.is_link_local() or ip.is_reserved() or ip.is_multicast()))
+        return bool(
+            bool(ip.version == 6 and ip in IPV6_SITE_LOCAL)
+            or ip.is_multicast()
+            or ip.is_link_local()
+            or ip.is_reserved()
+            or not ip.is_global()
+        )
