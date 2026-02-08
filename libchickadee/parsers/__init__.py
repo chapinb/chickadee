@@ -120,8 +120,8 @@ class ParserBase:
             (bool): Whether or not the IP is a known BOGON address.
         """
         ip = IPAddress(ip_addr)
-        return bool(
-            bool(ip.version == 6 and ip in IPV6_SITE_LOCAL)
+        return (
+            (ip.version == 6 and ip in IPV6_SITE_LOCAL)
             or ip.is_multicast()
             or ip.is_link_local()
             or ip.is_reserved()
