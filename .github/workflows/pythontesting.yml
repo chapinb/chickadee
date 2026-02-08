@@ -27,13 +27,8 @@ jobs:
         python -m pip install uv
         uv sync --group test
 
-    - name: Lint with ruff
-      run: |
-        uvx ruff format --check .
-        uvx ruff check .
+    - name: Lint, format, and type check (pre-commit)
+      run: uvx pre-commit run --all-files
 
     - name: Test with pytest
       run: uv run pytest --cov --cov-report term --cov-branch --durations 3 --cov-fail-under 85
-
-    - name: Run type checks
-      run: uv run mypy .
