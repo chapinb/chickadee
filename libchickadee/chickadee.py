@@ -146,6 +146,7 @@ Module Documentation
 
 """
 
+import _io
 import argparse
 import configparser
 import logging
@@ -154,7 +155,6 @@ import sys
 from collections import Counter
 from pathlib import PurePath
 
-import _io
 from tqdm import tqdm
 
 # Import lib features

@@ -20,12 +20,12 @@ class ParserBaseTestCase(unittest.TestCase):
 
     def test_bogon(self):
         """Test the identification of bogon IP addresses"""
-        ip_list = [
+        ip_list = [  
             "10.1.1.1",
             "192.168.1.1",
             "127.0.0.1",
             "172.16.1.1",
-            "0.0.0.0",
+            "0.0.0.0",  # noqa: S104
             "100.64.1.1",
             "169.254.1.1",
             "192.0.0.23",
