@@ -1,6 +1,6 @@
 [project]
 name = "chickadee"
-version = "20230525.1"
+version = "20260208.0"
 description = "Yet another GeoIP enrichment tool."
 readme = "README.md"
 requires-python = ">=3.10,<3.15"
