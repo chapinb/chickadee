@@ -8,9 +8,6 @@ services:
         source: ..
         target: /workspaces/repo
       - type: bind
-        source: ../.git
-        target: /workspaces/repo/.git
-      - type: bind
         source: ../.git/hooks
         target: /workspaces/repo/.git/hooks
         read_only: true
