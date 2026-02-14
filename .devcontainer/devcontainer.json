@@ -1,10 +1,14 @@
 {
   "name": "Chickadee Dev Container",
-  "dockerComposeFile": ["docker-compose.yml"],
+  "dockerComposeFile": ["docker-compose.yaml"],
   "service": "workspace",
   "workspaceFolder": "/workspaces/repo",
   "shutdownAction": "stopCompose",
   "overrideCommand": false,
+  "mounts": [
+    "source=${localEnv:USERPROFILE}/.claude,target=/home/node/.claude,type=bind",
+    "source=${localEnv:USERPROFILE}/.codex,target=/home/node/.codex,type=bind"
+  ],
 
   "customizations": {
     "vscode": {
