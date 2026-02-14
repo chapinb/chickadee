@@ -24,9 +24,6 @@ services:
         target: /home/node/.gitconfig
         read_only: true
     working_dir: /workspaces/repo
-    depends_on:
-      egress-proxy:
-        condition: service_healthy
     networks:
       - internal_net
     environment:
@@ -61,12 +58,6 @@ services:
       - ./squid/squid.conf:/etc/squid/squid.conf:ro
       - ./squid/allowed_domains.txt:/etc/squid/allowed_domains.txt:ro
       - squid-cache:/var/spool/squid
-    healthcheck:
-      test: ["CMD-SHELL", "squidclient -h localhost mgr:info | grep -q 'HTTP/1'"]
-      interval: 15s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
     networks:
       - internal_net
       - internet_net
