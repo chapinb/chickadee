@@ -62,7 +62,7 @@ services:
       - squid-cache:/var/spool/squid
       - squid-logs:/var/log/squid
     healthcheck:
-      test: ["CMD-SHELL", "(echo > /dev/tcp/localhost/3128) 2>/dev/null"]
+      test: ["CMD-SHELL", "bash -c '(echo > /dev/tcp/localhost/3128) 2>/dev/null'"]
       interval: 5s
       timeout: 3s
       retries: 3
