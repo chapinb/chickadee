@@ -4,7 +4,15 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ..:/workspaces/repo:cached
+      - type: bind
+        source: ..
+        target: /workspaces/repo
+      - type: bind
+        source: ${USERPROFILE:-${HOME}}/.claude
+        target: /home/node/.claude
+      - type: bind
+        source: ${USERPROFILE:-${HOME}}/.codex
+        target: /home/node/.codex
     working_dir: /workspaces/repo
     networks:
       - internal_net
