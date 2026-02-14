@@ -3,6 +3,7 @@
 .pythonhosted.org
 .crates.io
 .registry.npmjs.org
+.public.ecr.aws
 
 # git hosts (if you fetch deps from git)
 .github.com
