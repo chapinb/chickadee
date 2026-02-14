@@ -51,8 +51,6 @@ services:
     networks:
       - internal_net
       - internet_net
-    ports:
-      - "3128:3128"
 
 networks:
   # Workspace can only talk to things on this network; Docker won’t route it out.
