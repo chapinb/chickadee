@@ -22,6 +22,7 @@ services:
       - HTTPS_PROXY=http://egress-proxy:3128
       - ALL_PROXY=http://egress-proxy:3128
       - NO_PROXY=localhost,127.0.0.1,egress-proxy
+      - CLAUDE_CONFIG_DIR=/home/node/.claude
       # Helpful for language tooling:
       - PIP_DISABLE_PIP_VERSION_CHECK=1
     # Optional: reduce accidental host interaction
