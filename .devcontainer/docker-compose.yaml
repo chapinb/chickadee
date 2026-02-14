@@ -50,7 +50,7 @@ services:
     read_only: false
     mem_limit: 4g
     cpus: 2
-    pids_limit: 256
+    pids_limit: 1024
 
   egress-proxy:
     # Pin to a specific tag — update periodically and verify egress controls still work.
