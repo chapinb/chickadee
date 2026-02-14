@@ -24,6 +24,10 @@ services:
         target: /home/node/.gitconfig
         read_only: true
     working_dir: /workspaces/repo
+    depends_on:
+      - egress-proxy
+    stdin_open: true
+    tty: true
     networks:
       - internal_net
     environment:
@@ -56,7 +60,7 @@ services:
     image: public.ecr.aws/lts/squid:6.6-24.04_edge
     volumes:
       - ./squid/squid.conf:/etc/squid/squid.conf:ro
-      - ./squid/allowed_domains.txt:/etc/squid/allowed_domains.txt:ro
+      - ./runtime/allowed_domains.txt:/etc/squid/allowed_domains.txt:ro
       - squid-cache:/var/spool/squid
     networks:
       - internal_net
