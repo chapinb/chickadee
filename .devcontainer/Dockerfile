@@ -73,6 +73,8 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
   -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
   -x
 
-# Install Claude Code — always use the latest version
+# Install Claude Code — intentionally unpinned so every build gets the latest
+# release. This trades reproducibility for always having the newest features
+# and fixes. Pin with a version ARG if reproducible builds become a priority.
 RUN curl -fsSL https://claude.ai/install.sh | zsh
 ENV PATH=/home/node/.local/bin:$PATH
