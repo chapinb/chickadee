@@ -10,6 +10,17 @@ services:
       - type: bind
         source: ../.git
         target: /workspaces/repo/.git
+      - type: bind
+        source: ../.git/hooks
+        target: /workspaces/repo/.git/hooks
+        read_only: true
+      - type: bind
+        source: ../.git/config
+        target: /workspaces/repo/.git/config
+        read_only: true
+      - type: bind
+        source: ../.git/info
+        target: /workspaces/repo/.git/info
         read_only: true
       - type: bind
         source: ${USERPROFILE:-${HOME}}/.claude
@@ -26,8 +37,6 @@ services:
     working_dir: /workspaces/repo
     depends_on:
       - egress-proxy
-    stdin_open: true
-    tty: true
     networks:
       - internal_net
     environment:
