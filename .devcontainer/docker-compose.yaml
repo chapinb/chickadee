@@ -47,6 +47,9 @@ services:
       - /run:size=8M
       - /home/node/.npm:size=256M
       - /home/node/.cache:size=512M
+    mem_limit: 4g
+    cpus: 2
+    pids_limit: 256
 
   egress-proxy:
     # Pin to a specific tag — update periodically and verify egress controls still work.
