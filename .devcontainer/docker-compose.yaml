@@ -41,6 +41,12 @@ services:
       - ALL
     security_opt:
       - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:size=512M
+      - /run:size=8M
+      - /home/node/.npm:size=256M
+      - /home/node/.cache:size=512M
 
   egress-proxy:
     # Pin to a specific tag — update periodically and verify egress controls still work.
