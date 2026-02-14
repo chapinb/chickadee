@@ -207,6 +207,10 @@ EOF
 
 # --- Main -------------------------------------------------------------------
 
+# Ensure the merged domains file exists before any compose command so Docker
+# does not create it as a directory on first run.
+merge_domains
+
 command="${1:-help}"
 shift || true
 
