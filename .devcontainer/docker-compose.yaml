@@ -24,10 +24,6 @@ services:
         target: /home/node/.claude
         read_only: false
       - type: bind
-        source: ${USERPROFILE:-${HOME}}/.codex
-        target: /home/node/.codex
-        read_only: false
-      - type: bind
         source: ${USERPROFILE:-${HOME}}/.gitconfig
         target: /home/node/.gitconfig
         read_only: true
