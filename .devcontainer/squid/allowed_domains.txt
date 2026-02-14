@@ -19,3 +19,4 @@
 .anthropic.com
 .claude.com
 .claude.ai
+.ipapi.is
