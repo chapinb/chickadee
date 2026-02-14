@@ -10,9 +10,15 @@ services:
       - type: bind
         source: ${USERPROFILE:-${HOME}}/.claude
         target: /home/node/.claude
+        read_only: true
       - type: bind
         source: ${USERPROFILE:-${HOME}}/.codex
         target: /home/node/.codex
+        read_only: true
+      - type: bind
+        source: ${USERPROFILE:-${HOME}}/.gitconfig
+        target: /home/node/.gitconfig
+        read_only: true
     working_dir: /workspaces/repo
     networks:
       - internal_net
