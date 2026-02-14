@@ -8,6 +8,10 @@ services:
         source: ..
         target: /workspaces/repo
       - type: bind
+        source: ../.git
+        target: /workspaces/repo/.git
+        read_only: true
+      - type: bind
         source: ${USERPROFILE:-${HOME}}/.claude
         target: /home/node/.claude
         read_only: true
