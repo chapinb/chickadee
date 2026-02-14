@@ -43,7 +43,8 @@ services:
       - no-new-privileges:true
 
   egress-proxy:
-    image: public.ecr.aws/ubuntu/squid:latest
+    # Pin to a specific tag — update periodically and verify egress controls still work.
+    image: public.ecr.aws/ubuntu/squid:6.6-24.04_edge
     volumes:
       - ./squid/squid.conf:/etc/squid/squid.conf:ro
       - ./squid/allowed_domains.txt:/etc/squid/allowed_domains.txt:ro
