@@ -7,7 +7,14 @@
 
 # git hosts (if you fetch deps from git)
 .github.com
+.api.github.com
+.codeload.github.com
 .raw.githubusercontent.com
+.objects.githubusercontent.com
+.github-releases.githubusercontent.com
+.githubusercontent.com
+.ghcr.io
+
 
 # docs (example)
 .docs.rs
