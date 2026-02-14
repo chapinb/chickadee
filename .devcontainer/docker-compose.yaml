@@ -60,6 +60,7 @@ services:
       - ./squid/squid.conf:/etc/squid/squid.conf:ro
       - ./runtime/allowed_domains.txt:/etc/squid/allowed_domains.txt:ro
       - squid-cache:/var/spool/squid
+      - squid-logs:/var/log/squid
     healthcheck:
       test: ["CMD-SHELL", "(echo > /dev/tcp/localhost/3128) 2>/dev/null"]
       interval: 5s
@@ -80,3 +81,4 @@ networks:
 
 volumes:
   squid-cache: {}
+  squid-logs: {}
