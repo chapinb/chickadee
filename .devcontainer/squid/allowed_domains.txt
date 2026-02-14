@@ -13,3 +13,8 @@
 # docs (example)
 .docs.rs
 .readthedocs.io
+
+# AI
+.anthropic.com
+.claude.com
+.claude.ai
