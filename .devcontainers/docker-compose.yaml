@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  workspace:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ..:/workspaces/repo:cached
+    working_dir: /workspaces/repo
+    networks:
+      - internal_net
+    environment:
+      # Force common tooling through the proxy
+      - HTTP_PROXY=http://egress-proxy:3128
+      - HTTPS_PROXY=http://egress-proxy:3128
+      - ALL_PROXY=http://egress-proxy:3128
+      - NO_PROXY=localhost,127.0.0.1,egress-proxy
+      # Helpful for language tooling:
+      - PIP_DISABLE_PIP_VERSION_CHECK=1
+    # Optional: reduce accidental host interaction
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+  egress-proxy:
+    image: public.ecr.aws/ubuntu/squid:latest
+    volumes:
+      - ./squid/squid.conf:/etc/squid/squid.conf:ro
+      - ./squid/allowed_domains.txt:/etc/squid/allowed_domains.txt:ro
+      - squid-cache:/var/spool/squid
+    networks:
+      - internal_net
+      - internet_net
+    ports:
+      - "3128:3128"
+
+networks:
+  # Workspace can only talk to things on this network; Docker won’t route it out.
+  internal_net:
+    internal: true
+
+  # Proxy has a second network that can reach the outside world
+  internet_net: {}
+
+volumes:
+  squid-cache: {}

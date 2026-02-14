@@ -1,0 +1,16 @@
+{
+  "name": "Chickadee Dev Container",
+  "dockerComposeFile": ["docker-compose.yml"],
+  "service": "workspace",
+  "workspaceFolder": "/workspaces/repo",
+  "shutdownAction": "stopCompose",
+  "overrideCommand": false,
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      }
+    }
+  }
+}

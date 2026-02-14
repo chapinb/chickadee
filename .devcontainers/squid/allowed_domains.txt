@@ -1,0 +1,14 @@
+# package registries
+.pypi.org
+.pythonhosted.org
+.crates.io
+.static.crates.io
+.registry.npmjs.org
+
+# git hosts (if you fetch deps from git)
+.github.com
+.raw.githubusercontent.com
+
+# docs (example)
+.docs.rs
+.readthedocs.io
