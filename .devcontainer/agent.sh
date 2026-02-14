@@ -64,7 +64,7 @@ proxy_is_running() {
 
 proxy_reload_if_running() {
     if proxy_is_running; then
-        compose exec egress-proxy squid -k reconfigure
+        compose exec egress-proxy squid -k reconfigure &>/dev/null
     fi
 }
 
@@ -168,7 +168,7 @@ cmd_proxy_list() {
 cmd_proxy_reload() {
     merge_domains
     if proxy_is_running; then
-        compose exec egress-proxy squid -k reconfigure
+        compose exec egress-proxy squid -k reconfigure &>/dev/null
         echo "Proxy configuration reloaded"
     else
         echo "Proxy is not running"
