@@ -168,3 +168,26 @@ class Resolver(ResolverBase):
             return {"query": ip, "status": "failed", "message": json_data["error"]}
         json_data["query"] = ip
         return json_data
+
+    def single(self):
+        """Handle single item query operations.
+
+        Generally not called directly, should be called by ``self.query()`` to
+        allow for the logic to handle which endpoint is preferred.
+
+        Returns:
+            (list): List of resolved IP address records with specified fields.
+        """
+        params = {"q": self.data}
+        if self.api_key:
+            params["key"] = self.api_key
+
+        rdata = requests.get(self.uri, params=params, timeout=60)
+        if rdata.status_code == 200:
+            return [self.parse_response(self.data, rdata.json())]
+        if rdata.status_code == 429 and self.enable_sleep:
+            self.sleeper()
+            return self.single()
+        msg = f"Unknown error encountered: {rdata.status_code}"
+        logger.error(msg)
+        return [{"query": self.data, "status": "failed", "message": msg}]
