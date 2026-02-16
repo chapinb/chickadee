@@ -191,3 +191,47 @@ class Resolver(ResolverBase):
         msg = f"Unknown error encountered: {rdata.status_code}"
         logger.error(msg)
         return [{"query": self.data, "status": "failed", "message": msg}]
+
+    def batch(self):
+        """Handle batch query operations.
+
+        Generally not called directly, should be called by ``self.query()`` to
+        allow for the logic to handle which endpoint is preferred.
+
+        The ipapi.is batch endpoint accepts a POST with ``{"ips": [...]}`` and
+        returns a dict keyed by IP address.
+
+        Returns:
+            (list): List of resolved IP address records with specified fields.
+        """
+        ips = list(self.data)
+        resolved_recs = []
+        orig_recs = range(0, len(ips), 100)
+        if self.pbar:
+            orig_recs = trange(0, len(ips), 100, desc="Resolving IPs", unit_scale=True)
+
+        for x in orig_recs:
+            chunk = ips[x : x + 100]
+
+            body = {"ips": chunk}
+            if self.api_key:
+                body["key"] = self.api_key
+
+            rdata = requests.post(self.uri, json=body, timeout=60)
+
+            if rdata.status_code == 200:
+                response = rdata.json()
+                for ip in chunk:
+                    ip_data = response.get(ip, {})
+                    resolved_recs.append(self.parse_response(ip, ip_data))
+            elif rdata.status_code == 429 and self.enable_sleep:
+                self.sleeper()
+                # Retry the same chunk by recursing with remaining data
+                self.data = ips[x:]
+                return resolved_recs + self.batch()
+            else:
+                msg = f"Unknown error encountered: {rdata.status_code}"
+                logger.error(msg)
+                resolved_recs += [{"query": ip, "status": "failed", "message": msg} for ip in chunk]
+
+        return resolved_recs
