@@ -9,6 +9,13 @@ services:
       - type: bind
         source: ..
         target: /workspaces/repo
+      # The repo bind mount above includes .git/ as read-write, which the
+      # agent needs for commits (objects/, refs/, index, etc.).  The mounts
+      # below overlay specific .git paths as read-only to block tampering:
+      #   hooks/  — prevent installing hooks that execute on the host
+      #   config  — prevent changing remotes, credential helpers, etc.
+      #   info/   — prevent altering exclude rules
+      # These paths always exist after git-clone, so the mounts are safe.
       - type: bind
         source: ../.git/hooks
         target: /workspaces/repo/.git/hooks
