@@ -98,9 +98,7 @@ class IpapiIsTestCase(unittest.TestCase):
 
     def test_parse_response_error(self):
         """Verify error response returns failed record."""
-        result = self.resolver.parse_response(
-            "999.999.999.999", {"error": "Invalid IP"}
-        )
+        result = self.resolver.parse_response("999.999.999.999", {"error": "Invalid IP"})
         self.assertEqual(
             result,
             {
@@ -113,9 +111,7 @@ class IpapiIsTestCase(unittest.TestCase):
     @patch("libchickadee.resolvers.ipapi_is.requests.get")
     def test_single(self, mock_get):
         """Verify single() returns a parsed result with query field."""
-        mock_get.return_value = MockResponse(
-            json_data=dict(SAMPLE_RESPONSE_8888), status_code=200
-        )
+        mock_get.return_value = MockResponse(json_data=dict(SAMPLE_RESPONSE_8888), status_code=200)
         self.resolver.data = "8.8.8.8"
         result = self.resolver.single()
         self.assertEqual(len(result), 1)
@@ -130,9 +126,7 @@ class IpapiIsTestCase(unittest.TestCase):
             "8.8.8.8": dict(SAMPLE_RESPONSE_8888),
             "1.1.1.1": dict(SAMPLE_RESPONSE_1111),
         }
-        mock_post.return_value = MockResponse(
-            json_data=batch_response, status_code=200
-        )
+        mock_post.return_value = MockResponse(json_data=batch_response, status_code=200)
         self.resolver.data = ["8.8.8.8", "1.1.1.1"]
         result = self.resolver.batch()
         self.assertEqual(len(result), 2)
