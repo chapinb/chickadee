@@ -205,12 +205,12 @@ class Resolver(ResolverBase):
             (list): List of resolved IP address records with specified fields.
         """
         ips = list(self.data)
-        resolved_recs = []
-        orig_recs = range(0, len(ips), 100)
+        resolved_records = []
+        chunk_ranges = range(0, len(ips), 100)
         if self.pbar:
-            orig_recs = trange(0, len(ips), 100, desc="Resolving IPs", unit_scale=True)
+            chunk_ranges = trange(0, len(ips), 100, desc="Resolving IPs", unit_scale=True)
 
-        for x in orig_recs:
+        for x in chunk_ranges:
             chunk = ips[x : x + 100]
 
             body = {"ips": chunk}
@@ -223,18 +223,18 @@ class Resolver(ResolverBase):
                 response = rdata.json()
                 for ip in chunk:
                     ip_data = response.get(ip, {})
-                    resolved_recs.append(self.parse_response(ip, ip_data))
+                    resolved_records.append(self.parse_response(ip, ip_data))
             elif rdata.status_code == 429 and self.enable_sleep:
                 self.sleeper()
                 # Retry the same chunk by recursing with remaining data
                 self.data = ips[x:]
-                return resolved_recs + self.batch()
+                return resolved_records + self.batch()
             else:
                 msg = f"Unknown error encountered: {rdata.status_code}"
                 logger.error(msg)
-                resolved_recs += [{"query": ip, "status": "failed", "message": msg} for ip in chunk]
+                resolved_records += [{"query": ip, "status": "failed", "message": msg} for ip in chunk]
 
-        return resolved_recs
+        return resolved_records
 
 
 class ProResolver(Resolver):
