@@ -75,6 +75,7 @@ class ChickadeeConfigTestCase(unittest.TestCase):
                 "resolver": "ip_api",
                 "virustotal": "",
                 "ip_api": "",
+                "ipapi_is": "",
                 "no-count": False,
                 "no-resolve": True,
                 "include-bogon": False,
@@ -103,6 +104,7 @@ class ChickadeeConfigTestCase(unittest.TestCase):
                 "resolver": "ip_api",
                 "ip_api": "",
                 "virustotal": "",
+                "ipapi_is": "",
                 "no-count": False,
                 "no-resolve": False,
                 "include-bogon": False,
@@ -141,6 +143,7 @@ ip_api = not-an-api-key
                 "resolver": "ip_api",
                 "virustotal": None,
                 "ip_api": "not-an-api-key",
+                "ipapi_is": None,
             },
         )
         os.remove(test_conf)

@@ -15,7 +15,7 @@ Usage
 
 .. code-block:: text
 
-    usage: chickadee [-h] [-r {ip_api,virustotal}] [-f FIELDS]
+    usage: chickadee [-h] [-r {ip_api,virustotal,ipapi_is}] [-f FIELDS]
                      [-t {json,jsonl,csv}] [-w FILENAME.JSON] [-n] [--no-count]
                      [-s] [--lang {en,de,es,pt-BR,fr,ja,zh-CN,ru}] [-b]
                      [-c CONFIG] [-p] [-v] [-V] [-l LOG]
@@ -39,7 +39,7 @@ Usage
 
     optional arguments:
       -h, --help            show this help message and exit
-      -r {ip_api,virustotal}, --resolver {ip_api,virustotal}
+      -r {ip_api,virustotal,ipapi_is}, --resolver {ip_api,virustotal,ipapi_is}
                             Resolving service to use. Must specify api key in config file.
                             Please see template_chickadee.ini for instructions.
                             (default: ip_api)
@@ -166,7 +166,7 @@ from libchickadee.parsers.plain_text import PlainTextParser
 from libchickadee.parsers.xlsx import XLSXParser
 
 # Import resolvers
-from libchickadee.resolvers import ResolverBase, ipapi, virustotal
+from libchickadee.resolvers import ResolverBase, ipapi, ipapi_is, virustotal
 from libchickadee.update import update_available
 
 __author__ = "Chapin Bryce"
@@ -424,6 +424,10 @@ class Chickadee:
                 "pro_resolver": virustotal.ProResolver,
                 "free_resolver": None,
             },
+            "ipapi_is": {
+                "pro_resolver": ipapi_is.ProResolver,
+                "free_resolver": ipapi_is.Resolver,
+            },
         }
 
         if api_key:
@@ -528,6 +532,7 @@ def config_handing(config_file=None, search_conf_path=None):
             "resolver": "",
             "ip_api": "",  # Hold respective API key
             "virustotal": "",  # Hold respective API key
+            "ipapi_is": "",  # Hold respective API key
         },
     }
 
@@ -656,7 +661,7 @@ def arg_handling(args):
         "--resolver",
         help="Resolving service to use. Must specify api key in config file. "
         "Please see template_chickadee.ini for instructions.",
-        choices=["ip_api", "virustotal"],
+        choices=["ip_api", "virustotal", "ipapi_is"],
         default="ip_api",
     )
     parser.add_argument("-f", "--fields", help="Comma separated fields to query")
@@ -755,6 +760,7 @@ def join_config_args(config, args, definitions=None):
             "resolver": "ip_api",
             "ip_api": "",  # Hold the related API key
             "virustotal": "",  # Hold the related API key
+            "ipapi_is": "",  # Hold the related API key
             "data": "",
         }
 
