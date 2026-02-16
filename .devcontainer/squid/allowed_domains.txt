@@ -21,3 +21,4 @@
 .ip-api.com
 .ipapi.is
 .virustotal.com
+api.ipapi.is
