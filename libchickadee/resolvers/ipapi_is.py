@@ -126,7 +126,8 @@ class Resolver(ResolverBase):
 
     Args:
         fields (list): Collection of fields to request in resolution.
-        lang (str): Language for returned results.
+        lang (str): Accepted for interface compatibility but not sent to
+            the ipapi.is API (it does not support a language parameter).
     """
 
     MAX_RETRIES = 3
@@ -257,7 +258,7 @@ class ProResolver(Resolver):
     Args:
         api_key (str): ipapi.is API key for requests.
         fields (list): Collection of fields to request in resolution.
-        lang (str): Language for returned results.
+        lang (str): Accepted for interface compatibility; not used by ipapi.is.
     """
 
     def __init__(self, api_key, fields=None, lang="en"):  # pragma: no cover
