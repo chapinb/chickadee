@@ -96,6 +96,28 @@ class IpapiIsTestCase(unittest.TestCase):
         self.assertEqual(result["query"], "8.8.8.8")
         self.assertEqual(result["ip"], "8.8.8.8")
 
+    def test_parse_response_flattens_nested_dicts(self):
+        """Verify nested dicts are flattened to dot-notation keys."""
+        import copy
+
+        data = copy.deepcopy(SAMPLE_RESPONSE_8888)
+        result = self.resolver.parse_response("8.8.8.8", data)
+        # Nested company fields should be flattened
+        self.assertEqual(result["company.name"], "Google LLC")
+        self.assertEqual(result["company.domain"], "google.com")
+        self.assertEqual(result["company.type"], "hosting")
+        # Nested asn fields should be flattened
+        self.assertEqual(result["asn.asn"], 15169)
+        self.assertEqual(result["asn.org"], "Google LLC")
+        # Nested location fields should be flattened
+        self.assertEqual(result["location.country"], "United States")
+        self.assertEqual(result["location.city"], "Mountain View")
+        self.assertEqual(result["location.timezone"], "America/Los_Angeles")
+        # Parent dict keys should be removed
+        self.assertNotIn("company", result)
+        self.assertNotIn("asn", result)
+        self.assertNotIn("location", result)
+
     def test_parse_response_error(self):
         """Verify error response returns failed record."""
         result = self.resolver.parse_response("999.999.999.999", {"error": "Invalid IP"})
