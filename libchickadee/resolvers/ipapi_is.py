@@ -235,3 +235,21 @@ class Resolver(ResolverBase):
                 resolved_recs += [{"query": ip, "status": "failed", "message": msg} for ip in chunk]
 
         return resolved_recs
+
+
+class ProResolver(Resolver):
+    """GeoIP resolver using the ipapi.is paid subscription.
+
+    Sets the API key and disables sleep functionality for the paid tier.
+
+    Args:
+        api_key (str): ipapi.is API key for requests.
+        fields (list): Collection of fields to request in resolution.
+        lang (str): Language for returned results.
+    """
+
+    def __init__(self, api_key, fields=None, lang="en"):  # pragma: no cover
+        """Initialize class object and configure default values."""
+        super().__init__(fields=fields, lang=lang)
+        self.api_key = api_key
+        self.enable_sleep = False
