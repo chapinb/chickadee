@@ -47,11 +47,11 @@ merge_domains() {
     {
         # Strip comments and blank lines from committed list
         if [[ -f "$COMMITTED_DOMAINS" ]]; then
-            grep -v '^\s*#' "$COMMITTED_DOMAINS" | grep -v '^\s*$'
+            grep -v '^[[:space:]]*#' "$COMMITTED_DOMAINS" | grep -v '^[[:space:]]*$'
         fi
         # Strip comments and blank lines from local overrides
         if [[ -f "$LOCAL_DOMAINS" ]]; then
-            grep -v '^\s*#' "$LOCAL_DOMAINS" | grep -v '^\s*$'
+            grep -v '^[[:space:]]*#' "$LOCAL_DOMAINS" | grep -v '^[[:space:]]*$'
         fi
     } | sort -u > "$MERGED_DOMAINS"
 }
