@@ -23,9 +23,22 @@
 - Keep tests focused on parser and resolver behavior; include fixtures under `libchickadee/test/` when needed.
 
 ## Commit & Pull Request Guidelines
-- Recent history shows short, imperative commit messages (for example `Bump urllib3 from 2.0.2 to 2.0.6`). Match that style.
+- Keep commits tiny — one logical change per commit. Small commits make review easier and keep `git bisect` useful.
+- Each commit message must have a single-letter prefix followed by ` - ` and a brief one-sentence description of **why** the change was made.
+
+| Prefix | Meaning |
+|--------|-------------------------------|
+| F      | Feature                       |
+| B      | Bug fix                       |
+| t      | Test-only change              |
+| d      | Documentation-only change     |
+| a      | Automated formatting change   |
+| R      | Refactor                      |
+
+- If a commit could reasonably carry more than one prefix, the commit is too large — break it into smaller commits before saving.
 - PRs should include a clear description of the change, any relevant issue links, and updates to docs/tests when behavior changes.
 
 ## Security & Configuration Tips
 - Review `SECURITY.md` for vulnerability reporting.
 - Resolver credentials and runtime options are typically configured via `template_chickadee.ini`; avoid committing real API keys.
+- If using the devcontainer, report any failure to connect to a domain or website, so that the allow list can be updated & reloaded to permit access.

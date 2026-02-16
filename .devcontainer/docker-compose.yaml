@@ -1,0 +1,93 @@
+services:
+  workspace:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TZ: ${TZ:-UTC}
+    volumes:
+      - type: bind
+        source: ..
+        target: /workspaces/repo
+      # The repo bind mount above includes .git/ as read-write, which the
+      # agent needs for commits (objects/, refs/, index, etc.).  The mounts
+      # below overlay specific .git paths as read-only to block tampering:
+      #   hooks/  — prevent installing hooks that execute on the host
+      #   config  — prevent changing remotes, credential helpers, etc.
+      #   info/   — prevent altering exclude rules
+      # These paths always exist after git-clone, so the mounts are safe.
+      - type: bind
+        source: ../.git/hooks
+        target: /workspaces/repo/.git/hooks
+        read_only: true
+      - type: bind
+        source: ../.git/config
+        target: /workspaces/repo/.git/config
+        read_only: true
+      - type: bind
+        source: ../.git/info
+        target: /workspaces/repo/.git/info
+        read_only: true
+      - type: bind
+        source: ${USERPROFILE:-${HOME}}/.claude
+        target: /home/node/.claude
+        read_only: false
+      - type: bind
+        source: ${USERPROFILE:-${HOME}}/.gitconfig
+        target: /home/node/.gitconfig
+        read_only: true
+    working_dir: /workspaces/repo
+    depends_on:
+      egress-proxy:
+        condition: service_healthy
+    networks:
+      - internal_net
+    environment:
+      # Force common tooling through the proxy
+      - HTTP_PROXY=http://egress-proxy:3128
+      - HTTPS_PROXY=http://egress-proxy:3128
+      - ALL_PROXY=http://egress-proxy:3128
+      - NO_PROXY=localhost,127.0.0.1
+      - CLAUDE_CONFIG_DIR=/home/node/.claude
+      - POWERLEVEL9K_DISABLE_GITSTATUS=true
+      # Helpful for language tooling:
+      - PIP_DISABLE_PIP_VERSION_CHECK=1
+    # Optional: reduce accidental host interaction
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: false
+    mem_limit: 4g
+    cpus: 2
+    pids_limit: 1024
+
+  egress-proxy:
+    # Pin to a specific tag — update periodically and verify egress controls still work.
+    image: public.ecr.aws/lts/squid:6.6-24.04_edge
+    volumes:
+      - ./squid/squid.conf:/etc/squid/squid.conf:ro
+      - ./runtime/allowed_domains.txt:/etc/squid/allowed_domains.txt:ro
+      - squid-cache:/var/spool/squid
+      - squid-logs:/var/log/squid
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '(echo > /dev/tcp/localhost/3128) 2>/dev/null'"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    networks:
+      - internal_net
+      - internet_net
+
+networks:
+  # Workspace can only talk to things on this network; Docker won’t route it out.
+  internal_net:
+    internal: true
+
+  # Proxy has a second network that can reach the outside world
+  internet_net: {}
+
+volumes:
+  squid-cache: {}
+  squid-logs: {}

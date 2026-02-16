@@ -1,0 +1,23 @@
+# package registries
+.pypi.org
+.pythonhosted.org
+.public.ecr.aws
+.astral.sh
+
+# git hosts (if you fetch deps from git)
+.github.com
+.githubusercontent.com
+.ghcr.io
+
+# docs (example)
+.readthedocs.io
+
+# AI
+.anthropic.com
+.claude.com
+.claude.ai
+
+# Data sources
+.ip-api.com
+.ipapi.is
+.virustotal.com

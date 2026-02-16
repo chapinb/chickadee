@@ -109,3 +109,10 @@ venv.bak/
 chickadee.ini
 .vscode/
 test_data/
+
+# Claude
+.claude/settings.local.json
+
+# Devcontainer runtime artifacts
+.devcontainer/runtime/
+.devcontainer/squid/allowed_domains.local.txt
