@@ -54,7 +54,7 @@ addresses. Please see <a class="reference internal" href="index.html#installatio
 on setting up this tool on your system.</p>
 <section id="usage">
 <span id="chickadee-usage"></span><h3>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h3>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: chickadee [-h] [-r {ip_api,virustotal}] [-f FIELDS]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: chickadee [-h] [-r {ip_api,virustotal,ipapi_is}] [-f FIELDS]
                  [-t {json,jsonl,csv}] [-w FILENAME.JSON] [-n] [--no-count]
                  [-s] [--lang {en,de,es,pt-BR,fr,ja,zh-CN,ru}] [-b]
                  [-c CONFIG] [-p] [-v] [-V] [-l LOG]
@@ -78,7 +78,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -r {ip_api,virustotal}, --resolver {ip_api,virustotal}
+  -r {ip_api,virustotal,ipapi_is}, --resolver {ip_api,virustotal,ipapi_is}
                         Resolving service to use. Must specify api key in config file.
                         Please see template_chickadee.ini for instructions.
                         (default: ip_api)

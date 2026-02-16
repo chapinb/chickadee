@@ -388,13 +388,184 @@ allow for the logic to handle which endpoint is preferred.</p>
 
 </dd></dl>
 
+<span class="target" id="module-libchickadee.resolvers.ipapi_is"></span><section id="ipapi-is-resolver">
+<h2>IPAPI.is Resolver<a class="headerlink" href="#ipapi-is-resolver" title="Permalink to this heading">¶</a></h2>
+<p>Resolver leveraging the ipapi.is JSON API.</p>
+<p>This is a third-party data source that provides GeoIP, ASN, company,
+and threat intelligence information for IPv4 and IPv6 addresses.</p>
+<section id="id2">
+<h3>Data Source Information<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<p>This data source is hosted at ipapi.is and requires an internet connection
+to use. It offers a free API, with terms described on their site. Please refer
+to the service’s website for an authoritative source on API specifications.
+This documentation summarizes a point in time understanding of the data source
+though since it is a third party service, it may change in a manner that breaks
+this tool or causes this documentation to become inaccurate. In no way is
+inclusion of a data source in libchickadee an endorsement of the data source.</p>
+<p><strong>Data source documentation:</strong> <a class="reference external" href="https://ipapi.is/developers.html">https://ipapi.is/developers.html</a></p>
+<section id="id3">
+<h4>Endpoints<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h4>
+<p>The API supports JSON responses for both single and batch lookups.</p>
+<ul class="simple">
+<li><p>Single: <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">https://api.ipapi.is?q={ip}</span></code></p></li>
+<li><p>Batch: <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">https://api.ipapi.is</span></code> with JSON body <code class="docutils literal notranslate"><span class="pre">{&quot;ips&quot;:</span> <span class="pre">[...]}</span></code></p></li>
+</ul>
+</section>
+<section id="id4">
+<h4>Fields<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h4>
+<p>These fields are in no particular order. Nested fields use dot notation.</p>
+<ul class="simple">
+<li><p>query</p></li>
+<li><p>count</p></li>
+<li><p>ip</p></li>
+<li><p>rir</p></li>
+<li><p>is_bogon</p></li>
+<li><p>is_mobile</p></li>
+<li><p>is_crawler</p></li>
+<li><p>is_datacenter</p></li>
+<li><p>is_tor</p></li>
+<li><p>is_proxy</p></li>
+<li><p>is_vpn</p></li>
+<li><p>is_abuser</p></li>
+<li><p>company.name</p></li>
+<li><p>company.domain</p></li>
+<li><p>company.network</p></li>
+<li><p>company.type</p></li>
+<li><p>asn.asn</p></li>
+<li><p>asn.name</p></li>
+<li><p>asn.org</p></li>
+<li><p>asn.network</p></li>
+<li><p>location.country</p></li>
+<li><p>location.city</p></li>
+<li><p>location.state</p></li>
+<li><p>location.latitude</p></li>
+<li><p>location.longitude</p></li>
+<li><p>location.timezone</p></li>
+<li><p>status</p></li>
+<li><p>message</p></li>
+</ul>
+</section>
+<section id="id5">
+<h4>Limitations<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h4>
+<p>The free tier allows 1,000 requests per day with no authentication required.
+Rate limiting returns HTTP 429 with no rate limit headers; a fixed 60-second
+backoff is used on 429 responses.</p>
+<p>The professional service supports an API key passed as <code class="docutils literal notranslate"><span class="pre">key</span></code> in query
+parameters (GET) or in the POST body alongside the <code class="docutils literal notranslate"><span class="pre">ips</span></code> list.</p>
+</section>
+</section>
+<section id="id6">
+<h3>Module Documentation<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+</section>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="libchickadee.resolvers.ipapi_is.ProResolver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libchickadee.resolvers.ipapi_is.</span></span><span class="sig-name descname"><span class="pre">ProResolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ipapi_is.ProResolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>GeoIP resolver using the ipapi.is paid subscription.</p>
+<p>Sets the API key and disables sleep functionality for the paid tier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> (<em>str</em>) – ipapi.is API key for requests.</p></li>
+<li><p><strong>fields</strong> (<em>list</em>) – Collection of fields to request in resolution.</p></li>
+<li><p><strong>lang</strong> (<em>str</em>) – Language for returned results.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="libchickadee.resolvers.ipapi_is.Resolver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">libchickadee.resolvers.ipapi_is.</span></span><span class="sig-name descname"><span class="pre">Resolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ipapi_is.Resolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to handle ipapi.is API queries for IP addresses.</p>
+<p>Sets endpoint to the free API and configures rate limit sleep timers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fields</strong> (<em>list</em>) – Collection of fields to request in resolution.</p></li>
+<li><p><strong>lang</strong> (<em>str</em>) – Language for returned results.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="libchickadee.resolvers.ipapi_is.Resolver.batch">
+<span class="sig-name descname"><span class="pre">batch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ipapi_is.Resolver.batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle batch query operations.</p>
+<p>Generally not called directly, should be called by <code class="docutils literal notranslate"><span class="pre">self.query()</span></code> to
+allow for the logic to handle which endpoint is preferred.</p>
+<p>The ipapi.is batch endpoint accepts a POST with <code class="docutils literal notranslate"><span class="pre">{&quot;ips&quot;:</span> <span class="pre">[...]}</span></code> and
+returns a dict keyed by IP address.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of resolved IP address records with specified fields.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>(list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libchickadee.resolvers.ipapi_is.Resolver.parse_response">
+<span class="sig-name descname"><span class="pre">parse_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ipapi_is.Resolver.parse_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a single IP response from ipapi.is.</p>
+<p>Checks for error responses (HTTP 200 with <code class="docutils literal notranslate"><span class="pre">{&quot;error&quot;:</span> <span class="pre">&quot;...&quot;}</span></code> body)
+and returns a failed record if found. Otherwise returns the response
+dict with <code class="docutils literal notranslate"><span class="pre">query</span></code> set to the requested IP.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ip</strong> (<em>str</em>) – The requested IP address.</p></li>
+<li><p><strong>json_data</strong> (<em>dict</em>) – The JSON response body for this IP.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parsed record with <code class="docutils literal notranslate"><span class="pre">query</span></code> field set.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libchickadee.resolvers.ipapi_is.Resolver.single">
+<span class="sig-name descname"><span class="pre">single</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ipapi_is.Resolver.single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle single item query operations.</p>
+<p>Generally not called directly, should be called by <code class="docutils literal notranslate"><span class="pre">self.query()</span></code> to
+allow for the logic to handle which endpoint is preferred.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of resolved IP address records with specified fields.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>(list)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="libchickadee.resolvers.ipapi_is.Resolver.sleeper">
+<span class="sig-name descname"><span class="pre">sleeper</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#libchickadee.resolvers.ipapi_is.Resolver.sleeper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixed 60-second sleep for rate limiting.</p>
+<p>The ipapi.is API does not provide rate limit headers, so a fixed
+backoff period is used when a 429 response is received.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <span class="target" id="module-libchickadee.resolvers.virustotal"></span><section id="virustotal-resolver">
 <h2>VirusTotal Resolver<a class="headerlink" href="#virustotal-resolver" title="Permalink to this heading">¶</a></h2>
 <p>Resolver leveraging the VirusTotal JSON API.</p>
 <p>This is a third-party data source that provides GeoIP, ASN, associated detected file samples,
 detections on web hosted content, known resolutions, and other resolution information for IPv4 and IPv6 addresses.</p>
-<section id="id2">
-<h3>Data Source Information<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<section id="id7">
+<h3>Data Source Information<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
 <p>This data source is hosted at virustotal.com and requires an internet connection
 to use. It offers a free API with registration and approval, with terms described
 on their site. Please refer to the service’s website for an authoritative source
@@ -404,8 +575,8 @@ though since it is a third party service, it may change in a manner that breaks
 this tool or causes this documentation to become inaccurate. In no way is
 inclusion of a data source in libchickadee an endorsement of the data source.</p>
 <p><strong>Data source documentation:</strong> <a class="reference external" href="https://developers.virustotal.com/reference">https://developers.virustotal.com/reference</a></p>
-<section id="id3">
-<h4>Endpoints<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h4>
+<section id="id8">
+<h4>Endpoints<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h4>
 <p>The API supports a number of reports, though for IP addresses only allows
 the submission of a single IP address per request. This means bulk lookups
 will take at most 1 minute per 4 IP addresses, due to rate limiting.</p>
@@ -413,8 +584,8 @@ will take at most 1 minute per 4 IP addresses, due to rate limiting.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">https://www.virustotal.com/vtapi/v2/ip-address/report?apikey=&lt;apikey&gt;&amp;ip=&lt;ip&gt;</span></code></p></li>
 </ul>
 </section>
-<section id="id4">
-<h4>Fields<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h4>
+<section id="id9">
+<h4>Fields<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h4>
 <p>These fields are in no particular order.</p>
 <ul class="simple">
 <li><p>query</p></li>
@@ -435,8 +606,8 @@ will take at most 1 minute per 4 IP addresses, due to rate limiting.</p>
 <li><p>message</p></li>
 </ul>
 </section>
-<section id="id5">
-<h4>Limitations<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h4>
+<section id="id10">
+<h4>Limitations<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h4>
 <p>This service has a free tier for non-commercial use, and is rate limited to:</p>
 <ul class="simple">
 <li><p>4 requests per minute</p></li>
@@ -447,8 +618,8 @@ will take at most 1 minute per 4 IP addresses, due to rate limiting.</p>
 sleep for 15 seconds if a 204 is returned.</p>
 </section>
 </section>
-<section id="id6">
-<h3>Module Documentation<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+<section id="id11">
+<h3>Module Documentation<a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h3>
 </section>
 </section>
 <dl class="py class">
@@ -573,7 +744,7 @@ Full API documentation here: <a class="reference external" href="https://develop
 <li><a class="reference internal" href="#libchickadee.resolvers.ipapi.Resolver.sleeper"><code class="docutils literal notranslate"><span class="pre">Resolver.sleeper()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#virustotal-resolver">VirusTotal Resolver</a><ul>
+<li><a class="reference internal" href="#ipapi-is-resolver">IPAPI.is Resolver</a><ul>
 <li><a class="reference internal" href="#id2">Data Source Information</a><ul>
 <li><a class="reference internal" href="#id3">Endpoints</a></li>
 <li><a class="reference internal" href="#id4">Fields</a></li>
@@ -581,6 +752,24 @@ Full API documentation here: <a class="reference external" href="https://develop
 </ul>
 </li>
 <li><a class="reference internal" href="#id6">Module Documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#libchickadee.resolvers.ipapi_is.ProResolver"><code class="docutils literal notranslate"><span class="pre">ProResolver</span></code></a></li>
+<li><a class="reference internal" href="#libchickadee.resolvers.ipapi_is.Resolver"><code class="docutils literal notranslate"><span class="pre">Resolver</span></code></a><ul>
+<li><a class="reference internal" href="#libchickadee.resolvers.ipapi_is.Resolver.batch"><code class="docutils literal notranslate"><span class="pre">Resolver.batch()</span></code></a></li>
+<li><a class="reference internal" href="#libchickadee.resolvers.ipapi_is.Resolver.parse_response"><code class="docutils literal notranslate"><span class="pre">Resolver.parse_response()</span></code></a></li>
+<li><a class="reference internal" href="#libchickadee.resolvers.ipapi_is.Resolver.single"><code class="docutils literal notranslate"><span class="pre">Resolver.single()</span></code></a></li>
+<li><a class="reference internal" href="#libchickadee.resolvers.ipapi_is.Resolver.sleeper"><code class="docutils literal notranslate"><span class="pre">Resolver.sleeper()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#virustotal-resolver">VirusTotal Resolver</a><ul>
+<li><a class="reference internal" href="#id7">Data Source Information</a><ul>
+<li><a class="reference internal" href="#id8">Endpoints</a></li>
+<li><a class="reference internal" href="#id9">Fields</a></li>
+<li><a class="reference internal" href="#id10">Limitations</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id11">Module Documentation</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#libchickadee.resolvers.virustotal.ProResolver"><code class="docutils literal notranslate"><span class="pre">ProResolver</span></code></a><ul>

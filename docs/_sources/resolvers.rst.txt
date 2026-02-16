@@ -7,6 +7,9 @@ Resolvers
 .. automodule:: libchickadee.resolvers.ipapi
    :members:
 
+.. automodule:: libchickadee.resolvers.ipapi_is
+   :members:
+
 .. automodule:: libchickadee.resolvers.virustotal
    :members:
 
