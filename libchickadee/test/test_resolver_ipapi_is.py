@@ -1,5 +1,6 @@
 """ipapi.is Resolver Tests."""
 
+import copy
 import unittest
 from unittest.mock import patch
 
@@ -91,15 +92,13 @@ class IpapiIsTestCase(unittest.TestCase):
 
     def test_parse_response_success(self):
         """Verify normal response gets query field added."""
-        data = dict(SAMPLE_RESPONSE_8888)
+        data = copy.deepcopy(SAMPLE_RESPONSE_8888)
         result = self.resolver.parse_response("8.8.8.8", data)
         self.assertEqual(result["query"], "8.8.8.8")
         self.assertEqual(result["ip"], "8.8.8.8")
 
     def test_parse_response_flattens_nested_dicts(self):
         """Verify nested dicts are flattened to dot-notation keys."""
-        import copy
-
         data = copy.deepcopy(SAMPLE_RESPONSE_8888)
         result = self.resolver.parse_response("8.8.8.8", data)
         # Nested company fields should be flattened
@@ -133,7 +132,7 @@ class IpapiIsTestCase(unittest.TestCase):
     @patch("libchickadee.resolvers.ipapi_is.requests.get")
     def test_single(self, mock_get):
         """Verify single() returns a parsed result with query field."""
-        mock_get.return_value = MockResponse(json_data=dict(SAMPLE_RESPONSE_8888), status_code=200)
+        mock_get.return_value = MockResponse(json_data=copy.deepcopy(SAMPLE_RESPONSE_8888), status_code=200)
         self.resolver.data = "8.8.8.8"
         result = self.resolver.single()
         self.assertEqual(len(result), 1)
@@ -145,8 +144,8 @@ class IpapiIsTestCase(unittest.TestCase):
     def test_batch(self, mock_post):
         """Verify batch() handles dict-keyed response correctly."""
         batch_response = {
-            "8.8.8.8": dict(SAMPLE_RESPONSE_8888),
-            "1.1.1.1": dict(SAMPLE_RESPONSE_1111),
+            "8.8.8.8": copy.deepcopy(SAMPLE_RESPONSE_8888),
+            "1.1.1.1": copy.deepcopy(SAMPLE_RESPONSE_1111),
         }
         mock_post.return_value = MockResponse(json_data=batch_response, status_code=200)
         self.resolver.data = ["8.8.8.8", "1.1.1.1"]
@@ -161,7 +160,7 @@ class IpapiIsTestCase(unittest.TestCase):
         """Verify single() retries after 429 and sleeps 60s."""
         mock_get.side_effect = [
             MockResponse(json_data={}, status_code=429),
-            MockResponse(json_data=dict(SAMPLE_RESPONSE_8888), status_code=200),
+            MockResponse(json_data=copy.deepcopy(SAMPLE_RESPONSE_8888), status_code=200),
         ]
         self.resolver.data = "8.8.8.8"
         result = self.resolver.single()
@@ -174,8 +173,8 @@ class IpapiIsTestCase(unittest.TestCase):
     def test_rate_limit_batch(self, mock_post, mock_sleep):
         """Verify batch() retries after 429 and sleeps 60s."""
         batch_response = {
-            "8.8.8.8": dict(SAMPLE_RESPONSE_8888),
-            "1.1.1.1": dict(SAMPLE_RESPONSE_1111),
+            "8.8.8.8": copy.deepcopy(SAMPLE_RESPONSE_8888),
+            "1.1.1.1": copy.deepcopy(SAMPLE_RESPONSE_1111),
         }
         mock_post.side_effect = [
             MockResponse(json_data={}, status_code=429),
