@@ -89,7 +89,7 @@ logger = logging.getLogger(__name__)
 
 FIELDS = [
     "query",
-    "count",
+    "count",  # Injected by Chickadee.resolve(), not returned by the API
     "ip",
     "rir",
     "is_bogon",
