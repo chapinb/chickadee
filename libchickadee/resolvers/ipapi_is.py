@@ -117,3 +117,54 @@ FIELDS = [
     "status",
     "message",
 ]
+
+
+class Resolver(ResolverBase):
+    """Class to handle ipapi.is API queries for IP addresses.
+
+    Sets endpoint to the free API and configures rate limit sleep timers.
+
+    Args:
+        fields (list): Collection of fields to request in resolution.
+        lang (str): Language for returned results.
+    """
+
+    def __init__(self, fields=None, lang="en"):
+        """Initialize class object and configure default values."""
+        super().__init__()
+        self.lang = lang
+        self.fields = FIELDS if not fields else fields
+        self.uri = "https://api.ipapi.is"
+        self.api_key = None
+        self.enable_sleep = True
+
+    def sleeper(self):
+        """Fixed 60-second sleep for rate limiting.
+
+        The ipapi.is API does not provide rate limit headers, so a fixed
+        backoff period is used when a 429 response is received.
+
+        Return:
+            None
+        """
+        logger.info("Sleeping for 60 seconds due to rate limiting.")
+        time.sleep(60)
+
+    def parse_response(self, ip, json_data):
+        """Parse a single IP response from ipapi.is.
+
+        Checks for error responses (HTTP 200 with ``{"error": "..."}`` body)
+        and returns a failed record if found. Otherwise returns the response
+        dict with ``query`` set to the requested IP.
+
+        Args:
+            ip (str): The requested IP address.
+            json_data (dict): The JSON response body for this IP.
+
+        Returns:
+            (dict): Parsed record with ``query`` field set.
+        """
+        if "error" in json_data:
+            return {"query": ip, "status": "failed", "message": json_data["error"]}
+        json_data["query"] = ip
+        return json_data
