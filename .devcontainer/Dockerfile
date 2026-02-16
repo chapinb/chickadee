@@ -51,14 +51,19 @@ ENV SHELL=/bin/zsh
 ENV EDITOR=nvim
 ENV VISUAL=nvim
 
-# Default powerline10k theme
+# Default powerline10k theme — download, verify checksum, then execute
 ARG ZSH_IN_DOCKER_VERSION=1.2.0
-RUN sh -c "$(curl -fsSL https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \
-  -p git \
-  -p fzf \
-  -a "source /usr/share/doc/fzf/examples/key-bindings.zsh" \
-  -a "source /usr/share/doc/fzf/examples/completion.zsh" \
-  -x
+ARG ZSH_IN_DOCKER_SHA256=f74e5b08c295b6c3886654bb63c688e5ea16c58a4209435c4ddbab2c42fe9b41
+RUN curl -fsSL -o /tmp/zsh-in-docker.sh \
+      "https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh" \
+  && echo "${ZSH_IN_DOCKER_SHA256}  /tmp/zsh-in-docker.sh" | sha256sum -c - \
+  && sh /tmp/zsh-in-docker.sh \
+      -p git \
+      -p fzf \
+      -a "source /usr/share/doc/fzf/examples/key-bindings.zsh" \
+      -a "source /usr/share/doc/fzf/examples/completion.zsh" \
+      -x \
+  && rm /tmp/zsh-in-docker.sh
 
 # Install Claude Code — intentionally unpinned so every build gets the latest
 # release. This trades reproducibility for always having the newest features
