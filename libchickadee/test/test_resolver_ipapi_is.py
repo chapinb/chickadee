@@ -185,6 +185,64 @@ class IpapiIsTestCase(unittest.TestCase):
         self.assertEqual(len(result), 2)
         mock_sleep.assert_called_once_with(60)
 
+    @patch("libchickadee.resolvers.ipapi_is.requests.get")
+    def test_single_unknown_error(self, mock_get):
+        """Verify single() returns failed record on non-200/429 status."""
+        mock_get.return_value = MockResponse(json_data={}, status_code=500)
+        self.resolver.data = "8.8.8.8"
+        result = self.resolver.single()
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["query"], "8.8.8.8")
+        self.assertEqual(result[0]["status"], "failed")
+        self.assertIn("500", result[0]["message"])
+
+    @patch("libchickadee.resolvers.ipapi_is.requests.post")
+    def test_batch_unknown_error(self, mock_post):
+        """Verify batch() returns failed records on non-200/429 status."""
+        mock_post.return_value = MockResponse(json_data={}, status_code=500)
+        self.resolver.data = ["8.8.8.8", "1.1.1.1"]
+        result = self.resolver.batch()
+        self.assertEqual(len(result), 2)
+        for record in result:
+            self.assertEqual(record["status"], "failed")
+            self.assertIn("500", record["message"])
+
+    @patch("libchickadee.resolvers.ipapi_is.requests.post")
+    def test_batch_missing_ip_in_response(self, mock_post):
+        """Verify batch() handles IP missing from response dict."""
+        batch_response = {
+            "8.8.8.8": copy.deepcopy(SAMPLE_RESPONSE_8888),
+            # 1.1.1.1 intentionally omitted from response
+        }
+        mock_post.return_value = MockResponse(json_data=batch_response, status_code=200)
+        self.resolver.data = ["8.8.8.8", "1.1.1.1"]
+        result = self.resolver.batch()
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0]["query"], "8.8.8.8")
+        self.assertEqual(result[1]["query"], "1.1.1.1")
+
+    @patch("libchickadee.resolvers.ipapi_is.time.sleep")
+    @patch("libchickadee.resolvers.ipapi_is.requests.get")
+    def test_single_exhausted_retries(self, mock_get, mock_sleep):
+        """Verify single() fails after exhausting retry attempts on 429."""
+        mock_get.return_value = MockResponse(json_data={}, status_code=429)
+        self.resolver.data = "8.8.8.8"
+        result = self.resolver.single()
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["status"], "failed")
+        self.assertEqual(mock_sleep.call_count, self.resolver.MAX_RETRIES)
+
+    @patch("libchickadee.resolvers.ipapi_is.time.sleep")
+    @patch("libchickadee.resolvers.ipapi_is.requests.post")
+    def test_batch_exhausted_retries(self, mock_post, mock_sleep):
+        """Verify batch() fails after exhausting retry attempts on 429."""
+        mock_post.return_value = MockResponse(json_data={}, status_code=429)
+        self.resolver.data = ["8.8.8.8"]
+        result = self.resolver.batch()
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["status"], "failed")
+        self.assertEqual(mock_sleep.call_count, self.resolver.MAX_RETRIES)
+
 
 if __name__ == "__main__":
     unittest.main()
