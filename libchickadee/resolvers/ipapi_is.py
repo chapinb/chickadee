@@ -154,19 +154,25 @@ class Resolver(ResolverBase):
         """Parse a single IP response from ipapi.is.
 
         Checks for error responses (HTTP 200 with ``{"error": "..."}`` body)
-        and returns a failed record if found. Otherwise returns the response
-        dict with ``query`` set to the requested IP.
+        and returns a failed record if found. Otherwise flattens nested dicts
+        into dot-notation keys (e.g. ``company.name``) and sets ``query``.
 
         Args:
             ip (str): The requested IP address.
             json_data (dict): The JSON response body for this IP.
 
         Returns:
-            (dict): Parsed record with ``query`` field set.
+            (dict): Parsed record with ``query`` field and flattened keys.
         """
         if "error" in json_data:
             return {"query": ip, "status": "failed", "message": json_data["error"]}
         json_data["query"] = ip
+        # Flatten nested dicts to dot-notation keys matching FIELDS
+        for key in list(json_data.keys()):
+            if isinstance(json_data[key], dict):
+                for subkey, value in json_data[key].items():
+                    json_data[f"{key}.{subkey}"] = value
+                del json_data[key]
         return json_data
 
     def single(self):
