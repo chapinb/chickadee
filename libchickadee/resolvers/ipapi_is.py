@@ -129,6 +129,8 @@ class Resolver(ResolverBase):
         lang (str): Language for returned results.
     """
 
+    MAX_RETRIES = 3
+
     def __init__(self, fields=None, lang="en"):
         """Initialize class object and configure default values."""
         super().__init__()
@@ -189,12 +191,15 @@ class Resolver(ResolverBase):
         if self.api_key:
             params["key"] = self.api_key
 
-        rdata = requests.get(self.uri, params=params, timeout=60)
-        if rdata.status_code == 200:
-            return [self.parse_response(self.data, rdata.json())]
-        if rdata.status_code == 429 and self.enable_sleep:
-            self.sleeper()
-            return self.single()
+        for attempt in range(self.MAX_RETRIES + 1):
+            rdata = requests.get(self.uri, params=params, timeout=60)
+            if rdata.status_code == 200:
+                return [self.parse_response(self.data, rdata.json())]
+            if rdata.status_code == 429 and self.enable_sleep and attempt < self.MAX_RETRIES:
+                self.sleeper()
+                continue
+            break
+
         msg = f"Unknown error encountered: {rdata.status_code}"
         logger.error(msg)
         return [{"query": self.data, "status": "failed", "message": msg}]
@@ -224,22 +229,22 @@ class Resolver(ResolverBase):
             if self.api_key:
                 body["key"] = self.api_key
 
-            rdata = requests.post(self.uri, json=body, timeout=60)
+            for attempt in range(self.MAX_RETRIES + 1):
+                rdata = requests.post(self.uri, json=body, timeout=60)
 
-            if rdata.status_code == 200:
-                response = rdata.json()
-                for ip in chunk:
-                    ip_data = response.get(ip, {})
-                    resolved_records.append(self.parse_response(ip, ip_data))
-            elif rdata.status_code == 429 and self.enable_sleep:
-                self.sleeper()
-                # Retry the same chunk by recursing with remaining data
-                self.data = ips[x:]
-                return resolved_records + self.batch()
-            else:
+                if rdata.status_code == 200:
+                    response = rdata.json()
+                    for ip in chunk:
+                        ip_data = response.get(ip, {})
+                        resolved_records.append(self.parse_response(ip, ip_data))
+                    break
+                if rdata.status_code == 429 and self.enable_sleep and attempt < self.MAX_RETRIES:
+                    self.sleeper()
+                    continue
                 msg = f"Unknown error encountered: {rdata.status_code}"
                 logger.error(msg)
                 resolved_records += [{"query": ip, "status": "failed", "message": msg} for ip in chunk]
+                break
 
         return resolved_records
 
