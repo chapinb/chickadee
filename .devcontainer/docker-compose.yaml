@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        TZ: ${TZ:-UTC}
     volumes:
       - type: bind
         source: ..

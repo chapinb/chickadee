@@ -2,7 +2,7 @@
 # `node` user used throughout. Python is managed separately by `uv`.
 FROM node:20
 
-ARG TZ
+ARG TZ=UTC
 ENV TZ="$TZ"
 
 
