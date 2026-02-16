@@ -1,8 +1,6 @@
 # package registries
 .pypi.org
 .pythonhosted.org
-.crates.io
-.registry.npmjs.org
 .public.ecr.aws
 .astral.sh
 
@@ -12,11 +10,14 @@
 .ghcr.io
 
 # docs (example)
-.docs.rs
 .readthedocs.io
 
 # AI
 .anthropic.com
 .claude.com
 .claude.ai
+
+# Data sources
+.ip-api.com
 .ipapi.is
+.virustotal.com
