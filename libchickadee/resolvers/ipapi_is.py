@@ -166,14 +166,15 @@ class Resolver(ResolverBase):
         """
         if "error" in json_data:
             return {"query": ip, "status": "failed", "message": json_data["error"]}
-        json_data["query"] = ip
+        result = {"query": ip}
         # Flatten nested dicts to dot-notation keys matching FIELDS
-        for key in list(json_data.keys()):
-            if isinstance(json_data[key], dict):
-                for subkey, value in json_data[key].items():
-                    json_data[f"{key}.{subkey}"] = value
-                del json_data[key]
-        return json_data
+        for key, value in json_data.items():
+            if isinstance(value, dict):
+                for subkey, subvalue in value.items():
+                    result[f"{key}.{subkey}"] = subvalue
+            else:
+                result[key] = value
+        return result
 
     def single(self):
         """Handle single item query operations.
