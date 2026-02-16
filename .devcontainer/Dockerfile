@@ -1,4 +1,5 @@
-# From https://github.com/anthropics/claude-code/blob/8c09097e8c2565c4c9c107cb9ad1cfcb87366368/.devcontainer/Dockerfile
+# node:20 is used because Claude Code requires Node.js and provides the
+# `node` user used throughout. Python is managed separately by `uv`.
 FROM node:20
 
 ARG TZ
