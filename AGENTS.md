@@ -41,3 +41,4 @@
 ## Security & Configuration Tips
 - Review `SECURITY.md` for vulnerability reporting.
 - Resolver credentials and runtime options are typically configured via `template_chickadee.ini`; avoid committing real API keys.
+- If using the devcontainer, report any failure to connect to a domain or website, so that the allow list can be updated & reloaded to permit access.

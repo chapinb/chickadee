@@ -1,1 +1,1 @@
-Read AGENTS.md before starting work.
+Read @AGENTS.md before starting work.
