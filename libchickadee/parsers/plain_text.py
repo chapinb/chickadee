@@ -13,6 +13,7 @@ to first decompress it.
 
 import binascii
 from gzip import GzipFile
+from io import BytesIO
 
 from libchickadee.parsers import ParserBase, run_parser_from_cli
 
@@ -54,14 +55,24 @@ class PlainTextParser(ParserBase):
         if not is_stream:
             file_data = GzipFile(filename=file_entry) if self.is_gz_file(file_entry) else open(file_entry, "rb")
         else:
-            # Encode if needed
-            two_bytes = file_entry.buffer.read(2)
+            stream_buffer = file_entry.buffer
+            two_bytes = b""
+
+            # Prefer non-destructive reads for streams that may not be seekable
+            if hasattr(stream_buffer, "peek"):
+                two_bytes = stream_buffer.peek(2)[:2]
+            else:
+                two_bytes = stream_buffer.read(2)
+                if hasattr(stream_buffer, "seekable") and stream_buffer.seekable():
+                    stream_buffer.seek(0)
+                else:
+                    stream_buffer = BytesIO(two_bytes + stream_buffer.read())
+
             if isinstance(two_bytes, str):
                 two_bytes = two_bytes.encode()
 
-            file_entry.seek(0)
             # Check for gzip stream
-            file_data = GzipFile(fileobj=file_entry) if binascii.hexlify(two_bytes) == b"1f8b" else file_entry.buffer
+            file_data = GzipFile(fileobj=stream_buffer) if binascii.hexlify(two_bytes) == b"1f8b" else stream_buffer
 
         for raw_line in file_data:
             line = raw_line if isinstance(raw_line, str) else raw_line.decode()

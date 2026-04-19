@@ -513,6 +513,20 @@ class ChickadeeFileTestCase(unittest.TestCase):
         ips = Chickadee.file_handler(stream, ignore_bogon=True)
         self.assertDictEqual(ips, {"1.1.1.1": 1})
 
+    def test_file_handler_non_seekable_stream(self):
+        """Validate stream parsing when stdin is not seekable (common in Linux pipes)."""
+
+        class NonSeekableBytesIO(io.BytesIO):
+            def seekable(self):
+                return False
+
+            def seek(self, *args, **kwargs):
+                raise io.UnsupportedOperation("underlying stream is not seekable")
+
+        stream = io.TextIOWrapper(NonSeekableBytesIO(b"test 1.1.1.1 ip"))
+        ips = Chickadee.file_handler(stream, ignore_bogon=True)
+        self.assertDictEqual(ips, {"1.1.1.1": 1})
+
 
 if __name__ == "__main__":
     unittest.main()

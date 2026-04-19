@@ -1,5 +1,6 @@
 """Plain-text parsing tests"""
 
+import gzip
 import io
 import os
 import unittest
@@ -44,6 +45,27 @@ class PlainTextParserTestCase(unittest.TestCase):
     def test_stream_plaintext(self):
         """Test stream parsing with bytes-backed buffer"""
         stream = io.TextIOWrapper(io.BytesIO(b"8.8.8.8\n"))
+        self.parser.parse_file(stream, is_stream=True)
+        self.assertEqual({"8.8.8.8": 1}, self.parser.ips)
+
+    def test_stream_non_seekable_gzip(self):
+        """Test gzip parsing from a non-seekable stream."""
+
+        class NonSeekableBytesIO(io.BytesIO):
+            def seekable(self):
+                return False
+
+            def seek(self, *args, **kwargs):
+                raise io.UnsupportedOperation("underlying stream is not seekable")
+
+        gz_payload = gzip.compress(b"8.8.8.8\n")
+        stream = io.TextIOWrapper(NonSeekableBytesIO(gz_payload))
+        self.parser.parse_file(stream, is_stream=True)
+        self.assertEqual({"8.8.8.8": 1}, self.parser.ips)
+
+    def test_stream_peek_buffer(self):
+        """Test parsing with a peek-capable buffer to validate non-destructive header checks."""
+        stream = io.TextIOWrapper(io.BufferedReader(io.BytesIO(b"8.8.8.8\n")))
         self.parser.parse_file(stream, is_stream=True)
         self.assertEqual({"8.8.8.8": 1}, self.parser.ips)
 

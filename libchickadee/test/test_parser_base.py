@@ -44,7 +44,7 @@ class ParserBaseTestCase(unittest.TestCase):
             "100::517b:deaa:fb23:5013",
         ]  # nosec
         for ip in ip_list:
-            self.assertTrue(ParserBase.is_bogon(ip))
+            self.assertTrue(ParserBase.is_bogon(ip), msg=f"Failed bogon test for IP: {ip}")
 
     def test_nonbogon(self):
         """Test the is_bogon function to ensure it isn't overly inclusive"""
